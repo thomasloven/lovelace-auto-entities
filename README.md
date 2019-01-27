@@ -180,4 +180,50 @@ This card works very much like [`monster-card`](https://github.com/ciotlosm/cust
 - `auto-entities` works with custom cards.
 
 ![custom-cards-and-stuff](https://user-images.githubusercontent.com/1299821/51793369-aa3b6480-21bf-11e9-9a00-e7b7b85ba0a2.png)
-
+```yaml
+type: entities
+title: Combination
+entities:
+  - type: custom:auto-entities
+    card:
+      type: custom:fold-entity-row
+      head:
+        type: section
+        label: All lights
+    filter:
+      include:
+        - domain: light
+  - type: custom:auto-entities
+    card:
+      type: custom:fold-entity-row
+      head:
+        type: section
+        label: Lights that are on
+    filter:
+      include:
+        - domain: light
+          state: "on"
+  - type: custom:auto-entities
+    card:
+      type: custom:fold-entity-row
+      head:
+        type: section
+        label: Lights that are dimmed below 50%
+    filter:
+      include:
+        - domain: light
+          attributes:
+            brightness: "< 125"
+  - type: custom:auto-entities
+    card:
+      type: custom:fold-entity-row
+      head:
+        type: section
+        label: Lights that are kinda blue-ish
+    filter:
+      include:
+        - domain: light
+          attributes:
+            hs_color 1: "0:> 195"
+            hs_color 2: "0:< 255"
+```
