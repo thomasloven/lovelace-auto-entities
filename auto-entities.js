@@ -6,10 +6,12 @@ class AutoEntities extends cardTools.litElement() {
       throw new Error("Invalid configuration");
 
     this._config = config;
+    this.data = {};
 
     this.entities = this.get_entities() || [];
     this.card = cardTools.createCard({entities: this.entities, ...config.card});
   }
+
 
   match(pattern, str){
     if (typeof(str) === "string" && typeof(pattern) === "string") {
@@ -71,6 +73,26 @@ class AutoEntities extends cardTools.litElement() {
             )
               unmatched = true;
             break;
+          case "area":
+            let found = false;
+            this.data.areas.forEach((a) => {
+              if(found) return;
+              if(this.match(value, a.name)) {
+                this.data.devices.forEach((d) => {
+                  if(found) return;
+                  if(d.area_id && d.area_id === a.area_id) {
+                    this.data.entities.forEach((en) => {
+                      if(found) return;
+                      if(en.device_id === d.id && en.entity_id === e.entity_id) {
+                        found = true;
+                      }
+                    });
+                  }
+                });
+              }
+            });
+            if(!found) unmatched = true;
+            break;
           case "group":
             if(!value.startsWith("group.")
               || !hass.states[value]
@@ -89,6 +111,8 @@ class AutoEntities extends cardTools.litElement() {
                 unmatched = true;
             });
             break;
+          default:
+            unmatched = true;
         }
       });
       if(!unmatched) retval.push(count);
@@ -106,7 +130,7 @@ class AutoEntities extends cardTools.litElement() {
 
       if(this._config.filter.include){
         this._config.filter.include.forEach((f) => {
-          const add = this.match_filter(this._hass, Object.keys(this._hass.states), f)
+          const add = this.match_filter(this._hass, Object.keys(this._hass.states), f);
           add.forEach((i) => {
             entities.push({entity: Object.keys(this._hass.states)[i], ...f.options});
           });
@@ -134,16 +158,27 @@ class AutoEntities extends cardTools.litElement() {
     `;
   }
 
+  async get_data(hass) {
+    try {
+    this.data.areas = await hass.callWS({type: "config/area_registry/list"});
+    this.data.devices = await hass.callWS({type: "config/device_registry/list"});
+    this.data.entities = await hass.callWS({type: "config/entity_registry/list"});
+    } catch (err) {
+    }
+  }
+
   set hass(hass) {
     this._hass = hass;
-    const oldlen = this.entities.length;
-    this.entities = this.get_entities() || [];
-    if(this.card)
-    {
-      this.card.hass = this._hass;
-      this.card.setConfig({entities: this.entities, ...this._config.card});
-    }
-    if(this.entities.length != oldlen) this.requestUpdate();
+    this.get_data(hass).then(() => {
+      const oldlen = this.entities.length;
+      this.entities = this.get_entities() || [];
+      if(this.card)
+      {
+        this.card.hass = this._hass;
+        this.card.setConfig({entities: this.entities, ...this._config.card});
+      }
+      if(this.entities.length != oldlen) this.requestUpdate();
+    });
   }
 
 }

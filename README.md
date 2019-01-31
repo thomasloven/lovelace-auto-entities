@@ -40,6 +40,7 @@ All options are optional, and filters will match any entity matching **ALL** opt
 | name | Match friendly name attribute (e.g. "Kitchen lights", "Front door")
 | group | Match entities in given group
 | attributes | Match attributes. **See below**
+| area | Entity belongs in given area (Home Assistant 0.87 or later)
 | options | Additional options to attach to entities matching this filter (only makes sense in `include`)
 
 The attributes option takes an object with `attribute: value` combinations and matches any entity which matches all of those attributes.
