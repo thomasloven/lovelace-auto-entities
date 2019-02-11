@@ -174,17 +174,34 @@ class AutoEntities extends cardTools.litElement() {
     }
   }
 
+  _compare_arrays(a,b) {
+    if(a === b) return true;
+    if(a == null || b == null) return false;
+    if(a.length != b.length) return false;
+    for(var i = 0; i < a.length; i++) {
+      if(a[i] !== b[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   set hass(hass) {
     this._hass = hass;
     this.get_data(hass).then(() => {
-      const oldlen = this.entities.length;
-      this.entities = this.get_entities() || [];
       if(this.card)
       {
         this.card.hass = this._hass;
-        this.card.setConfig({entities: this.entities, ...this._config.card});
       }
-      if(this.entities.length != oldlen) this.requestUpdate();
+
+      const oldEntities = this.entities.map((e) => e.entity);
+      this.entities = this.get_entities() || [];
+      const newEntities = this.entities.map((e) => e.entity);
+
+      if(!this._compare_arrays(oldEntities, newEntities)) {
+        this.card.setConfig({entities: this.entities, ...this._config.card});
+        this.requestUpdate();
+      }
     });
   }
 
