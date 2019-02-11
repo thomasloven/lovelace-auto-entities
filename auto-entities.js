@@ -131,9 +131,16 @@ class AutoEntities extends cardTools.litElement() {
       if(this._config.filter.include){
         this._config.filter.include.forEach((f) => {
           const add = this.match_filter(this._hass, Object.keys(this._hass.states), f);
+          let toAdd = [];
           add.forEach((i) => {
-            entities.push({entity: Object.keys(this._hass.states)[i], ...f.options});
+            toAdd.push({entity: Object.keys(this._hass.states)[i], ...f.options});
           });
+          toAdd.sort((a,b) => {
+            if (a.entity < b.entity) return -1;
+            if (a.entity > b.entity) return 1;
+            return 0;
+          });
+          toAdd.forEach((i) => entities.push(i));
         });
       }
 
@@ -154,7 +161,7 @@ class AutoEntities extends cardTools.litElement() {
     if(this.entities.length === 0 && this._config.show_empty === false)
       return cardTools.litHtml()``;
     return cardTools.litHtml()`
-      ${this.card}
+      <div id="root">${this.card}</div>
     `;
   }
 
