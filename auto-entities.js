@@ -21,7 +21,8 @@ class AutoEntities extends cardTools.litElement() {
         var regex = new RegExp(pattern.substr(1).slice(0,-1));
         return regex.test(str);
       }
-    } else if(typeof(pattern) === "string") {
+    }
+    if(typeof(pattern) === "string") {
       if(pattern.indexOf(":") !== -1 && typeof(str) === "object") {
         while(pattern.indexOf(":") !== -1)
         {
@@ -29,12 +30,12 @@ class AutoEntities extends cardTools.litElement() {
           pattern = pattern.substr(pattern.indexOf(":")+1, pattern.length);
         }
       }
-      if(pattern.startsWith("<=")) return str <= parseFloat(pattern.substr(2));
-      if(pattern.startsWith(">=")) return str >= parseFloat(pattern.substr(2));
-      if(pattern.startsWith("<")) return str < parseFloat(pattern.substr(1));
-      if(pattern.startsWith(">")) return str > parseFloat(pattern.substr(1));
-      if(pattern.startsWith("!")) return str != parseFloat(pattern.substr(1));
-      if(pattern.startsWith("=")) return str == parseFloat(pattern.substr(1));
+      if(pattern.startsWith("<=")) return parseFloat(str) <= parseFloat(pattern.substr(2));
+      if(pattern.startsWith(">=")) return parseFloat(str) >= parseFloat(pattern.substr(2));
+      if(pattern.startsWith("<")) return parseFloat(str) < parseFloat(pattern.substr(1));
+      if(pattern.startsWith(">")) return parseFloat(str) > parseFloat(pattern.substr(1));
+      if(pattern.startsWith("!")) return parseFloat(str) != parseFloat(pattern.substr(1));
+      if(pattern.startsWith("=")) return parseFloat(str) == parseFloat(pattern.substr(1));
     }
     return str === pattern;
   }
