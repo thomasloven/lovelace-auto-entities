@@ -135,7 +135,7 @@ filter:
       options:
         secondary_info: last-changed
       attributes:
-        battery: "< 50"
+        battery_level: "< 50"
         source_type: gps
 ```
 
