@@ -109,6 +109,11 @@ class AutoEntities extends cardTools.LitElement {
             )
               unmatched = true;
             break;
+          case "group_expand":
+            if(!this.is_in_group(hass, value, e.entity_id)
+            )
+              unmatched = true;
+            break;
           case "attributes":
             Object.keys(value).forEach((entityKey) => {
               const k = entityKey.split(" ")[0];
@@ -126,6 +131,15 @@ class AutoEntities extends cardTools.LitElement {
       if(!unmatched) retval.push(count);
     });
     return retval;
+  }
+
+  is_in_group(hass, group_entity_id, entity_id) {
+    return group_entity_id.startsWith("group.")
+      && hass.states[group_entity_id]
+      && hass.states[group_entity_id].attributes.entity_id
+      && ((!entity_id.startsWith("group.") && hass.states[group_entity_id].attributes.entity_id.includes(entity_id))
+      || (hass.states[group_entity_id].attributes.entity_id.some((g) => this.is_in_group(hass, g, entity_id)))
+      )
   }
 
   get_entities()
