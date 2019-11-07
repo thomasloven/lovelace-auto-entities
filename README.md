@@ -1,60 +1,84 @@
 auto-entities
 =============
 
-**Kinda-sorta-experimental-ish**
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
-This plugin can automatically populate the `entities:` list of a card or entity-row with entities matching a filter.
-
-> If you've been around the custom lovelace stuff scene for a while,
-> this function probably feels familliar to you. This plugin is a
-> reimplementation of the fantastic [`monster-card`](https://github.com/ciotlosm/custom-lovelace/tree/master/monster-card)
-> by Marius Ciotlos. Differences are outlined below.
-
-## Installation instructions
-
-This plugin requires [card-tools](https://github.com/thomasloven/lovelace-card-tools) to be installed.
+Automatically populate lovelace cards with entities matching certain criteria.
 
 For installation instructions [see this guide](https://github.com/thomasloven/hass-config/wiki/Lovelace-Plugins).
 
+Install `auto-entities.js` as a `module`.
+
+```yaml
+resources:
+  - url: /local/auto-entities.js
+    type: module
+```
+
+## Usage
+
+```yaml
+type: custom:auto-entities
+card:
+  <card>
+entities:
+  - <entity>
+  - <entity>
+filter:
+  include:
+    - <filter>
+    - <filter>
+  exclude:
+    - <filter>
+    - <filter>
+
+show_empty: <show_empty>
+sort: <sort_method>
+```
+
 ## Options
 
-| Name | Type | Default | Description
-| ---- | ---- | ------- | -----------
-| type | string | **Required** | `custom:auto-entities`
-| card | object | **Required** | The card to display
-| filter | object | None | Filters for including and excluding entities
-| entities | list | None | Enties to include
-| show\_empty | boolean | true | Show/hide empty card
+- `card:` **Required.** The card to display. Specify this as you would specify any normal lovelace card, but ommit the `entities:` parameter.
+- `entities:` Any entities added here will be added to the card before any filters are applied.
+- `filter:`
+  - `include:` **Required.** A list of filters specifying which entities to add to the card
+  - `exclude:` A list of filters specifying which entities to remove from the card
+- `show_empty:` Whether to display the card if it has no entities. Default: `true`.
+- `sort:` How to sort the entities of the card. Default: `none`.
 
-### filters
-The `filter` options has two sections, `include` and `exclude`. Each section contains a list of filters.
+### Filters
+The two filter sections `include` and `exclude` each takes a list of filters.
 
-Each section has the following options.
-All options are optional, and filters will match any entity matching **ALL** options.
+Filters have the following options, and will match any entity fulfilling **ALL** options:
 
-| Name | Description
-| ---- | -----------
-| domain | Match entity domain (e.g. `light`, `binary_sensor`, `media_player`)
-| state | Match entity state (e.g. "on", "off", 3.14)
-| entity\_id | Match entity id (e.g. `light.bed_light`, `binary_sensor.weekdays_only`, `media_player.kitchen`)
-| name | Match friendly name attribute (e.g. "Kitchen lights", "Front door")
-| group | Match entities in given group
-| attributes | Match attributes. **See below**
-| area | Entity belongs in given area (Home Assistant 0.87 or later)
-| options | Additional options to attach to entities matching this filter (only makes sense in `include`)
+- `domain:` Match entity domain (e.g. `light`, `binary_sensor`, `media_player`)
+- `state:` Match entity state (e.g. `"on"`, `home`, `"3.14"`)
+- `entity_id:` Match entity id (e.g. `light.bed_light`, `input_binary.weekdays_only`)
+- `name:` Match friendly name attribute (e.g. `Kitchen lights`, `Front door`)
+- `group:` Match entities in given group (e.g. `group.living_room_lights`)
+- `area:` Match entities in given area (e.g. `Kitchen`)
+- `device:` Match entities belonging to given device (e.g. `Thomas iPhone`)
+- `attributes:` Map of `attribute: value` pairs to match.
 
-The attributes option takes an object with `attribute: value` combinations and matches any entity which matches all of those attributes.
+Special options:
+- `options:` Map of options to apply to entity when passed to card.
+- `type:` Type of special entries to include in entity list. Entries with a `type:` will not be filtered.
+- `not:` Specifies a filter that entities must *not* match.
+- `sort:` Specifies a method to sort entities matched by *this filter only*.
 
 ## How it works
 `auto-entities` creates a list of entities by:
-1. Including every entity given in `entities:` (this allows nesting of `auto-entities` if you'd want to do that for some reason...)
-2. Include all entities that matches **ALL** options of **ANY** filter in the `filter.include` section.
-3. Remove all entities that matches **ALL** options of **ANY** filter in the `filter.exclude` section.
+1. Including every entitiy given in `entities:` (this allow nesting of `auto-entities`if you'd want to do that for some reason...)
+2. Include all entities that matches **ALL** options of **ANY** filter in the `filter.include` section. The same entity may be included several times by different filters.
+3. Remove all entities that matches **ALL** options on **ANY** filter in the `filter.exclude` section.
 
-It then creates a card based on the configuration given in `card:` but adds the `entities:` option populated with the entities from above.
+It then creates a card based on the configuration given in `card:`, and fills in `entities:` of that card with the entities from above.
 
-### Matching rules
-Any filter option can use `*` as a wildcard for string comparison. Remember to quote your strings when doing this:
+## Matching rules
+
+### Wildcards
+Any filter option can use `*` as a wildcard for string comparison. Note that strings must be quoted when doing this:
+
 ```yaml
 filter:
   include:
@@ -62,15 +86,19 @@ filter:
     - entity_id: "sensor.temperature_*_max"
 ```
 
+### Regular expressions
 Any filter option can use [javascript Regular Expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) for string comparison. To do this, enclose the regex in `/`. Also make sure to quote the string:
+
 ```yaml
 filter:
   include:
-    - name: "/Bedroom .*/"
+    - name: "/^.* [Ll]ight$/"
     - entity_id: "/sensor.temperature_4[abd]/"
 ```
 
+### Numerical comparison
 Any filter option dealing with numerical quantities can use comparison operators if specified as a string (must be quoted):
+
 ```yaml
 filter:
   include:
@@ -83,7 +111,9 @@ filter:
     - state: 12 # State is exactly 12 but not "12"
 ```
 
+### Repeating options
 Any option can be used more than once by appending a number or string to the option name:
+
 ```yaml
 filter:
   include:
@@ -91,26 +121,49 @@ filter:
       state 2: "< 200"
 ```
 The filter above matches entities where the state is above 100 **AND** below 200. Compare to the following:
+
 ```yaml
 filter:
   include:
     - state: "< 100"
     - state: "> 200"
 ```
+
 The two filters above together match entities where the state is below 100 **OR** above 200.
 
-*Advanced stuff:* You can drill into attributes that are object using keys or indexes separated by `:`:
+### Object attributes
+Some entity attributes actually contain several values. One example is `hs_color` for a light, which has one value for Hue and one for Saturation. Such values can be stepped into using keys or indexes separated by a colon (`:`):
+
 ```yaml
 filter:
   include:
     - attributes:
-      hs_color: "1:> 30"
+      hs_color:1: ">30"
 ```
+
 The example above matches lights with a `hs_color` saturation value greater than 30.
+
+## Sorting entities
+Entities can be sorted, either on a filter-by-filter basis by adding a `sort:` option to the filter, or all at once after all filters have been applied using the `sort:` option of `auto-entities` itself.
+
+Sorting methods are specified as:
+
+```yaml
+sort:
+  method: <method>
+  reverse: <reverse>
+  ignore_case: <ignore_case>
+  attribute: <attribute>
+```
+
+- `method:` **Required** One of `domain`, `entity_id`, `name`, `state` or `attribute`
+- `reverse:` Set to `true` to reverse the order. Default: `false`.
+- `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
+- `attribute:` Attribute to sort by if `method: attribute`. Can be an *object attribute* as above (e.g. `attribute: rgb_color:2`)
 
 ## Examples
 
-Show all with some exceptions
+Show all entities, except yahoo weather, groups and zones in a glance card:
 ```yaml
 type: custom:auto-entities
 card:
@@ -123,7 +176,7 @@ filter:
     - domain: zone
 ```
 
-Show all in `device_tracker` with battery less than 50:
+Show all gps `device_tracker`s with battery level less than 50:
 ```yaml
 type: custom:auto-entities
 card:
@@ -170,61 +223,23 @@ filter:
   - state: "unavailable"
 ```
 
-
-## About monster-card
-This card works very much like [`monster-card`](https://github.com/ciotlosm/custom-lovelace/tree/master/monster-card) with the following exceptions:
-
-- `auto-entities` has no `when` option. Hiding the card based on the state of an entity is better done with [`conditional`](https://www.home-assistant.io/lovelace/conditional/).
-- `auto-entities` supports Regular Expressions.
-- `auto-entities` supports comparison operators for states as well as attributes.
-- `auto-entities` can add all entities from a group
-- `auto-entities` works with custom cards.
-
-![custom-cards-and-stuff](https://user-images.githubusercontent.com/1299821/51793369-aa3b6480-21bf-11e9-9a00-e7b7b85ba0a2.png)
+Show everything that has "light" in its name, but isn't a light, and all switches in the living room:
 ```yaml
-type: entities
-title: Combination
-entities:
-  - type: custom:auto-entities
-    card:
-      type: custom:fold-entity-row
-      head:
-        type: section
-        label: All lights
-    filter:
-      include:
-        - domain: light
-  - type: custom:auto-entities
-    card:
-      type: custom:fold-entity-row
-      head:
-        type: section
-        label: Lights that are on
-    filter:
-      include:
-        - domain: light
-          state: "on"
-  - type: custom:auto-entities
-    card:
-      type: custom:fold-entity-row
-      head:
-        type: section
-        label: Lights that are dimmed below 50%
-    filter:
-      include:
-        - domain: light
-          attributes:
-            brightness: "< 125"
-  - type: custom:auto-entities
-    card:
-      type: custom:fold-entity-row
-      head:
-        type: section
-        label: Lights that are kinda blue-ish
-    filter:
-      include:
-        - domain: light
-          attributes:
-            hs_color 1: "0:> 195"
-            hs_color 2: "0:< 255"
+type: custom:auto-entities
+show_empty: false
+card:
+  type: entities
+  title: Lights on
+  show_header_toggle: false
+filter:
+  include:
+    - name: /[Ll]ight/
+      not:
+        domain: light
+    - type: section
+    - domain: switch
+      area: Living Room
 ```
+
+---
+<a href="https://www.buymeacoffee.com/uqD6KHCdJ" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/white_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
