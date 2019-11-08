@@ -75,7 +75,7 @@ class AutoEntities extends LitElement {
             // Sort everything
             entities = entities.sort(entity_sorter(this.hass, this._config.sort));
         }
-        
+
         return entities;
     }
 

@@ -226,7 +226,6 @@ filter:
 Show everything that has "light" in its name, but isn't a light, and all switches in the living room:
 ```yaml
 type: custom:auto-entities
-show_empty: false
 card:
   type: entities
   title: Lights on
@@ -239,6 +238,18 @@ filter:
     - type: section
     - domain: switch
       area: Living Room
+```
+
+List every sensor belonging to any iPhone:
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+  title: Phones
+  show_header_toggle: false
+filter:
+  include:
+    - device: /iPhone/
 ```
 
 ---

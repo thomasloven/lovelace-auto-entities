@@ -92,16 +92,25 @@ export function entity_filter(hass, filter) {
                     break;
                 
                 case "device":
-                    const _deviceEntities = deviceEntities(deviceByName(value));
-                    if(!_deviceEntities.includes(entity.entity_id))
-                        return false;
+                    let _deviceMatch = false;
+                    for(const d of window.cardToolsData.devices) {
+                        if (match(value, d.name)){
+                            if(deviceEntities(d).includes(entity.entity_id))
+                                _deviceMatch = true;
+                        }
+                    }
+                    if(!_deviceMatch) return false;
                     break;
                 
                 case "area":
-                    const _areaDevices = areaDevices(areaByName(value));
-                    const _areaEntities = _areaDevices.flatMap(deviceEntities);
-                    if(!_areaEntities.includes(entity.entity_id))
-                        return false;
+                    let _areaMatch = false;
+                    for (const a of window.cardToolsData.areas) {
+                        if(match(value, a.name)) {
+                            if(areaDevices(a).flatMap(deviceEntities).includes(entity.entity_id))
+                                _areaMatch = true;
+                        }
+                    }
+                    if(!_areaMatch) return false;
                     break;
 
                 default:
