@@ -1,5 +1,5 @@
 import { areaByName, areaDevices, deviceByName, deviceEntities } from "card-tools/src/devices";
- 
+
 function match(pattern, value) {
     if(typeof(value) === "string" && typeof(pattern) === "string") {
         if((pattern.startsWith('/') && pattern.endsWith('/')) || pattern.indexOf('*') !== -1) {
@@ -39,7 +39,7 @@ export function entity_filter(hass, filter) {
                 case "sort":
                     break;
 
-                case "domain": 
+                case "domain":
                     if(!match(value, entity.entity_id.split('.')[0]))
                         return false;
                     break;
@@ -85,12 +85,12 @@ export function entity_filter(hass, filter) {
                         continue;
                     }
                     break;
-                
+
                 case "not":
                     if(entity_filter(hass,value)(e))
                         return false;
                     break;
-                
+
                 case "device":
                     let _deviceMatch = false;
                     for(const d of window.cardToolsData.devices) {
@@ -101,7 +101,7 @@ export function entity_filter(hass, filter) {
                     }
                     if(!_deviceMatch) return false;
                     break;
-                
+
                 case "area":
                     let _areaMatch = false;
                     for (const a of window.cardToolsData.areas) {

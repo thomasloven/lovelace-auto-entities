@@ -33,6 +33,7 @@ filter:
     - <filter>
 
 show_empty: <show_empty>
+unique: <unique>
 sort: <sort_method>
 ```
 
@@ -44,6 +45,7 @@ sort: <sort_method>
   - `include:` **Required.** A list of filters specifying which entities to add to the card
   - `exclude:` A list of filters specifying which entities to remove from the card
 - `show_empty:` Whether to display the card if it has no entities. Default: `true`.
+- `unique:` Whether to remove duplicate values after filtering and sorting. Default: `false`.
 - `sort:` How to sort the entities of the card. Default: `none`.
 
 ### Filters

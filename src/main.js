@@ -17,7 +17,7 @@ class AutoEntities extends LitElement {
         if(!config || !config.card) {
             throw new Error("Invalid configuration");
         }
-        
+
         this._config = config;
         this.entities = [];
         this.cardConfig = {entities: this.entities, ...config.card};
@@ -76,6 +76,21 @@ class AutoEntities extends LitElement {
             entities = entities.sort(entity_sorter(this.hass, this._config.sort));
         }
 
+        if(this._config.unique) {
+            function compare(a,b) {
+                if(typeof(a) !== typeof(b)) return false;
+                if(typeof(a) !== "object") return a===b;
+                if(Object.keys(a).some((k) => !Object.keys(b).includes(k))) return false;
+
+                return Object.keys(a).every((k) => compare(a[k], b[k]));
+            }
+            let newEntities = [];
+            for(const e of entities) {
+                if(newEntities.some((i) => compare(i,e))) continue;
+                newEntities.push(e);
+            }
+            entities = newEntities;
+        }
         return entities;
     }
 
@@ -95,7 +110,7 @@ class AutoEntities extends LitElement {
             const newEntities = await this._getEntities();
             if(!compare(oldEntities, newEntities)) {
                 this.entities = newEntities;
-                this.cardConfig = { 
+                this.cardConfig = {
                     ...this.cardConfig,
                     entities: newEntities,
                 };
