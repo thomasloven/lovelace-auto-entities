@@ -46,7 +46,7 @@ sort: <sort_method>
   - `exclude:` A list of filters specifying which entities to remove from the card
 - `show_empty:` Whether to display the card if it has no entities. Default: `true`.
 - `unique:` Whether to remove duplicate values after filtering and sorting. Default: `false`.
-- `sort:` How to sort the entities of the card. Default: `none`.
+- `sort:` How to sort the entities of the card. Default: `none`. See [Sorting entities for details](#sorting-entities)
 
 ### Filters
 The two filter sections `include` and `exclude` each takes a list of filters.
