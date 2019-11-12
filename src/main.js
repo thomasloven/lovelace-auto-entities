@@ -9,8 +9,6 @@ class AutoEntities extends LitElement {
     static get properties() {
         return {
             hass: {},
-            cardConfig: {},
-            entities: {},
         };
     }
     async setConfig(config) {
@@ -19,8 +17,8 @@ class AutoEntities extends LitElement {
         }
 
         this._config = config;
-        this.entities = [];
-        this.cardConfig = {entities: this.entities, ...config.card};
+        this._entities = [];
+        this.cardConfig = {entities: [], ...config.card};
     }
 
     async _getEntities()
@@ -94,27 +92,46 @@ class AutoEntities extends LitElement {
         return entities;
     }
 
-    async updated(changedProperties) {
-        if(changedProperties.has("hass") && this.hass) {
-            function compare(a,b) {
-                if( a === b ) return true;
-                if( a == null || b == null) return false;
-                if(a.length != b.length) return false;
-                for(var i = 0; i < a.length; i++)
-                    if(a[i] !== b[i])
-                        return false;
+    set entities(ent) {
+        function compare(a,b) {
+            if( a === b )
                 return true;
-            }
+            if( a == null || b == null)
+                return false;
+            if(a.length != b.length)
+                return false;
+            for(var i = 0; i < a.length; i++)
+                if(JSON.stringify(a[i]) !== JSON.stringify(b[i]))
+                    return false;
+            return true;
+        }
+        if(!compare(ent, this._entities))
+        {
+            this._entities = ent;
+            this.cardConfig = {...this.cardConfig, entities: this._entities};
+        }
+    }
+    get entities() {
+        return this._entities;
+    }
 
-            const oldEntities = this.entities;
-            const newEntities = await this._getEntities();
-            if(!compare(oldEntities, newEntities)) {
-                this.entities = newEntities;
-                this.cardConfig = {
-                    ...this.cardConfig,
-                    entities: newEntities,
-                };
-            }
+    set cardConfig(cardConfig) {
+        this._cardConfig = cardConfig;
+        if(this.querySelector("card-maker"))
+            this.querySelector("card-maker").config = cardConfig;
+    }
+    get cardConfig() {
+        return this._cardConfig;
+    }
+
+    firstUpdated() {
+        this.cardConfig = this._cardConfig;
+    }
+
+    updated(changedProperties) {
+        if(changedProperties.has("hass") && this.hass) {
+            // Run this in a timeout to improve performance
+            setTimeout(() => this._getEntities().then((e) => this.entities = e), 0);
         }
     }
 
@@ -128,7 +145,6 @@ class AutoEntities extends LitElement {
         }
         return html`
         <card-maker
-            .config=${this.cardConfig}
             .hass=${this.hass}
         ></card-maker>`;
     }
