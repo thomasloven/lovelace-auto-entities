@@ -16,9 +16,14 @@ class AutoEntities extends LitElement {
             throw new Error("Invalid configuration");
         }
 
-        this._config = config;
-        this._entities = [];
-        this.cardConfig = {entities: [], ...config.card};
+        if(!this._config) {
+            this._config = config;
+            this.cardConfig = {entities: [], ...config.card};
+            this.entities = [];
+        } else {
+            this._config = config;
+            this.hass = this.hass;
+        }
     }
 
     async _getEntities()
@@ -109,6 +114,14 @@ class AutoEntities extends LitElement {
         {
             this._entities = ent;
             this.cardConfig = {...this.cardConfig, entities: this._entities};
+            if(ent.length === 0 && this._config.show_empty === false) {
+                this.style.display = "none";
+                this.style.margin = "0";
+            } else {
+                this.style.display = null;
+                this.style.margin = null;
+            }
+            this.requestUpdate();
         }
     }
     get entities() {
@@ -140,9 +153,6 @@ class AutoEntities extends LitElement {
     }
 
     render() {
-        if(this.entities.length === 0 && this._config.show_empty === false) {
-            return html``;
-        }
         return html`
         <card-maker
             .hass=${this.hass}
