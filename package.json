@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch --mode=development",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "update-card-tools": "npm uninstall card-tools && npm install thomasloven/lovelace-card-tools"
   },
   "author": "Thomas Lovén",
   "license": "MIT",

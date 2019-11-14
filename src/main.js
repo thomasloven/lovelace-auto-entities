@@ -3,6 +3,7 @@ import "card-tools/src/card-maker";
 import { entity_filter } from "./filter";
 import { entity_sorter } from "./sort";
 import { getData } from "card-tools/src/devices";
+import { fireEvent } from "card-tools/src/event";
 
 class AutoEntities extends LitElement {
 
@@ -11,11 +12,10 @@ class AutoEntities extends LitElement {
             hass: {},
         };
     }
-    async setConfig(config) {
+    setConfig(config) {
         if(!config || !config.card) {
             throw new Error("Invalid configuration");
         }
-
         if(!this._config) {
             this._config = config;
             this.cardConfig = {entities: [], ...config.card};
@@ -160,14 +160,16 @@ class AutoEntities extends LitElement {
     }
 
     getCardSize() {
+        let len = 0;
         if(this.querySelector("card-maker") && this.querySelector("card-maker").getCardSize)
-            return this.querySelector("card-maker").getCardSize();
-        if(this.entities.length)
-            return this.entities.length;
-        if(this._config.filter && this._config.filter.include)
+            len = this.querySelector("card-maker").getCardSize();
+        if(len === 1 && this.entities.length)
+            len = this.entities.length;
+        if(len === 0 && this._config.filter && this._config.filter.include)
             return Object.keys(this._config.filter.include).length;
-        return 1
+        return len || 1;
     }
 }
 
-customElements.define('auto-entities', AutoEntities)
+customElements.define('auto-entities', AutoEntities);
+fireEvent('ll-rebuild', {});
