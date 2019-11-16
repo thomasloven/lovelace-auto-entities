@@ -158,11 +158,13 @@ sort:
   attribute: <attribute>
   first: <first>
   count: <count>
+  numeric: <numeric>
 ```
 
 - `method:` **Required** One of `domain`, `entity_id`, `name`, `state` or `attribute`
 - `reverse:` Set to `true` to reverse the order. Default: `false`.
 - `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
+- `numeric:` Set to `true` to sort by numeric value. Default: `false`.
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an *object attribute* as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
 
