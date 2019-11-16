@@ -16,6 +16,10 @@ export function entity_sorter(hass, method) {
     function compare(_a, _b) {
       if(method.ignore_case && _a.toLowerCase) _a = _a.toLowerCase();
       if(method.ignore_case && _b.toLowerCase) _b = _b.toLowerCase();
+      if(method.numeric) {
+        _a = isNaN(parseFloat(_a)) ? undefined : parseFloat(_a);
+        _b = isNaN(parseFloat(_b)) ? undefined : parseFloat(_b);
+      }
       if(_a === undefined && _b === undefined) return 0;
       if(_a === undefined) return lt;
       if(_b === undefined) return gt;
