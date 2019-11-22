@@ -81,6 +81,10 @@ class AutoEntities extends LitElement {
     if(this._config.sort) {
       // Sort everything
       entities = entities.sort(entity_sorter(this.hass, this._config.sort));
+      if(this._config.sort.count) {
+        const start = this._config.sort.first || 0;
+        entities = entities.slice(start, start + this._config.sort.count);
+      }
     }
 
     if(this._config.unique) {
