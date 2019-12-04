@@ -7,6 +7,16 @@ Automatically populate lovelace cards with entities matching certain criteria.
 
 For installation instructions [see this guide](https://github.com/thomasloven/hass-config/wiki/Lovelace-Plugins).
 
+If installed using HACS: 
+
+```yaml
+resources:
+  - url: /community_plugin/lovelace-auto-entities/auto-entities.js
+    type: module
+```
+
+Otherwise:
+
 Install `auto-entities.js` as a `module`.
 
 ```yaml
