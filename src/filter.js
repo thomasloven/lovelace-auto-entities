@@ -120,6 +120,25 @@ export function entity_filter(hass, filter) {
             return false;
           break;
 
+        case 'last_changed':
+          {
+            const now = new Date().getTime();
+            const changed = new Date(entity.last_changed).getTime();
+            if(!match(value, (now-changed)/60000))
+              return false;
+            break;
+          }
+
+        case 'last_updated':
+          {
+            const now = new Date().getTime();
+            const updated = new Date(entity.last_updated).getTime();
+
+            if(!match(value, (now-updated)/60000))
+              return false;
+            break;
+          }
+
         default:
           return false;
       }
