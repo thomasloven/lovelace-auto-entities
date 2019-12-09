@@ -37,39 +37,40 @@ export function entity_filter(hass, filter) {
       switch(key.split(" ")[0]) {
         case "options":
         case "sort":
-        break;
+          break;
 
         case "domain":
-        if(!match(value, entity.entity_id.split('.')[0]))
-        return false;
-        break;
+          if(!match(value, entity.entity_id.split('.')[0]))
+            return false;
+          break;
 
         case "entity_id":
-        if(!match(value, entity.entity_id))
-        return false;
-        break;
+          if(!match(value, entity.entity_id))
+            return false;
+          break;
 
         case "state":
-        if(!match(value, entity.state))
-        return false;
-        break;
+          if(!match(value, entity.state))
+            return false;
+          break;
 
         case "name":
-        if(!entity.attributes.friendly_name
-          || !match(value, entity.attributes.friendly_name))
-          return false;
-          break;
-
-          case "group":
-          if(!value.startsWith("group.")
-          || !hass.states[value]
-          || !hass.states[value].attributes.entity_id
-          || !hass.states[value].attributes.entity_id.includes(entity.entity_id)
+          if(!entity.attributes.friendly_name
+            || !match(value, entity.attributes.friendly_name)
           )
-          return false;
+            return false;
           break;
 
-          case "attributes":
+        case "group":
+          if(!value.startsWith("group.")
+            || !hass.states[value]
+            || !hass.states[value].attributes.entity_id
+            || !hass.states[value].attributes.entity_id.includes(entity.entity_id)
+          )
+            return false;
+          break;
+
+        case "attributes":
           for(const [k, v] of Object.entries(value)) {
             let attr = k.split(" ")[0];
             let entityAttribute = entity.attributes;
@@ -80,47 +81,49 @@ export function entity_filter(hass, filter) {
             }
             if(entityAttribute === undefined
               || (v && !match(v, entityAttribute))
-              )
+            )
               return false;
-              continue;
-            }
-            break;
-
-            case "not":
-            if(entity_filter(hass,value)(e))
-            return false;
-            break;
-
-            case "device":
-            if(!window.cardToolsData || !window.cardToolsData.devices)
-            return false;
-            let _deviceMatch = false;
-            for(const d of window.cardToolsData.devices) {
-              if (match(value, d.name)){
-                if(deviceEntities(d).includes(entity.entity_id))
-                _deviceMatch = true;
-              }
-            }
-            if(!_deviceMatch) return false;
-            break;
-
-            case "area":
-            if(!window.cardToolsData || !window.cardToolsData.areas)
-            return false;
-            let _areaMatch = false;
-            for (const a of window.cardToolsData.areas) {
-              if(match(value, a.name)) {
-                if(areaDevices(a).flatMap(deviceEntities).includes(entity.entity_id))
-                _areaMatch = true;
-              }
-            }
-            if(!_areaMatch) return false;
-            break;
-
-            default:
-            return false;
+            continue;
           }
-        }
-        return true;
+          break;
+
+        case "not":
+          if(entity_filter(hass,value)(e))
+            return false;
+          break;
+
+        case "device":
+          if(!window.cardToolsData || !window.cardToolsData.devices)
+            return false;
+          let _deviceMatch = false;
+          for(const d of window.cardToolsData.devices) {
+            if (match(value, d.name)){
+              if(deviceEntities(d).includes(entity.entity_id))
+                _deviceMatch = true;
+            }
+          }
+          if(!_deviceMatch)
+            return false;
+          break;
+
+        case "area":
+          if(!window.cardToolsData || !window.cardToolsData.areas)
+            return false;
+          let _areaMatch = false;
+          for (const a of window.cardToolsData.areas) {
+            if(match(value, a.name)) {
+              if(areaDevices(a).flatMap(deviceEntities).includes(entity.entity_id))
+                _areaMatch = true;
+            }
+          }
+          if(!_areaMatch)
+            return false;
+          break;
+
+        default:
+          return false;
       }
     }
+    return true;
+  }
+}
