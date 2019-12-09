@@ -65,6 +65,19 @@ export function entity_sorter(hass, method) {
           if(_b === undefined) return gt;
         }
         return compare(_a, _b);
+      case "last_changed":
+        method.numeric = true;
+        // Note A and B are swapped because you'd most likely want to sort by most recently changed first
+        return compare(
+          new Date(entityB.last_changed).getTime(),
+          new Date(entityA.last_changed).getTime()
+        );
+      case "last_updated":
+        method.numeric=true;
+        return compare(
+          new Date(entityB.last_changed).getTime(),
+          new Date(entityA.last_changed).getTime()
+        );
       default:
         return 0;
     }

@@ -61,6 +61,8 @@ Filters have the following options, and will match any entity fulfilling **ALL**
 - `area:` Match entities in given area (e.g. `Kitchen`)
 - `device:` Match entities belonging to given device (e.g. `Thomas iPhone`)
 - `attributes:` Map of `attribute: value` pairs to match.
+- `last_changed:` Match minutes since last state change (most useful as a comparison, e.g. `last_changed: < 15`)
+- `last_updated:` Match minutes since last update
 
 Special options:
 - `options:` Map of options to apply to entity when passed to card.
@@ -161,10 +163,10 @@ sort:
   numeric: <numeric>
 ```
 
-- `method:` **Required** One of `domain`, `entity_id`, `name`, `state` or `attribute`
+- `method:` **Required** One of `domain`, `entity_id`, `name`, `state`, `attribute`, `last_changed` or `last_updated`
 - `reverse:` Set to `true` to reverse the order. Default: `false`.
 - `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
-- `numeric:` Set to `true` to sort by numeric value. Default: `false`.
+- `numeric:` Set to `true` to sort by numeric value. Default: `false` except for `last_changed` and `last_updated` sorting methods.
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an *object attribute* as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
 
