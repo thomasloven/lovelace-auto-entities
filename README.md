@@ -170,6 +170,9 @@ sort:
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an *object attribute* as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
 
+## Entity options
+In the `options:` option of the filters, the string `this.entity_id` will be replaced with the matched entity_id. Useful for service calls - see below.
+
 ## Examples
 
 Show all entities, except yahoo weather, groups and zones in a glance card:
@@ -259,6 +262,38 @@ card:
 filter:
   include:
     - device: /iPhone/
+```
+
+List the five last triggered motion sensors:
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+filter:
+  include:
+    - domain: binary_sensor
+      attributes:
+       device_class: motion
+sort:
+  method: last_changed
+  count: 5
+```
+
+Turn on scenes by clicking them:
+```yaml
+type: custom:auto-entities
+card:
+  type: glance
+filter:
+  include:
+    - domain: scene
+      options:
+        tap_action:
+          action: call-service
+          service: scene.turn_on
+          service_data:
+            # Note the magic value this.entity_id here
+            entity_id: this.entity_id
 ```
 
 ---

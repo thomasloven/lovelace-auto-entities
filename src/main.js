@@ -59,7 +59,17 @@ class AutoEntities extends LitElement {
         }
 
         let add = all_entities.filter(entity_filter(this.hass, f))
-        .map((e) => new Object({...e, ...f.options}));
+        .map((e) =>
+          JSON.parse(
+            JSON.stringify(
+              new Object({
+                ...e,
+                ...f.options
+              })
+            )
+            .replace(/this.entity_id/g, e.entity)
+          )
+        );
 
         if(f.sort !== undefined) {
           // Sort per filter
