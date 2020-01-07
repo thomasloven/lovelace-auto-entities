@@ -78,6 +78,15 @@ export function entity_sorter(hass, method) {
           new Date(entityB.last_changed).getTime(),
           new Date(entityA.last_changed).getTime()
         );
+      case "last_triggered":
+        if(entityA.attributes.last_triggered == null
+          || entityB.attributes.last_triggered == null)
+          return 0;
+        method.numeric=true;
+        return compare(
+          new Date(entityB.attributes.last_triggered).getTime(),
+          new Date(entityA.attributes.last_triggered).getTime()
+        );
       default:
         return 0;
     }

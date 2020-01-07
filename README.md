@@ -163,10 +163,10 @@ sort:
   numeric: <numeric>
 ```
 
-- `method:` **Required** One of `domain`, `entity_id`, `name`, `state`, `attribute`, `last_changed` or `last_updated`
+- `method:` **Required** One of `domain`, `entity_id`, `name`, `state`, `attribute`, `last_changed` `last_updated` or `last_triggered`.
 - `reverse:` Set to `true` to reverse the order. Default: `false`.
 - `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
-- `numeric:` Set to `true` to sort by numeric value. Default: `false` except for `last_changed` and `last_updated` sorting methods.
+- `numeric:` Set to `true` to sort by numeric value. Default: `false` except for `last_changed`, `last_updated` and `last_triggered` sorting methods.
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an *object attribute* as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
 
