@@ -80,7 +80,7 @@ export function entity_filter(hass, filter) {
               entityAttribute = entityAttribute[step];
             }
             if(entityAttribute === undefined
-              || (v && !match(v, entityAttribute))
+              || (v !== undefined && !match(v, entityAttribute))
             )
               return false;
             continue;
