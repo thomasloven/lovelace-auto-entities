@@ -142,7 +142,7 @@ Some entity attributes actually contain several values. One example is `hs_color
 filter:
   include:
     - attributes:
-      hs_color:1: ">30"
+        hs_color:1: ">30"
 ```
 
 The example above matches lights with a `hs_color` saturation value greater than 30.
