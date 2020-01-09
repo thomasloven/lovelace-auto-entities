@@ -5,6 +5,7 @@ import { getData } from "card-tools/src/devices";
 import { fireEvent } from "card-tools/src/event";
 import { createCard } from "card-tools/src/lovelace-element";
 import { hass } from "card-tools/src/hass";
+import {subscribeRenderTemplate} from "card-tools/src/templates";
 
 class AutoEntities extends LitElement {
 
@@ -28,6 +29,19 @@ class AutoEntities extends LitElement {
       this._config = config;
       this.hass = this.hass;
     }
+    if(config.filter && config.filter.template) {
+      this.template = "";
+      if(String(config.filter.template).includes("{%") || String(config.filter.template).includes("{{")) {
+        subscribeRenderTemplate(null, (res) => {
+          this.template = res;
+          this._getEntities();
+        }, {
+          template: config.filter.template,
+          variables: {config},
+          entity_ids: config.filter.entity_ids,
+        });
+      }
+    }
 
     // Reevaluate all filters once areas have been loaded
     getData().then(() => this._getEntities());
@@ -35,21 +49,28 @@ class AutoEntities extends LitElement {
 
   _getEntities()
   {
+
+    const format_entities = (e) => {
+      if(!e) return null;
+      if(typeof(e) === "string")
+        return {entity: e.trim()}
+      return e;
+    }
+
     let entities = [];
     // Start with any entities added by the `entities` parameter
     if(this._config.entities)
-    entities = entities.concat(this._config.entities)
-    .map((e) => {
-      if(typeof(e) === "string")
-      return {entity: e};
-      return e;
-    });
+      entities = entities.concat(this._config.entities.map(format_entities));
 
     if(!this.hass || !this._config.filter) return entities;
 
+    if(this.template) {
+      entities = entities.concat(this.template.split(/[\s,]+/).map(format_entities));
+    }
+    entities = entities.filter(Boolean);
+
     if(this._config.filter.include) {
-      const all_entities = Object.keys(this.hass.states)
-      .map((e) => new Object({entity: e}));
+      const all_entities = Object.keys(this.hass.states).map(format_entities);
 
       for(const f of this._config.filter.include) {
         if(f.type !== undefined) {
