@@ -72,7 +72,7 @@ export function entity_filter(hass, filter) {
 
         case "attributes":
           for(const [k, v] of Object.entries(value)) {
-            let attr = k.split(" ")[0];
+            let attr = k.trim();
             let entityAttribute = entity.attributes;
             while(attr && entityAttribute) {
               let step;
