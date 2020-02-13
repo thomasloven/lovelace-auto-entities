@@ -18,6 +18,7 @@ class AutoEntities extends LitElement {
     if(!config || !config.card) {
       throw new Error("Invalid configuration");
     }
+    config = JSON.parse(JSON.stringify(config));
     if(!this._config) {
       this._config = config;
 
