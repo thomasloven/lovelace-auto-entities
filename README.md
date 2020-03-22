@@ -5,7 +5,23 @@ auto-entities
 
 Automatically populate lovelace cards with entities matching certain criteria.
 
-For installation instructions [see this guide](https://github.com/thomasloven/hass-config/wiki/Lovelace-Plugins).
+## Installation
+
+### HACS
+
+Search for for `auto-entities` in Plugins. After installing restart Home Assistant.
+
+In order to use it in the UI, add the following in the `resources` section
+
+```yaml
+resources:
+- url: /community_plugin/lovelace-auto-entities/auto-entities.js
+  type: js
+```
+
+### Manually
+
+For manual installation instructions [see this guide](https://github.com/thomasloven/hass-config/wiki/Lovelace-Plugins).
 
 Install `auto-entities.js` as a `module`.
 
