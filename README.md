@@ -115,10 +115,10 @@ Any filter option dealing with numerical quantities can use comparison operators
 filter:
   include:
     - attributes:
-      battery: "<= 50" # Attribute battery_level is 50 or less
+        battery: "<= 50" # Attribute battery_level is 50 or less
     - state: "> 25" # State is greater than 25
     - attributes:
-      count: "! 2" # Attribute count is not equal to 2
+        count: "! 2" # Attribute count is not equal to 2
     - state: "= 12" # State is exactly 12 (also matches "12", "12.0" etc.)
     - state: 12 # State is exactly 12 but not "12"
 ```
