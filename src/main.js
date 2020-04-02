@@ -58,6 +58,32 @@ class AutoEntities extends LitElement {
       return e;
     }
 
+    const process_options = (entity, options) => {
+      if (typeof(options) === "undefined")
+        return {};
+      let processed = Object.entries(options).map(([option, value]) => {
+        if (typeof(value) === "object" && value !== null) {
+          // if the from option isn't set, this are probably more options and we should recurse
+          if (!("from" in value))
+            return [option, process_options(entity, value)];
+
+          // dereference the referenced state on the entity and apply optional regexp
+          let state = this.hass.states[entity.entity];
+          let refval = value.from.startsWith("attributes.") ? state.attributes[value.from.substring(11)] : state[value.from];
+          if ("match" in value && "replace" in value) {
+            let match = value.match.startsWith('/') && value.match.endsWith('/') ? value.match.slice(1, -1) : value.match;
+            refval = refval.toString().replace(new RegExp(match, 'g'), value.replace);
+          }
+          return [option, refval];
+        } else if (typeof(value) === "string") {
+          return [option, value.replace(/this.entity_id/g, entity.entity)];
+        } else {
+          return [option, value];
+        }
+      });
+      return Object.fromEntries(processed);
+    }
+
     let entities = [];
     // Start with any entities added by the `entities` parameter
     if(this._config.entities)
@@ -81,17 +107,7 @@ class AutoEntities extends LitElement {
         }
 
         let add = all_entities.filter(entity_filter(this.hass, f))
-        .map((e) =>
-          JSON.parse(
-            JSON.stringify(
-              new Object({
-                ...e,
-                ...f.options
-              })
-            )
-            .replace(/this.entity_id/g, e.entity)
-          )
-        );
+        .map(e => ({...e, ...process_options(e, f.options)}));
 
         if(f.sort !== undefined) {
           // Sort per filter

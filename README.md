@@ -179,7 +179,13 @@ sort:
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
 
 ## Entity options
-In the `options:` option of the filters, the string `this.entity_id` will be replaced with the matched entity_id. Useful for service calls - see below.
+In the `options:` option of the filters, it's possible to dynamically build the value based on the entity by specify a mapping with a `from` option. This creates the value based on an entity property. This can be useful for example to rename entities (see below for an example). The available options are:
+
+- `from:` **Required.** The name of the entity property (for example `entity_id`, `state`, `attribute.friendly_name`, etc.) to use.
+- `match`: Regex to search for (optionally enclosed in `/`)
+- `replace`: Replacement matched value, use `$1`, `$2` to reference captured groups.
+
+Furthermore, as a shorthand the string `this.entity_id` will be replaced with the matched entity_id in every value as well - see below.
 
 ## Examples
 
@@ -285,6 +291,21 @@ filter:
 sort:
   method: last_changed
   count: 5
+```
+
+List all linkquality indicators, and strip the "linkquality" suffix from their names:
+```yaml
+type: 'custom:auto-entities'
+card:
+  type: entities
+filter:
+  include:
+    - entity_id: sensor.*_linkquality
+      options:
+        name:
+          from: attributes.friendly_name
+          match: "/ +linkquality$/"
+          replace: ""
 ```
 
 Turn on scenes by clicking them:
