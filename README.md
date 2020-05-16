@@ -49,6 +49,8 @@ sort: <sort_method>
 - `show_empty:` Whether to display the card if it has no entities. Default: `true`.
 - `unique:` Whether to remove duplicate values after filtering and sorting. Default: `false`.
 - `sort:` How to sort the entities of the card. Default: `none`. See [Sorting entities for details](#sorting-entities)
+- `auto_cards:` Whether to create new cards for each filtered entity. Default: `false`. See [Auto Cards](#auto-cards)
+- `auto_cards_entity_param:` If `auto_cards` is true, then this option decides the name of the parameter that will take the filtered entity. Default: `entity`.
 
 ### Filters
 The two main filter sections `include` and `exclude` each takes a list of filters.
@@ -340,6 +342,38 @@ filter:
 >       - light.kitchen_lights
 >       - light.ceiling_lights
 > ```
+
+## Auto Cards
+The option `auto_cards` will create a card for each filtered entity.
+
+## Examples
+Use auto cards to combine the filtering with other components. For instance, the example below will create a new `custom:slider-entity-row` card for each light that is on.
+
+```yaml
+type: custom:auto-entities
+card:
+  toggle: true
+  hide_when_off: true
+  type: custom:slider-entity-row
+
+auto_cards: true
+# The new card will magically get the filtered entity in the parameter with the value of `auto_cards_entity_param`
+auto_cards_entity_param: entity 
+
+filter:
+  include:
+    - domain: light
+      state: "on"
+```
+
+Result for each card
+```yaml
+- toggle: true
+  hide_when_off: true
+  type: custom:slider-entity-row
+  entity: light.my_filtered_light 
+```
+
 
 ---
 <a href="https://www.buymeacoffee.com/uqD6KHCdJ" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/white_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
