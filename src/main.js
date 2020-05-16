@@ -25,7 +25,7 @@ class AutoEntities extends LitElement {
       this.hass = hass();
       this._getEntities();
       this.cardConfig = {entities: this.entities, ...config.card};
-      this.card = createCard(this.cardConfig);
+      this.card = [createCard(this.cardConfig)];
     } else {
       this._config = config;
       this.hass = this.hass;
@@ -169,16 +169,22 @@ class AutoEntities extends LitElement {
 
   set cardConfig(cardConfig) {
     this._cardConfig = cardConfig;
-    if(this.card)
-      this.card.setConfig(cardConfig);
+    if(this.card) {
+      this.card.forEach(card => {
+        card.setConfig(cardConfig);
+      });
+
+    }
   }
   get cardConfig() {
     return this._cardConfig;
   }
 
   updated(changedProperties) {
-    if(changedProperties.has("hass") && this.hass) {
-      this.card.hass = this.hass;
+    if(changedProperties.has("hass") && this.hass && this.card) {
+      this.card.forEach(card => {
+        card.hass = this.hass;
+      })
       // Run this in a timeout to improve performance
       setTimeout(() => this._getEntities(), 0);
     }
@@ -188,14 +194,19 @@ class AutoEntities extends LitElement {
     return this;
   }
   render() {
-    return html`
-    ${this.card}`;
+    return html`${this.card.map(card => card)}`;
   }
 
   getCardSize() {
     let len = 0;
-    if(this.card && this.card.getCardSize)
-      len = this.card.getCardSize();
+
+    if(this.card) {
+      len = this.card.reduce((val, c) => {
+        const cardSize = c.getCardSize ? c.getCardSize() : 0;
+        return val + cardSize;
+      }, 0);
+    }
+
     if(len === 1 && this.entities.length)
       len = this.entities.length;
     if(len === 0 && this._config.filter && this._config.filter.include)
