@@ -24,8 +24,13 @@ class AutoEntities extends LitElement {
 
       this.hass = hass();
       this._getEntities();
-      this.cardConfig = {entities: this.entities, ...config.card};
-      this.card = [createCard(this.cardConfig)];
+      
+      const cardConfig = {...config.card, entities: this.entities };
+      this.cards = [{ 
+        cardConfig,
+        cardElement: createCard(cardConfig), 
+      }];
+      
     } else {
       this._config = config;
       this.hass = this.hass;
@@ -137,6 +142,15 @@ class AutoEntities extends LitElement {
     this.entities = entities;
   }
 
+  _updateCardConfig(newCardConfig) {
+    if (this.cards) {
+      this.cards.forEach(card =>  {
+        card.cardConfig = { ...card.cardConfig, ...newCardConfig };
+        card.cardElement.setConfig(card.cardConfig);
+      });
+    }
+  }
+  
   set entities(ent) {
     function compare(a,b) {
       if( a === b )
@@ -153,7 +167,9 @@ class AutoEntities extends LitElement {
     if(!compare(ent, this._entities))
     {
       this._entities = ent;
-      this.cardConfig = {...this.cardConfig, entities: this._entities};
+      
+      this._updateCardConfig({ entities: this._entities });
+
       if(ent.length === 0 && this._config.show_empty === false) {
         this.style.display = "none";
         this.style.margin = "0";
@@ -167,23 +183,10 @@ class AutoEntities extends LitElement {
     return this._entities;
   }
 
-  set cardConfig(cardConfig) {
-    this._cardConfig = cardConfig;
-    if(this.card) {
-      this.card.forEach(card => {
-        card.setConfig(cardConfig);
-      });
-
-    }
-  }
-  get cardConfig() {
-    return this._cardConfig;
-  }
-
   updated(changedProperties) {
-    if(changedProperties.has("hass") && this.hass && this.card) {
-      this.card.forEach(card => {
-        card.hass = this.hass;
+    if(changedProperties.has("hass") && this.hass && this.cards) {
+      this.cards.forEach(card => {
+        card.cardElement.hass = this.hass;
       })
       // Run this in a timeout to improve performance
       setTimeout(() => this._getEntities(), 0);
@@ -194,15 +197,15 @@ class AutoEntities extends LitElement {
     return this;
   }
   render() {
-    return html`${this.card.map(card => card)}`;
+    return html`${this.cards.map(card => card.cardElement)}`;
   }
 
   getCardSize() {
     let len = 0;
 
-    if(this.card) {
-      len = this.card.reduce((val, c) => {
-        const cardSize = c.getCardSize ? c.getCardSize() : 0;
+    if(this.cards) {
+      len = this.cards.reduce((val, card) => {
+        const cardSize = card.cardElement.getCardSize ? card.cardElement.getCardSize() : 0;
         return val + cardSize;
       }, 0);
     }
