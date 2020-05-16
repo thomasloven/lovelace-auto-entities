@@ -25,12 +25,15 @@ class AutoEntities extends LitElement {
       this.hass = hass();
       this._getEntities();
       
-      const cardConfig = {...config.card, entities: this.entities };
-      this.cards = [{ 
-        cardConfig,
-        cardElement: createCard(cardConfig), 
-      }];
-      
+      if (this._config.auto_cards) {
+        this._createCardForEachEntity();
+      } else {
+        const cardConfig = {...config.card, entities: this.entities };
+        this.cards = [{ 
+          cardConfig,
+          cardElement: createCard(cardConfig), 
+        }];
+      } 
     } else {
       this._config = config;
       this.hass = this.hass;
@@ -51,6 +54,24 @@ class AutoEntities extends LitElement {
 
     // Reevaluate all filters once areas have been loaded
     getData().then(() => this._getEntities());
+  }
+
+  _createCardForEachEntity() {
+    const autoCardEntityParameter =
+      this._config.auto_cards_entity_param || 'entity';
+    this.cards = [];
+    this.entities.forEach((entityEntry) => {
+      const cardConfig = {
+        [autoCardEntityParameter]: entityEntry.entity,
+        ...this._config.card,
+      };
+      const cardElement = createCard(cardConfig);
+
+      this.cards.push({
+        cardElement,
+        cardConfig
+      });
+    });
   }
 
   _getEntities()
@@ -168,7 +189,11 @@ class AutoEntities extends LitElement {
     {
       this._entities = ent;
       
-      this._updateCardConfig({ entities: this._entities });
+      if (this._config.auto_cards) {
+        this._createCardForEachEntity();
+      } else {
+        this._updateCardConfig({ entities: this._entities });
+      }
 
       if(ent.length === 0 && this._config.show_empty === false) {
         this.style.display = "none";
@@ -188,8 +213,14 @@ class AutoEntities extends LitElement {
       this.cards.forEach(card => {
         card.cardElement.hass = this.hass;
       })
-      // Run this in a timeout to improve performance
-      setTimeout(() => this._getEntities(), 0);
+
+      // Run this in a timeout to improve performance when not using auto_cards. 
+      // Auto cards need to rerender itself after updating its entities. 
+      if (this._config.auto_cards) {
+        this._getEntities();
+      } else {
+        setTimeout(() => this._getEntities(), 0);
+      }
     }
   }
 
