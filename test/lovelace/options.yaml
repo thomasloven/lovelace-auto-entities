@@ -1,0 +1,104 @@
+x-anchors:
+  desc: &desc
+    type: markdown
+    style:
+      ha-markdown:
+        $: |
+          code {
+            font-size: 8pt !important;
+            line-height: normal;
+            white-space: pre-wrap;
+            }
+  card: &card
+    type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+
+title: Options
+cards:
+  - <<: *desc
+    content: |
+      ## 0: Base card
+
+      ```
+      type: custom:auto-entities
+      card:
+        type: entities
+        show_header_toggle: false
+      ```
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 1: show_empty
+
+          ```
+          - <<: *card
+            filter:
+              include:
+                - domain: light
+                  state: "on"
+          - <<: *card
+            show_empty: false
+            filter:
+              include:
+                - domain: light
+                  state: "off"
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: light
+              state: "on"
+      - <<: *card
+        show_empty: false
+        filter:
+          include:
+            - domain: light
+              state: "off"
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 2: Entity options
+
+          ```
+          - <<: *card
+            filter:
+              include:
+                - domain: light
+                  options:
+                    name: Lamp
+                    icon: mdi:lamp
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: light
+              options:
+                name: Lamp
+                icon: mdi:lamp
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 3: Unique matches
+
+          ```
+          - <<: *card
+            unique: true
+            filter:
+              include:
+                - domain: light
+                - state: "on"
+          ```
+      - <<: *card
+        unique: true
+        filter:
+          include:
+            - domain: light
+            - state: "on"

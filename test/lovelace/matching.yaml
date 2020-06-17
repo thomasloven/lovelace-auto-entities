@@ -1,0 +1,146 @@
+x-anchors:
+  desc: &desc
+    type: markdown
+    style:
+      ha-markdown:
+        $: |
+          code {
+            font-size: 8pt !important;
+            line-height: normal;
+            white-space: pre-wrap;
+            }
+  card: &card
+    type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+
+title: Matching rules
+cards:
+  - <<: *desc
+    content: |
+      ## 0: Base card
+
+      ```
+      type: custom:auto-entities
+      card:
+        type: entities
+        show_header_toggle: false
+      ```
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 1: Globbing
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - name: "*Light"
+              - type: section
+              - name: "*Light*"
+          ```
+      - <<: *card
+        filter:
+          include:
+            - name: "*Light"
+            - type: section
+            - name: "*Light*"
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 2: Regex
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - name: /Light/
+              - type: section
+              - name: /Light$/
+          ```
+      - <<: *card
+        filter:
+          include:
+            - name: /Light/
+            - type: section
+            - name: /Light$/
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 3: Comparison
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - attributes:
+                  brightness: ">100"
+              - type: section
+              - attributes:
+                  brightness: "<100"
+              - type: section
+              - attributes:
+                  brightness: "!0"
+              - type: section
+              - attributes 1:
+                  brightness: ">50"
+                attributes 2:
+                  brightness: "<150"
+              - type: section
+              - attributes:
+                  brightness 1: ">50"
+                  brightness 2: "<150"
+          ```
+      - <<: *card
+        filter:
+          include:
+            - attributes:
+                brightness: ">50"
+            - type: section
+            - attributes:
+                brightness: "<150"
+            - type: section
+            - attributes:
+                brightness: "!255"
+            - type: section
+            - attributes 1:
+                brightness: ">50"
+              attributes 2:
+                brightness: "<150"
+            - type: section
+            - attributes:
+                brightness 1: ">50"
+                brightness 2: "<150"
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 4: Tricks
+
+          Kind of blue-ish lights
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: light
+                attributes:
+                  hs_color:0 1: "> 195"
+                  hs_color:0 2: "< 255"
+                  hs_color:1: "> 50"
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: light
+              attributes:
+                hs_color:0 1: "> 195"
+                hs_color:0 2: "< 255"
+                hs_color:1: "> 50"

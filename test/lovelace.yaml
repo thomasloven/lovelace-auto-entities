@@ -1,0 +1,7 @@
+title: slider-entity-row
+views:
+  - !include lovelace/basic.yaml
+  - !include lovelace/combined.yaml
+  - !include lovelace/matching.yaml
+  - !include lovelace/options.yaml
+  - !include lovelace/template.yaml

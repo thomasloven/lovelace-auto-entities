@@ -1,0 +1,203 @@
+x-anchors:
+  desc: &desc
+    type: markdown
+    style:
+      ha-markdown:
+        $: |
+          code {
+            font-size: 8pt !important;
+            line-height: normal;
+            white-space: pre-wrap;
+            }
+  card: &card
+    type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+
+title: Basic
+cards:
+  - <<: *desc
+    content: |
+      ## 0: Base card
+
+      ```
+      type: custom:auto-entities
+      card:
+        type: entities
+        show_header_toggle: false
+      ```
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 1: Domain filter
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: light
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: light
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 2: State filter
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - state: "on"
+          ```
+      - <<: *card
+        filter:
+          include:
+            - state: "on"
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 3: Entity id filter
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - entity_id: light.bed_light
+          ```
+      - <<: *card
+        filter:
+          include:
+            - entity_id: light.bed_light
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 4: Name filter
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - name: Bed Light
+          ```
+      - <<: *card
+        filter:
+          include:
+            - name: Bed Light
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 5: Area filter
+
+          > A device must be manually added to the area `Test Area` ([click here](http://localhost:5001/config/devices/dashboard)).
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - area: Test Area
+          ```
+      - <<: *card
+        filter:
+          include:
+            - area: Test Area
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 6: Device filter
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - device: Bed Light
+          ```
+      - <<: *card
+        filter:
+          include:
+            - device: Bed Light
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 7: Attribute filter
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - attributes:
+                  device_class: moisture
+          ```
+      - <<: *card
+        filter:
+          include:
+            - attributes:
+                device_class: moisture
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 8: Last changed filter
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - last_changed: < 5
+          ```
+      - <<: *card
+        filter:
+          include:
+            - last_changed: < 5
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 9: Last updated filter
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - last_updated: < 5
+          ```
+      - <<: *card
+        filter:
+          include:
+            - last_updated: < 5
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 10: Group filter
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - group: group.lights
+          ```
+      - <<: *card
+        filter:
+          include:
+            - group: group.lights

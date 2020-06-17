@@ -1,0 +1,23 @@
+default_config:
+
+demo:
+
+lovelace:
+  mode: storage
+  dashboards:
+    lovelace-yaml:
+      mode: yaml
+      title: yaml
+      filename: lovelace.yaml
+
+group:
+  lights:
+    entities:
+      - light.bed_light
+      - light.ceiling_lights
+      - light.kitchen_lights
+  climate:
+    entities:
+      - climate.ecobee
+      - climate.heatpump
+      - climate.hvac

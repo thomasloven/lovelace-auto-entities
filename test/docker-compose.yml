@@ -1,0 +1,95 @@
+#
+# Docker services for testing Home Assistant integrations and plugins
+#
+# Automaatically sets up configuration adds a user and skips the onboarding
+#
+# Username: dev
+# Password: dev
+#
+# Two services, 'prod' and 'dev' run the latest production and dev docker images respectively.
+#
+# Start with
+# $ docker-compose up prod
+# or
+# $ docker-compose up dev
+#
+# When done, clean up with
+# $ docker-compose rm -f
+#
+
+x-files: &x-files
+  - ../auto-entities.js:/config/www/auto-entities.js
+  - ./configuration.yaml:/config/configuration.yaml
+  - ./lovelace.yaml:/config/lovelace.yaml
+  - ./lovelace:/config/lovelace
+
+x-command: &x-command |
+  bash -c '
+  curl https://raw.githubusercontent.com/thomasloven/lovelace-card-mod/master/card-mod.js --output /config/www/card-mod.js &&
+  hass --script ensure_config -c /config &&
+  hass --script auth -c /config add dev dev &&
+  echo "
+    {
+      \"data\": {
+        \"done\": [
+          \"user\",
+          \"core_config\",
+          \"integration\"
+        ]
+      },
+      \"key\": \"onboarding\",
+      \"version\": 3
+    }
+    " > /config/.storage/onboarding &&
+
+  echo "
+    {
+      \"data\": {
+        \"items\": [
+          {
+            \"id\": \"1\",
+            \"type\": \"module\",
+            \"url\": \"/local/card-mod.js\"
+          },
+          {
+            \"id\": \"2\",
+            \"type\": \"module\",
+            \"url\": \"/local/auto-entities.js\"
+          }
+        ]
+      },
+      \"key\": \"lovelace_resources\",
+      \"version\": 1
+    }
+    " > /config/.storage/lovelace_resources &&
+
+  echo "
+    {
+      \"data\": {
+        \"areas\": [
+          {
+            \"id\": \"123\",
+            \"name\": \"Test Area\"
+          }
+        ]
+      },
+      \"key\": \"core.area_registry\",
+      \"version\": 1
+    }
+    " > /config/.storage/core.area_registry
+
+  hass -v -c /config'
+
+version: '3.5'
+services:
+
+  prod: &base_service
+    image: homeassistant/home-assistant:latest
+    volumes: *x-files
+    ports:
+      - "5001:8123"
+    command: *x-command
+
+  dev:
+    <<: *base_service
+    image: homeassistant/home-assistant:dev

@@ -1,0 +1,71 @@
+x-anchors:
+  desc: &desc
+    type: markdown
+    style:
+      ha-markdown:
+        $: |
+          code {
+            font-size: 8pt !important;
+            line-height: normal;
+            white-space: pre-wrap;
+            }
+  card: &card
+    type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+
+title: Templates
+cards:
+  - <<: *desc
+    content: |
+      ## 0: Base card
+
+      ```
+      type: custom:auto-entities
+      card:
+        type: entities
+        show_header_toggle: false
+      ```
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 1: List of entities in template
+
+          ```
+          <<: *card
+          filter:
+            template: "{{'light.bed_light, light.kitchen_lights, light.ceiling_lights'}}"
+          ```
+      - <<: *card
+        filter:
+          template: "{{'light.bed_light, light.kitchen_lights, light.ceiling_lights'}}"
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 2: Actual template
+          {% raw %}
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: group
+                options:
+                  <<: *card
+                  filter:
+                    template: "{{state_attr(config.entity, 'entity_id') | join(', ')}}"
+          ```
+          {% endraw %}
+      - <<: *card
+        filter:
+          include:
+            - domain: group
+              options:
+                <<: *card
+                filter:
+                  template: "{{state_attr(config.entity, 'entity_id') | join(', ')}}"

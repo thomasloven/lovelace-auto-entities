@@ -1,0 +1,76 @@
+x-anchors:
+  desc: &desc
+    type: markdown
+    style:
+      ha-markdown:
+        $: |
+          code {
+            font-size: 8pt !important;
+            line-height: normal;
+            white-space: pre-wrap;
+            }
+  card: &card
+    type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+
+title: Combinations
+cards:
+  - <<: *desc
+    content: |
+      ## 0: Base card
+
+      ```
+      type: custom:auto-entities
+      card:
+        type: entities
+        show_header_toggle: false
+      ```
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 1: And
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: light
+              - type: section
+              - state: "on"
+              - type: section
+              - domain: light
+                state: "on"
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: light
+            - type: section
+            - state: "on"
+            - type: section
+            - domain: light
+              state: "on"
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 1: Not
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - state: "on"
+                not:
+                  domain: light
+          ```
+      - <<: *card
+        filter:
+          include:
+            - state: "on"
+              not:
+                domain: light
