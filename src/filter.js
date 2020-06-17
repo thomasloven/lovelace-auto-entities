@@ -97,7 +97,7 @@ export function entity_filter(hass, filter) {
             return false;
           let _deviceMatch = false;
           for(const d of window.cardToolsData.devices) {
-            if (match(value, d.name)){
+            if (match(value, d.name_by_user) || match(value, d.name)){
               if(deviceEntities(d).includes(entity.entity_id))
                 _deviceMatch = true;
             }
