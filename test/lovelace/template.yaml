@@ -69,3 +69,25 @@ cards:
                 <<: *card
                 filter:
                   template: "{{state_attr(config.entity, 'entity_id') | join(', ')}}"
+
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 3: this.entityid
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: light
+                options:
+                  name: this.entity_id
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: light
+              options:
+                name: this.entity_id

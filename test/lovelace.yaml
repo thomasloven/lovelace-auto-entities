@@ -5,3 +5,4 @@ views:
   - !include lovelace/matching.yaml
   - !include lovelace/options.yaml
   - !include lovelace/template.yaml
+  - !include lovelace/sorting.yaml

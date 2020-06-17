@@ -1,0 +1,80 @@
+x-anchors:
+  desc: &desc
+    type: markdown
+    style:
+      ha-markdown:
+        $: |
+          code {
+            font-size: 8pt !important;
+            line-height: normal;
+            white-space: pre-wrap;
+            }
+  card: &card
+    type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+
+title: Sorting
+cards:
+  - <<: *desc
+    content: |
+      ## 0: Base card
+
+      ```
+      type: custom:auto-entities
+      card:
+        type: entities
+        show_header_toggle: false
+      ```
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 1: Common sorting
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+              - domain: sensor
+          sort:
+            method: state
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+            - domain: sensor
+        sort:
+          method: state
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 2: Per filter sorting
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+                sort:
+                  method: state
+              - domain: sensor
+                sort:
+                  method: state
+                  reverse: true
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+              sort:
+                method: state
+            - domain: sensor
+              sort:
+                method: state
+                reverse: true
