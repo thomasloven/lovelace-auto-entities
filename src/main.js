@@ -15,8 +15,14 @@ class AutoEntities extends LitElement {
     };
   }
   setConfig(config) {
-    if(!config || !config.card) {
-      throw new Error("Invalid configuration");
+    if(!config) {
+      throw new Error("No configuration.");
+    }
+    if(!config.card || !config.card.type) {
+      throw new Error("No card type specified.")
+    }
+    if(!config.filter && !config.entities) {
+      throw new Error("No filters specified.");
     }
     config = JSON.parse(JSON.stringify(config));
     if(!this._config) {
@@ -63,7 +69,11 @@ class AutoEntities extends LitElement {
     if(this._config.entities)
       entities = entities.concat(this._config.entities.map(format_entities));
 
-    if(!this.hass || !this._config.filter) return entities;
+    if(!this.hass || !this._config.filter)
+    {
+      this.entities = entities;
+      return;
+    }
 
     if(this.template) {
       entities = entities.concat(this.template.split(/[\s,]+/).map(format_entities));

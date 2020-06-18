@@ -1,0 +1,59 @@
+x-anchors:
+  desc: &desc
+    type: markdown
+    style:
+      ha-markdown:
+        $: |
+          code {
+            font-size: 8pt !important;
+            line-height: normal;
+            white-space: pre-wrap;
+            }
+  card: &card
+    type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+
+title: Errors
+cards:
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          No card
+      - type: custom:auto-entities
+        filter:
+          include:
+            - domain: light
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          No card type
+      - type: custom:auto-entities
+        card:
+          title: My card
+        filter:
+          include:
+            - domain: light
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          No filter
+      - type: custom:auto-entities
+        card:
+          type: entities
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          No filter-include
+      - type: custom:auto-entities
+        card:
+          type: entities
+        filter:

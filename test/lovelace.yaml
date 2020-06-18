@@ -6,3 +6,4 @@ views:
   - !include lovelace/options.yaml
   - !include lovelace/template.yaml
   - !include lovelace/sorting.yaml
+  - !include lovelace/errors.yaml
