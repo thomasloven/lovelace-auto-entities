@@ -58,6 +58,27 @@ cards:
     cards:
       - <<: *desc
         content: |
+          ## 2: Or
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - or:
+                - domain: light
+                - domain: switch
+          ```
+      - <<: *card
+        filter:
+          include:
+            - or:
+              - domain: light
+              - domain: switch
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
           ## 1: Not
 
           ```

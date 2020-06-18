@@ -92,6 +92,13 @@ export function entity_filter(hass, filter) {
             return false;
           break;
 
+        case "or":
+          for(const f of value) {
+            if(entity_filter(hass, f)(e))
+              return true;
+          }
+          return false;
+
         case "device":
           if(!window.cardToolsData || !window.cardToolsData.devices)
             return false;
