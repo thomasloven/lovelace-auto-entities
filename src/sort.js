@@ -75,8 +75,8 @@ export function entity_sorter(hass, method) {
       case "last_updated":
         method.numeric=true;
         return compare(
-          new Date(entityB.last_changed).getTime(),
-          new Date(entityA.last_changed).getTime()
+          new Date(entityB.last_updated).getTime(),
+          new Date(entityA.last_updated).getTime()
         );
       case "last_triggered":
         if(entityA.attributes.last_triggered == null
