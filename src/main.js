@@ -30,14 +30,33 @@ class AutoEntities extends LitElement {
       this._config = config;
       this.hass = this.hass;
     }
-    if(config.filter && config.filter.template) {
-      this.template = "";
-      if(String(config.filter.template).includes("{%") || String(config.filter.template).includes("{{")) {
+    // backwards compatibility
+    if(config.filter && config.filter.template && !config.filter.include_template){
+      config.filter.include_template = config.filter.template;
+    }
+
+    if(config.filter && config.filter.include_template) {
+      this.include_template = "";
+      if(String(config.filter.include_template).includes("{%") || String(config.filter.include_template).includes("{{")) {
         subscribeRenderTemplate(null, (res) => {
-          this.template = res;
+          this.include_template = res;
           this._getEntities();
         }, {
-          template: config.filter.template,
+          template: config.filter.include_template,
+          variables: {config},
+          entity_ids: config.filter.entity_ids,
+        });
+      }
+    }
+
+    if(config.filter && config.filter.exclude_template){
+      this.exclude_template = "";
+      if(String(config.filter.exclude_template).includes("{%") || String(config.filter.exclude_template).includes("{{")) {
+        subscribeRenderTemplate(null, (res) => {
+          this.exclude_template = res;
+          this._getEntities();
+        }, {
+          template: config.filter.exclude_template,
           variables: {config},
           entity_ids: config.filter.entity_ids,
         });
@@ -65,8 +84,8 @@ class AutoEntities extends LitElement {
 
     if(!this.hass || !this._config.filter) return entities;
 
-    if(this.template) {
-      entities = entities.concat(this.template.split(/[\s,]+/).map(format_entities));
+    if(this.include_template) {
+      entities = entities.concat(this.include_template.split(/[\s,]+/).map(format_entities));
     }
     entities = entities.filter(Boolean);
 
@@ -108,6 +127,13 @@ class AutoEntities extends LitElement {
           return !entity_filter(this.hass,f)(e)
         });
       }
+    }
+
+    if(this.exclude_template){
+      let entitiesToRemove = this.exclude_template.split(/[\s,]+/);
+      entities = entities.filter((e) => {
+        return !entitiesToRemove.includes(e.entity);
+      });
     }
 
     if(this._config.sort) {
