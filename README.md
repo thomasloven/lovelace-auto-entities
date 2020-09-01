@@ -25,7 +25,8 @@ entities:
   - <entity>
   - <entity>
 filter:
-  template: <template>
+  include_template: <template>
+  exclude_template: <template>
   include:
     - <filter>
     - <filter>
@@ -43,7 +44,8 @@ sort: <sort_method>
 - `card:` **Required.** The card to display. Specify this as you would specify any normal lovelace card, but ommit the `entities:` parameter.
 - `entities:` Any entities added here will be added to the card before any filters are applied.
 - `filter:`
-  - `template:` A jinja2 template evaluating to a whitespace- or comma-separated list of entity ids to include
+  - `include_template:` A jinja2 template evaluating to a whitespace- or comma-separated list of entity ids to include
+  - `exclude_template:` A jinja2 template evaluating to a whitespace- or comma-separated list of entity ids to exclude
   - `include:` A list of filters specifying which entities to add to the card
   - `exclude:` A list of filters specifying which entities to remove from the card
 - `show_empty:` Whether to display the card if it has no entities. Default: `true`.
@@ -80,9 +82,10 @@ The filter section `template` takes a jinja2 template which evaluates to a list 
 ## How it works
 `auto-entities` creates a list of entities by:
 1. Including every entitiy given in `entities:` (this allow nesting of `auto-entities`if you'd want to do that for some reason...)
-2. Include every entity listed in a `filter.template` evaluation
+2. Include every entity listed in a `filter.include_template` evaluation
 3. Include all entities that matches **ALL** options of **ANY** filter in the `filter.include` section. The same entity may be included several times by different filters.
 4. Remove all entities that matches **ALL** options on **ANY** filter in the `filter.exclude` section.
+5. Remove every entity listed in a `filter.exclude_template` evaluation
 
 It then creates a card based on the configuration given in `card:`, and fills in `entities:` of that card with the entities from above.
 
@@ -310,7 +313,7 @@ type: custom:auto-entities
 card:
   type: entities
 filter:
-  template: |
+  include_template: |
     {% for light in states.light %}
       {% if light.state == "on" %}
         {{ light.entity_id}},
@@ -324,7 +327,7 @@ filter:
 >
 > One is to redefine the template, e.g.:
 > ```yaml
->      template: |
+>      include_template: |
 >        {%if is_state('light.bed_light','on')%}light.bed_light{%endif%}
 >        {%if is_state('light.kitchen_lights','on')%}light.kitchen_lights{%endif%}
 >        {%if is_state('light.ceiling_lights','on')%}light.ceiling_lights{%endif%}
@@ -333,7 +336,7 @@ filter:
 > The other option is to add a list of entities to monitor:
 > ```yaml
 >   filter:
->     template: |
+>     include_template: |
 >       ...etc...
 >     entity_ids:
 >       - light.bed_light
