@@ -32,7 +32,7 @@ export function entity_filter(hass, filter) {
     const entity = typeof(e) === "string"
     ? hass.states[e]
     : hass.states[e.entity];
-    if(!e) return false;
+    if(!entity) return false;
     for (const [key, value] of Object.entries(filter)) {
       switch(key.split(" ")[0]) {
         case "options":
