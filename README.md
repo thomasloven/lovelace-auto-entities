@@ -49,6 +49,7 @@ sort: <sort_method>
 - `show_empty:` Whether to display the card if it has no entities. Default: `true`.
 - `unique:` Whether to remove duplicate values after filtering and sorting. Default: `false`.
 - `sort:` How to sort the entities of the card. Default: `none`. See [Sorting entities for details](#sorting-entities)
+- `card_param:` The parameter of the card to populate. Default: `entities`.
 
 ### Filters
 The two main filter sections `include` and `exclude` each takes a list of filters.
@@ -285,6 +286,19 @@ filter:
 sort:
   method: last_changed
   count: 5
+```
+
+Put all sensors in individual entity cards in a grid card:
+```yaml
+type: custom:auto-entities
+card:
+  type: grid
+card_param: cards
+filter:
+  include:
+    - domain: sensor
+      options:
+        type: entity
 ```
 
 Turn on scenes by clicking them:

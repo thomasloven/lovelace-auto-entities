@@ -30,7 +30,7 @@ class AutoEntities extends LitElement {
 
       this.hass = hass();
       this._getEntities();
-      this.cardConfig = {entities: this.entities, ...config.card};
+      this.cardConfig = {[config.card_param || "entities"]: this.entities, ...config.card};
       this.card = createCard(this.cardConfig);
     } else {
       this._config = config;

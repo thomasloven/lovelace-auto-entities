@@ -1,0 +1,21 @@
+title: Cards
+cards:
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - domain: light
+
+  - type: custom:auto-entities
+    card:
+      type: grid
+    card_param: cards
+    filter:
+      include:
+        - domain: light
+          options:
+            type: entity
+        - domain: "*"
+          options:
+            type: entity
