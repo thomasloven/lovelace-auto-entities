@@ -102,3 +102,44 @@ cards:
           include:
             - domain: light
             - state: "on"
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 4: Unique entity id
+
+          ```
+          - <<: *card
+            unique: true
+            filter:
+              include:
+                - domain: light
+                - domain: light
+                  options:
+                    icon: mdi:lamp
+          - <<: *card
+            unique: entity
+            filter:
+              include:
+                - domain: light
+                - domain: light
+                  options:
+                    icon: mdi:lamp
+          ```
+      - <<: *card
+        unique: true
+        filter:
+          include:
+            - domain: light
+            - domain: light
+              options:
+                icon: mdi:lamp
+      - <<: *card
+        unique: entity
+        filter:
+          include:
+            - domain: light
+            - domain: light
+              options:
+                icon: mdi:lamp

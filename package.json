@@ -11,8 +11,8 @@
   "author": "Thomas Lovén",
   "license": "MIT",
   "devDependencies": {
-    "webpack": "^4.42.0",
-    "webpack-cli": "^3.3.11"
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "card-tools": "github:thomasloven/lovelace-card-tools"

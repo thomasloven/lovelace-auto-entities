@@ -133,12 +133,16 @@ class AutoEntities extends LitElement {
       function compare(a,b) {
         if(typeof(a) !== typeof(b)) return false;
         if(typeof(a) !== "object") return a===b;
+        if(Object.keys(a).lenght !== Object.keys(b).length) return false;
         if(Object.keys(a).some((k) => !Object.keys(b).includes(k))) return false;
 
         return Object.keys(a).every((k) => compare(a[k], b[k]));
       }
       let newEntities = [];
+      console.log(entities);
       for(const e of entities) {
+        if(this._config.unique === "entity"
+         && newEntities.some((i) => i.entity === e.entity)) continue;
         if(newEntities.some((i) => compare(i,e))) continue;
         newEntities.push(e);
       }
