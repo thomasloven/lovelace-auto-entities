@@ -16,6 +16,3 @@ cards:
         - domain: light
           options:
             type: entity
-        - domain: "*"
-          options:
-            type: entity

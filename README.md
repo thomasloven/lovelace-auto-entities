@@ -72,6 +72,7 @@ Special options:
 - `type:` Type of special entries to include in entity list. Entries with a `type:` will not be filtered.
 - `not:` Specifies a filter that entities must *not* match.
 - `sort:` Specifies a method to sort entities matched by *this filter only*.
+- `or:` Match any in a list of filters.
 
 ### Template filter
 The filter section `template` takes a jinja2 template which evaluates to a list of comma- or whitespace separated `entity_id`s which are included.

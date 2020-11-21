@@ -214,5 +214,10 @@ class AutoEntities extends LitElement {
   }
 }
 
-customElements.define('auto-entities', AutoEntities);
-fireEvent('ll-rebuild', {});
+if(!customElements.get("auto-entities")) {
+  customElements.define('auto-entities', AutoEntities);
+  const pjson = require('../package.json');
+  console.info(`%cAUTO-ENTITIES ${pjson.version} IS INSTALLED`,
+  "color: green; font-weight: bold",
+  "");
+}
