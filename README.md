@@ -36,7 +36,7 @@ sort: <sort_method>
 - `card:` **Required.** The card to display. Specify this as you would specify any normal lovelace card, but ommit the `entities:` parameter.
 - `entities:` Any entities added here will be added to the card before any filters are applied.
 - `filter:`
-  - `template:` A jinja2 template evaluating to a whitespace- or comma-separated list of entity ids to include
+  - `template:` A jinja2 template evaluating to a list of entries to include
   - `include:` A list of filters specifying which entities to add to the card
   - `exclude:` A list of filters specifying which entities to remove from the card
 - `show_empty:` Whether to display the card if it has no entities. Default: `true`.
@@ -68,9 +68,7 @@ Special options:
 - `or:` Match any in a list of filters.
 
 ### Template filter
-The filter section `template` takes a jinja2 template which evaluates to a list of comma- or whitespace separated `entity_id`s which are included.
-
-> Note: Due to how the templating engine of Home Assistant works, this may or may not be as useful as it sounds. See note at templating example below.
+The filter section `template` takes a jinja2 template which evaluates to a list of entities or entity objects.
 
 ## How it works
 `auto-entities` creates a list of entities by:
@@ -325,29 +323,11 @@ filter:
       {% endif %}
     {% endfor %}
 ```
-> Note: templates won't update automatically on state changes unless they contain the literal entity id of the entity whose state changes.
-> I.e. the example above will not update when a light is turned on or off, unless the view is reloaded.
->
-> This is a limitation of the Home Assistant template engine, and nothing I can do anything about. There are, however two mitigations you could make.
->
-> One is to redefine the template, e.g.:
-> ```yaml
->      template: |
->        {%if is_state('light.bed_light','on')%}light.bed_light{%endif%}
->        {%if is_state('light.kitchen_lights','on')%}light.kitchen_lights{%endif%}
->        {%if is_state('light.ceiling_lights','on')%}light.ceiling_lights{%endif%}
-> ```
->
-> The other option is to add a list of entities to monitor:
-> ```yaml
->   filter:
->     template: |
->       ...etc...
->     entity_ids:
->       - light.bed_light
->       - light.kitchen_lights
->       - light.ceiling_lights
-> ```
+Or:
+```yaml
+...
+  template: {{states.light | selectattr('state', '==', 'on') | list}}
+```
 
 ---
 <a href="https://www.buymeacoffee.com/uqD6KHCdJ" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/white_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>

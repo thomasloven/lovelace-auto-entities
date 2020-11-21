@@ -1,3 +1,5 @@
+homeassistant:
+  legacy_templates: false
 default_config:
 
 demo:

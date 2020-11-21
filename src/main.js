@@ -46,7 +46,7 @@ class AutoEntities extends LitElement {
           template: config.filter.template,
           variables: {config},
           entity_ids: config.filter.entity_ids,
-        });
+        }, false);
       }
     }
 
@@ -76,7 +76,10 @@ class AutoEntities extends LitElement {
     }
 
     if(this.template) {
-      entities = entities.concat(this.template.split(/[\s,]+/).map(format_entities));
+      if(typeof(this.template) === "string")
+        entities = entities.concat(this.template.split(/[\s,]+/).map(format_entities));
+      else
+        entities = entities.concat(this.template.map(format_entities));
     }
     entities = entities.filter(Boolean);
 
@@ -139,7 +142,6 @@ class AutoEntities extends LitElement {
         return Object.keys(a).every((k) => compare(a[k], b[k]));
       }
       let newEntities = [];
-      console.log(entities);
       for(const e of entities) {
         if(this._config.unique === "entity"
          && newEntities.some((i) => i.entity === e.entity)) continue;
