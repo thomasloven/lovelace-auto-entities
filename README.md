@@ -310,6 +310,19 @@ filter:
             entity_id: this.entity_id
 ```
 
+Show all the lights in a group and its nested groups. I.e. a group of groups.
+```yaml
+    type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - group: group.my_group_of_groups
+          domain: light
+          options:
+            nested_groups: true
+```
+
 Example using templates:
 ```yaml
 type: custom:auto-entities

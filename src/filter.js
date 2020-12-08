@@ -27,6 +27,38 @@ function match(pattern, value) {
   return pattern === value;
 }
 
+const groupContainsEntityRecursively = (hass, groupName, entityId, iterationLevel = 0) => {
+  // directly return false if we are 5 levels deep into the recursion
+  // to avoid infinite loops
+  if (iterationLevel > 5) {
+    return false;
+  }
+
+  const group = hass.states[groupName];
+
+  if (!group.attributes.entity_id || group.attributes.entity_id.length < 0) {
+    return false;
+  }
+
+  const groupEntities = group.attributes.entity_id;
+
+  if (groupEntities.includes(entityId)) {
+    return true;
+  }
+
+  // Check recursively if an entity is found
+  return groupEntities
+    .filter((groupEntity) => groupEntity.startsWith("group."))
+    .some((groupEntity) => {
+      return groupContainsEntityRecursively(
+        hass,
+        groupEntity,
+        entityId,
+        iterationLevel + 1
+      );
+    });
+};
+
 export function entity_filter(hass, filter) {
   return function(e) {
     const entity = typeof(e) === "string"
@@ -63,9 +95,11 @@ export function entity_filter(hass, filter) {
 
         case "group":
           if(!value.startsWith("group.")
-            || !hass.states[value]
-            || !hass.states[value].attributes.entity_id
-            || !hass.states[value].attributes.entity_id.includes(entity.entity_id)
+            || (filter.options && filter.options.nested_groups && !groupContainsEntityRecursively(hass, value, entity.entity_id))
+            || ((!filter.options || !filter.options.nested_groups)
+                && (!hass.states[value]
+                  || !hass.states[value].attributes.entity_id
+                  || !hass.states[value].attributes.entity_id.includes(entity.entity_id)))
           )
             return false;
           break;
