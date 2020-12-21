@@ -169,7 +169,7 @@ class AutoEntities extends LitElement {
     if(!compare(ent, this._entities))
     {
       this._entities = ent;
-      this.cardConfig = {...this.cardConfig, entities: this._entities};
+      this.cardConfig = {...this.cardConfig, [this._config.card_param || "entities"]: this._entities};
       if(ent.length === 0 && this._config.show_empty === false) {
         this.style.display = "none";
         this.style.margin = "0";
