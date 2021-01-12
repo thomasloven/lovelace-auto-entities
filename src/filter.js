@@ -146,6 +146,37 @@ export function entity_filter(hass, filter) {
             break;
           }
 
+        case "when":
+          {
+            for (var i = 0; i < value.length; i++) {
+              var val = value[i];
+              if (val.entity_id) {
+                const whenEntity = hass.states[val.entity_id];
+                if (whenEntity) {
+                  if (val.state) {
+                    if(!match(val.state, whenEntity.state))
+                      return false;
+                  }
+                  if (val.attributes) {
+                    for(const [k, v] of Object.entries(val.attributes)) {
+                      let attr = k.trim();
+                      let entityAttribute = whenEntity.attributes;
+                      while(attr && entityAttribute) {
+                        let step;
+                        [step, attr] = attr.split(":");
+                        entityAttribute = entityAttribute[step];
+                      }
+                      if(entityAttribute === undefined || (v !== undefined && !match(v, entityAttribute)))
+                        return false;
+                      continue;
+                    }
+                  }
+                }
+              }
+            }
+            break;
+          }
+
         default:
           return false;
       }
