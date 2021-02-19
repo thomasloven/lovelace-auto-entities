@@ -119,7 +119,9 @@ export function entity_filter(hass, filter) {
           let _areaMatch = false;
           for (const a of window.cardToolsData.areas) {
             if(match(value, a.name)) {
-              if(areaDevices(a).flatMap(deviceEntities).includes(entity.entity_id))
+              if(entity.area_id === a.area_id)
+                _areaMatch = true;
+              else if(areaDevices(a).flatMap(deviceEntities).includes(entity.entity_id))
                 _areaMatch = true;
             }
           }
