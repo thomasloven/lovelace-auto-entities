@@ -1,4 +1,4 @@
-import { LitElement, html, css } from "card-tools/src/lit-element";
+import { LitElement, html, css, property } from "lit-element";
 import { entity_filter } from "./filter";
 import { entity_sorter } from "./sort";
 import { getData } from "card-tools/src/devices";
@@ -8,12 +8,23 @@ import { hass } from "card-tools/src/hass";
 import { subscribeRenderTemplate } from "card-tools/src/templates";
 import pjson from "../package.json";
 
+function compare(a, b) {
+  if (typeof a !== typeof b) return false;
+  if (typeof a !== "object") return a === b;
+  if (Object.keys(a).length !== Object.keys(b).length) return false;
+  if (Object.keys(a).some((k) => !Object.keys(b).includes(k))) return false;
+
+  return Object.keys(a).every((k) => compare(a[k], b[k]));
+}
+
 class AutoEntities extends LitElement {
-  static get properties() {
-    return {
-      hass: {},
-    };
-  }
+  _config;
+  @property() hass;
+  card;
+  template;
+  _entities;
+  _cardConfig;
+
   setConfig(config) {
     if (!config) {
       throw new Error("No configuration.");
@@ -139,15 +150,6 @@ class AutoEntities extends LitElement {
     }
 
     if (this._config.unique) {
-      function compare(a, b) {
-        if (typeof a !== typeof b) return false;
-        if (typeof a !== "object") return a === b;
-        if (Object.keys(a).lenght !== Object.keys(b).length) return false;
-        if (Object.keys(a).some((k) => !Object.keys(b).includes(k)))
-          return false;
-
-        return Object.keys(a).every((k) => compare(a[k], b[k]));
-      }
       let newEntities = [];
       for (const e of entities) {
         if (

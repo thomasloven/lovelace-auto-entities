@@ -47,8 +47,8 @@ cards:
       - <<: *card
         filter:
           template: "{{ ['light.bed_light',
-              'light.kitchen_lights',
-              {'entity': 'light.ceiling_lights', 'icon': 'mdi:lamp'}
+            'light.kitchen_lights',
+            {'entity': 'light.ceiling_lights', 'icon': 'mdi:lamp'}
             ] }}"
 
   - type: vertical-stack
@@ -68,7 +68,6 @@ cards:
                   <<: *card
                   filter:
                     template: "{{state_attr(config.entity, 'entity_id')}}"
-          {%endraw%}
           ```
           {% endraw %}
       - <<: *card
@@ -79,7 +78,6 @@ cards:
                 <<: *card
                 filter:
                   template: "{{state_attr(config.entity, 'entity_id')}}"
-
 
   - type: vertical-stack
     cards:

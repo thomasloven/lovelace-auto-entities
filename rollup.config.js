@@ -7,7 +7,7 @@ import babel from "@rollup/plugin-babel";
 const dev = process.env.ROLLUP_WATCH;
 
 export default {
-  input: "src/main.js",
+  input: "src/main.ts",
   output: {
     file: "auto-entities.js",
     format: "es",
@@ -15,7 +15,7 @@ export default {
   plugins: [
     nodeResolve(),
     json(),
-    //typescript(),
+    typescript(),
     babel({
       exclude: "node_modules/**",
     }),
