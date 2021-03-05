@@ -1,220 +1,754 @@
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/main.js");
-/******/ })
-/************************************************************************/
-/******/ ({
+const LitElement = customElements.get('home-assistant-main')
+  ? Object.getPrototypeOf(customElements.get('home-assistant-main'))
+  : Object.getPrototypeOf(customElements.get('hui-view'));
 
-/***/ "./node_modules/card-tools/src/deviceID.js":
-/*!*************************************************!*\
-  !*** ./node_modules/card-tools/src/deviceID.js ***!
-  \*************************************************/
-/*! exports provided: deviceID, setDeviceID */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+const html = LitElement.prototype.html;
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"deviceID\", function() { return deviceID; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"setDeviceID\", function() { return setDeviceID; });\nconst ID_STORAGE_KEY = 'lovelace-player-device-id';\nfunction _deviceID() {\n  if(!localStorage[ID_STORAGE_KEY])\n  {\n    const s4 = () => {\n      return Math.floor((1+Math.random())*100000).toString(16).substring(1);\n    };\n    if(window['fully'] && typeof fully.getDeviceId === \"function\")\n      localStorage[ID_STORAGE_KEY] = fully.getDeviceId();\n    else\n      localStorage[ID_STORAGE_KEY] = `${s4()}${s4()}-${s4()}${s4()}`;\n  }\n  return localStorage[ID_STORAGE_KEY];\n};\n\nlet deviceID = _deviceID();\n\nconst setDeviceID = (id) => {\n  if(id === null) return;\n  if(id === \"clear\") {\n    localStorage.removeItem(ID_STORAGE_KEY)\n  } else {\n    localStorage[ID_STORAGE_KEY] = id;\n  }\n  deviceID = _deviceID();\n}\n\nconst params = new URLSearchParams(window.location.search);\nif(params.get('deviceID')) {\n  setDeviceID(params.get('deviceID'));\n}\n\n\n\n//# sourceURL=webpack:///./node_modules/card-tools/src/deviceID.js?");
+LitElement.prototype.css;
 
-/***/ }),
+function hass() {
+  if(document.querySelector('hc-main'))
+    return document.querySelector('hc-main').hass;
 
-/***/ "./node_modules/card-tools/src/devices.js":
-/*!************************************************!*\
-  !*** ./node_modules/card-tools/src/devices.js ***!
-  \************************************************/
-/*! exports provided: getData, areaByName, areaDevices, deviceByName, deviceEntities */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+  if(document.querySelector('home-assistant'))
+    return document.querySelector('home-assistant').hass;
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"getData\", function() { return getData; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"areaByName\", function() { return areaByName; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"areaDevices\", function() { return areaDevices; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"deviceByName\", function() { return deviceByName; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"deviceEntities\", function() { return deviceEntities; });\n/* harmony import */ var _hass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./hass */ \"./node_modules/card-tools/src/hass.js\");\n\n\nconst areaData = Object(_hass__WEBPACK_IMPORTED_MODULE_0__[\"hass\"])().callWS({type: \"config/area_registry/list\"});\nconst deviceData = Object(_hass__WEBPACK_IMPORTED_MODULE_0__[\"hass\"])().callWS({type: \"config/device_registry/list\"});\nconst entityData = Object(_hass__WEBPACK_IMPORTED_MODULE_0__[\"hass\"])().callWS({type: \"config/entity_registry/list\"});\n\nasync function getData(){\n    window.cardToolsData = window.cardToolsData || {\n        areas: await areaData,\n        devices: await deviceData,\n        entities: await entityData,\n    }\n    return window.cardToolsData;\n}\n\ngetData();\n\nfunction areaByName(name) {\n    const data = window.cardToolsData;\n    for(const a of data.areas) {\n        if(a.name.toLowerCase() === name.toLowerCase())\n            return a;\n    }\n    return null;\n}\n\nfunction areaDevices(area) {\n    const data = window.cardToolsData;\n    let devices = [];\n    if(!area) return devices;\n    for(const d of data.devices) {\n        if(d.area_id === area.area_id) {\n            devices.push(d);\n        }\n    }\n    return devices;\n}\nfunction deviceByName(name) {\n    const data = window.cardToolsData;\n    for(const d of data.devices) {\n        if(d.name.toLowerCase() === name.toLowerCase())\n            return d;\n    }\n    return null;\n}\nfunction deviceEntities(device) {\n    const data = window.cardToolsData;\n    let entities = [];\n    if(!device) return entities;\n    for(const e of data.entities) {\n        if(e.device_id === device.id) {\n            entities.push(e.entity_id);\n        }\n    }\n    return entities;\n}\n\n\n//# sourceURL=webpack:///./node_modules/card-tools/src/devices.js?");
+  return undefined;
+}function lovelace_view() {
+  var root = document.querySelector("hc-main");
+  if(root) {
+    root = root && root.shadowRoot;
+    root = root && root.querySelector("hc-lovelace");
+    root = root && root.shadowRoot;
+    root = root && root.querySelector("hui-view") || root.querySelector("hui-panel-view");
+    return root;
+  }
 
-/***/ }),
+  root = document.querySelector("home-assistant");
+  root = root && root.shadowRoot;
+  root = root && root.querySelector("home-assistant-main");
+  root = root && root.shadowRoot;
+  root = root && root.querySelector("app-drawer-layout partial-panel-resolver");
+  root = root && root.shadowRoot || root;
+  root = root && root.querySelector("ha-panel-lovelace");
+  root = root && root.shadowRoot;
+  root = root && root.querySelector("hui-root");
+  root = root && root.shadowRoot;
+  root = root && root.querySelector("ha-app-layout");
+  root = root && root.querySelector("#view");
+  root = root && root.firstElementChild;
+  return root;
+}
 
-/***/ "./node_modules/card-tools/src/event.js":
-/*!**********************************************!*\
-  !*** ./node_modules/card-tools/src/event.js ***!
-  \**********************************************/
-/*! exports provided: fireEvent */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+async function load_lovelace() {
+  if(customElements.get("hui-view")) return true;
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"fireEvent\", function() { return fireEvent; });\n/* harmony import */ var _hass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./hass */ \"./node_modules/card-tools/src/hass.js\");\n\n\nfunction fireEvent(ev, detail, entity=null) {\n  ev = new Event(ev, {\n    bubbles: true,\n    cancelable: false,\n    composed: true,\n  });\n  ev.detail = detail || {};\n  if(entity) {\n    entity.dispatchEvent(ev);\n  } else {\n    var root = Object(_hass__WEBPACK_IMPORTED_MODULE_0__[\"lovelace_view\"])();\n    if (root) root.dispatchEvent(ev);\n  }\n}\n\n\n//# sourceURL=webpack:///./node_modules/card-tools/src/event.js?");
+  await customElements.whenDefined("partial-panel-resolver");
+  const ppr = document.createElement("partial-panel-resolver");
+  ppr.hass = {panels: [{
+    url_path: "tmp",
+    "component_name": "lovelace",
+  }]};
+  ppr._updateRoutes();
+  await ppr.routerOptions.routes.tmp.load();
+  if(!customElements.get("ha-panel-lovelace")) return false;
+  const p = document.createElement("ha-panel-lovelace");
+  p.hass = hass();
+  if(p.hass === undefined) {
+    await new Promise(resolve => {
+      window.addEventListener('connection-status', (ev) => {
+        console.log(ev);
+        resolve();
+      }, {once: true});
+    });
+    p.hass = hass();
+  }
+  p.panel = {config: {mode: null}};
+  p._fetchConfig();
+  return true;
+}
 
-/***/ }),
+const areaData = hass().callWS({type: "config/area_registry/list"});
+const deviceData = hass().callWS({type: "config/device_registry/list"});
+const entityData = hass().callWS({type: "config/entity_registry/list"});
 
-/***/ "./node_modules/card-tools/src/hass.js":
-/*!*********************************************!*\
-  !*** ./node_modules/card-tools/src/hass.js ***!
-  \*********************************************/
-/*! exports provided: hass, provideHass, lovelace, async_lovelace_view, lovelace_view, load_lovelace */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+async function getData(){
+    window.cardToolsData = window.cardToolsData || {
+        areas: await areaData,
+        devices: await deviceData,
+        entities: await entityData,
+    };
+    return window.cardToolsData;
+}
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"hass\", function() { return hass; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"provideHass\", function() { return provideHass; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"lovelace\", function() { return lovelace; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"async_lovelace_view\", function() { return async_lovelace_view; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"lovelace_view\", function() { return lovelace_view; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"load_lovelace\", function() { return load_lovelace; });\nfunction hass() {\n  if(document.querySelector('hc-main'))\n    return document.querySelector('hc-main').hass;\n\n  if(document.querySelector('home-assistant'))\n    return document.querySelector('home-assistant').hass;\n\n  return undefined;\n};\n\nfunction provideHass(element) {\n  if(document.querySelector('hc-main'))\n    return document.querySelector('hc-main').provideHass(element);\n\n  if(document.querySelector('home-assistant'))\n    return document.querySelector(\"home-assistant\").provideHass(element);\n\n  return undefined;\n}\n\nfunction lovelace() {\n  var root = document.querySelector(\"hc-main\");\n  if(root) {\n    var ll = root._lovelaceConfig;\n    ll.current_view = root._lovelacePath;\n    return ll;\n  }\n\n  root = document.querySelector(\"home-assistant\");\n  root = root && root.shadowRoot;\n  root = root && root.querySelector(\"home-assistant-main\");\n  root = root && root.shadowRoot;\n  root = root && root.querySelector(\"app-drawer-layout partial-panel-resolver\");\n  root = root && root.shadowRoot || root;\n  root = root && root.querySelector(\"ha-panel-lovelace\")\n  root = root && root.shadowRoot;\n  root = root && root.querySelector(\"hui-root\")\n  if (root) {\n    var ll =  root.lovelace\n    ll.current_view = root.___curView;\n    return ll;\n  }\n\n  return null;\n}\n\nasync function await_el(el) {\n  if(!el) return;\n  await customElements.whenDefined(el.localName);\n  if(el.updateComplete)\n    await el.updateComplete;\n}\n\nasync function async_lovelace_view() {\n  var root = document.querySelector(\"hc-main\");\n  if(root) {\n    root = root && root.shadowRoot;\n    root = root && root.querySelector(\"hc-lovelace\");\n    await_el(root);\n    root = root && root.shadowRoot;\n    root = root && root.querySelector(\"hui-view\") || root.querySelector(\"hui-panel-view\");\n    await_el(root);\n    return root;\n  }\n\n  root = document.querySelector(\"home-assistant\");\n  await_el(root);\n  root = root && root.shadowRoot;\n  root = root && root.querySelector(\"home-assistant-main\");\n  await_el(root);\n  root = root && root.shadowRoot;\n  root = root && root.querySelector(\"app-drawer-layout partial-panel-resolver\");\n  await_el(root);\n  root = root && root.shadowRoot || root;\n  root = root && root.querySelector(\"ha-panel-lovelace\");\n  await_el(root);\n  root = root && root.shadowRoot;\n  root = root && root.querySelector(\"hui-root\");\n  await_el(root);\n  root = root && root.shadowRoot;\n  root = root && root.querySelector(\"ha-app-layout\")\n  await_el(root);\n  root = root && root.querySelector(\"#view\");\n  root = root && root.firstElementChild;\n  await_el(root);\n  return root;\n}\nfunction lovelace_view() {\n  var root = document.querySelector(\"hc-main\");\n  if(root) {\n    root = root && root.shadowRoot;\n    root = root && root.querySelector(\"hc-lovelace\");\n    root = root && root.shadowRoot;\n    root = root && root.querySelector(\"hui-view\") || root.querySelector(\"hui-panel-view\");\n    return root;\n  }\n\n  root = document.querySelector(\"home-assistant\");\n  root = root && root.shadowRoot;\n  root = root && root.querySelector(\"home-assistant-main\");\n  root = root && root.shadowRoot;\n  root = root && root.querySelector(\"app-drawer-layout partial-panel-resolver\");\n  root = root && root.shadowRoot || root;\n  root = root && root.querySelector(\"ha-panel-lovelace\");\n  root = root && root.shadowRoot;\n  root = root && root.querySelector(\"hui-root\");\n  root = root && root.shadowRoot;\n  root = root && root.querySelector(\"ha-app-layout\")\n  root = root && root.querySelector(\"#view\");\n  root = root && root.firstElementChild;\n  return root;\n}\n\nasync function load_lovelace() {\n  if(customElements.get(\"hui-view\")) return true;\n\n  await customElements.whenDefined(\"partial-panel-resolver\");\n  const ppr = document.createElement(\"partial-panel-resolver\");\n  ppr.hass = {panels: [{\n    url_path: \"tmp\",\n    \"component_name\": \"lovelace\",\n  }]};\n  ppr._updateRoutes();\n  await ppr.routerOptions.routes.tmp.load();\n  if(!customElements.get(\"ha-panel-lovelace\")) return false;\n  const p = document.createElement(\"ha-panel-lovelace\");\n  p.hass = hass();\n  if(p.hass === undefined) {\n    await new Promise(resolve => {\n      window.addEventListener('connection-status', (ev) => {\n        console.log(ev);\n        resolve();\n      }, {once: true});\n    });\n    p.hass = hass();\n  }\n  p.panel = {config: {mode: null}};\n  p._fetchConfig();\n  return true;\n}\n\n\n//# sourceURL=webpack:///./node_modules/card-tools/src/hass.js?");
+getData();
 
-/***/ }),
+function areaDevices(area) {
+    const data = window.cardToolsData;
+    let devices = [];
+    if(!area) return devices;
+    for(const d of data.devices) {
+        if(d.area_id === area.area_id) {
+            devices.push(d);
+        }
+    }
+    return devices;
+}
+function deviceEntities(device) {
+    const data = window.cardToolsData;
+    let entities = [];
+    if(!device) return entities;
+    for(const e of data.entities) {
+        if(e.device_id === device.id) {
+            entities.push(e.entity_id);
+        }
+    }
+    return entities;
+}
 
-/***/ "./node_modules/card-tools/src/lit-element.js":
-/*!****************************************************!*\
-  !*** ./node_modules/card-tools/src/lit-element.js ***!
-  \****************************************************/
-/*! exports provided: LitElement, html, css */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+function match(pattern, value) {
+  if (typeof value === "string" && typeof pattern === "string") {
+    if (pattern.startsWith('/') && pattern.endsWith('/') || pattern.indexOf('*') !== -1) {
+      if (!pattern.startsWith('/')) {
+        // Convert globs to regex
+        pattern = pattern.replace(/\./g, '\.').replace(/\*/g, '.*');
+        pattern = `/^${pattern}$/`;
+      }
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"LitElement\", function() { return LitElement; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"html\", function() { return html; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"css\", function() { return css; });\nconst LitElement = customElements.get('home-assistant-main')\n  ? Object.getPrototypeOf(customElements.get('home-assistant-main'))\n  : Object.getPrototypeOf(customElements.get('hui-view'));\n\nconst html = LitElement.prototype.html;\n\nconst css = LitElement.prototype.css;\n\n\n//# sourceURL=webpack:///./node_modules/card-tools/src/lit-element.js?");
+      let regex = new RegExp(pattern.slice(1, -1));
+      return regex.test(value);
+    }
+  }
 
-/***/ }),
+  if (typeof pattern === "string") {
+    // Comparisons assume numerical values
+    if (pattern.startsWith("<=")) return parseFloat(value) <= parseFloat(pattern.substr(2));
+    if (pattern.startsWith(">=")) return parseFloat(value) >= parseFloat(pattern.substr(2));
+    if (pattern.startsWith("<")) return parseFloat(value) < parseFloat(pattern.substr(1));
+    if (pattern.startsWith(">")) return parseFloat(value) > parseFloat(pattern.substr(1));
+    if (pattern.startsWith("!")) return parseFloat(value) != parseFloat(pattern.substr(1));
+    if (pattern.startsWith("=")) return parseFloat(value) == parseFloat(pattern.substr(1));
+  }
 
-/***/ "./node_modules/card-tools/src/lovelace-element.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/card-tools/src/lovelace-element.js ***!
-  \*********************************************************/
-/*! exports provided: CUSTOM_TYPE_PREFIX, DOMAINS_HIDE_MORE_INFO, createCard, createElement, createEntityRow */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+  return pattern === value;
+}
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"CUSTOM_TYPE_PREFIX\", function() { return CUSTOM_TYPE_PREFIX; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"DOMAINS_HIDE_MORE_INFO\", function() { return DOMAINS_HIDE_MORE_INFO; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createCard\", function() { return createCard; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createElement\", function() { return createElement; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createEntityRow\", function() { return createEntityRow; });\n/* harmony import */ var _event__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event */ \"./node_modules/card-tools/src/event.js\");\n/* harmony import */ var _hass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./hass */ \"./node_modules/card-tools/src/hass.js\");\n\n\n\nconst CUSTOM_TYPE_PREFIX = \"custom:\";\n\nconst DOMAINS_HIDE_MORE_INFO = [\n  \"input_number\",\n  \"input_select\",\n  \"input_text\",\n  \"scene\",\n  \"weblink\",\n];\n\nlet helpers = window.cardHelpers;\nconst helperPromise = new Promise(async (resolve, reject) => {\n  if(helpers) resolve();\n\n  const updateHelpers = async () => {\n    helpers = await window.loadCardHelpers();\n    window.cardHelpers = helpers;\n    resolve();\n  }\n\n  if(window.loadCardHelpers) {\n    updateHelpers();\n  } else {\n    // If loadCardHelpers didn't exist, force load lovelace and try once more.\n    window.addEventListener(\"load\", async () => {\n      Object(_hass__WEBPACK_IMPORTED_MODULE_1__[\"load_lovelace\"])();\n      if(window.loadCardHelpers) {\n        updateHelpers();\n      }\n    });\n  }\n});\n\nfunction errorElement(error, origConfig) {\n  const cfg = {\n    type: \"error\",\n    error,\n    origConfig,\n  };\n  const el = document.createElement(\"hui-error-card\");\n  customElements.whenDefined(\"hui-error-card\").then(() => {\n    const newel = document.createElement(\"hui-error-card\");\n    newel.setConfig(cfg);\n    if(el.parentElement)\n      el.parentElement.replaceChild(newel, el);\n  });\n  helperPromise.then(() => {\n    Object(_event__WEBPACK_IMPORTED_MODULE_0__[\"fireEvent\"])(\"ll-rebuild\", {}, el);\n  });\n  return el;\n}\n\nfunction _createElement(tag, config) {\n  let el = document.createElement(tag);\n  try {\n    el.setConfig(JSON.parse(JSON.stringify(config)));\n  } catch (err) {\n    el = errorElement(err, config);\n  }\n  helperPromise.then(() => {\n    Object(_event__WEBPACK_IMPORTED_MODULE_0__[\"fireEvent\"])(\"ll-rebuild\", {}, el);\n  });\n  return el;\n}\n\nfunction createLovelaceElement(thing, config) {\n  if(!config || typeof config !== \"object\" || !config.type)\n    return errorElement(`No ${thing} type configured`, config);\n\n  let tag = config.type;\n  if(tag.startsWith(CUSTOM_TYPE_PREFIX))\n    tag = tag.substr(CUSTOM_TYPE_PREFIX.length);\n  else\n    tag = `hui-${tag}-${thing}`;\n\n  if(customElements.get(tag))\n    return _createElement(tag, config);\n\n  const el = errorElement(`Custom element doesn't exist: ${tag}.`, config);\n  el.style.display = \"None\";\n\n  const timer = setTimeout(() => {\n    el.style.display = \"\";\n  }, 2000);\n\n  customElements.whenDefined(tag).then(() => {\n    clearTimeout(timer);\n    Object(_event__WEBPACK_IMPORTED_MODULE_0__[\"fireEvent\"])(\"ll-rebuild\", {}, el);\n  });\n\n  return el;\n}\n\nfunction createCard(config) {\n  if(helpers) return helpers.createCardElement(config);\n  return createLovelaceElement('card', config);\n}\nfunction createElement(config) {\n  if(helpers) return helpers.createHuiElement(config);\n  return createLovelaceElement('element', config);\n}\nfunction createEntityRow(config) {\n  if(helpers) return helpers.createRowElement(config);\n  const SPECIAL_TYPES = new Set([\n    \"call-service\",\n    \"cast\",\n    \"conditional\",\n    \"divider\",\n    \"section\",\n    \"select\",\n    \"weblink\",\n  ]);\n  const DEFAULT_ROWS = {\n    alert: \"toggle\",\n    automation: \"toggle\",\n    climate: \"climate\",\n    cover: \"cover\",\n    fan: \"toggle\",\n    group: \"group\",\n    input_boolean: \"toggle\",\n    input_number: \"input-number\",\n    input_select: \"input-select\",\n    input_text: \"input-text\",\n    light: \"toggle\",\n    lock: \"lock\",\n    media_player: \"media-player\",\n    remote: \"toggle\",\n    scene: \"scene\",\n    script: \"script\",\n    sensor: \"sensor\",\n    timer: \"timer\",\n    switch: \"toggle\",\n    vacuum: \"toggle\",\n    water_heater: \"climate\",\n    input_datetime: \"input-datetime\",\n    none: undefined,\n  };\n\n  if(!config)\n    return errorElement(\"Invalid configuration given.\", config);\n  if(typeof config === \"string\")\n    config = {entity: config};\n  if(typeof config !== \"object\" || (!config.entity && !config.type))\n    return errorElement(\"Invalid configuration given.\", config);\n\n  const type = config.type || \"default\";\n  if(SPECIAL_TYPES.has(type) || type.startsWith(CUSTOM_TYPE_PREFIX))\n    return createLovelaceElement('row', config);\n\n  const domain = config.entity ? config.entity.split(\".\", 1)[0]: \"none\";\n  return createLovelaceElement('entity-row', {\n    type: DEFAULT_ROWS[domain] || \"text\",\n    ...config\n  });\n}\n\n\n//# sourceURL=webpack:///./node_modules/card-tools/src/lovelace-element.js?");
+function entity_filter(hass, filter) {
+  return function (e) {
+    const entity = typeof e === "string" ? hass.states[e] : hass.states[e.entity];
+    if (!entity) return false;
 
-/***/ }),
+    for (const [key, value] of Object.entries(filter)) {
+      switch (key.split(" ")[0]) {
+        case "options":
+        case "sort":
+          break;
 
-/***/ "./node_modules/card-tools/src/templates.js":
-/*!**************************************************!*\
-  !*** ./node_modules/card-tools/src/templates.js ***!
-  \**************************************************/
-/*! exports provided: parseTemplate, hasTemplate, subscribeRenderTemplate */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+        case "domain":
+          if (!match(value, entity.entity_id.split('.')[0])) return false;
+          break;
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"parseTemplate\", function() { return parseTemplate; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"hasTemplate\", function() { return hasTemplate; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"subscribeRenderTemplate\", function() { return subscribeRenderTemplate; });\n/* harmony import */ var _hass_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./hass.js */ \"./node_modules/card-tools/src/hass.js\");\n/* harmony import */ var _deviceID_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./deviceID.js */ \"./node_modules/card-tools/src/deviceID.js\");\n\n\n\nasync function parseTemplate(hass, str, specialData = {}) {\n  if (!hass) hass = hass();\n  if (typeof(specialData === \"string\")) specialData = {};\n    specialData = Object.assign({\n      user: hass.user.name,\n      browser: _deviceID_js__WEBPACK_IMPORTED_MODULE_1__[\"deviceID\"],\n      hash: location.hash.substr(1) || ' ',\n    },\n    specialData);\n\n    for (var k in specialData) {\n      var re = new RegExp(`\\\\{${k}\\\\}`, \"g\");\n      str = str.replace(re, specialData[k]);\n    }\n\n    return hass.callApi(\"POST\", \"template\", {template: str});\n};\n\nfunction hasTemplate(str) {\n  if(String(str).includes(\"{%\"))\n    return true;\n  if(String(str).includes(\"{{\"))\n    return true;\n}\n\nfunction subscribeRenderTemplate(conn, onChange, params, stringify=true) {\n  // params = {template, entity_ids, variables}\n  if(!conn)\n    conn = Object(_hass_js__WEBPACK_IMPORTED_MODULE_0__[\"hass\"])().connection;\n  let variables = {\n    user: Object(_hass_js__WEBPACK_IMPORTED_MODULE_0__[\"hass\"])().user.name,\n    browser: _deviceID_js__WEBPACK_IMPORTED_MODULE_1__[\"deviceID\"],\n    hash: location.hash.substr(1) || ' ',\n    ...params.variables,\n  };\n  let template = params.template;\n  let entity_ids = params.entity_ids;\n\n  return conn.subscribeMessage(\n    (msg) => {\n      if(stringify) {\n        let res = String(msg.result);\n        // Localize \"_(key)\" if found in template results\n        const localize_function = /_\\([^)]*\\)/g;\n        res = res.replace(localize_function, (key) => Object(_hass_js__WEBPACK_IMPORTED_MODULE_0__[\"hass\"])().localize(key.substring(2, key.length-1)) || key);\n        onChange(res);\n      } else {\n        onChange(msg.result);\n      }\n    },\n    { type: \"render_template\",\n      template,\n      variables,\n      entity_ids,\n    }\n  );\n};\n\n\n//# sourceURL=webpack:///./node_modules/card-tools/src/templates.js?");
+        case "entity_id":
+          if (!match(value, entity.entity_id)) return false;
+          break;
 
-/***/ }),
+        case "state":
+          if (!match(value, entity.state)) return false;
+          break;
 
-/***/ "./package.json":
-/*!**********************!*\
-  !*** ./package.json ***!
-  \**********************/
-/*! exports provided: name, private, version, description, scripts, author, license, devDependencies, dependencies, default */
-/***/ (function(module) {
+        case "name":
+          if (!entity.attributes.friendly_name || !match(value, entity.attributes.friendly_name)) return false;
+          break;
 
-eval("module.exports = JSON.parse(\"{\\\"name\\\":\\\"auto-entities\\\",\\\"private\\\":true,\\\"version\\\":\\\"1.7.0\\\",\\\"description\\\":\\\"\\\",\\\"scripts\\\":{\\\"build\\\":\\\"webpack\\\",\\\"watch\\\":\\\"webpack --watch --mode=development\\\",\\\"update-card-tools\\\":\\\"npm uninstall card-tools && npm install thomasloven/lovelace-card-tools\\\"},\\\"author\\\":\\\"Thomas Lovén\\\",\\\"license\\\":\\\"MIT\\\",\\\"devDependencies\\\":{\\\"webpack\\\":\\\"^4.44.2\\\",\\\"webpack-cli\\\":\\\"^3.3.12\\\"},\\\"dependencies\\\":{\\\"card-tools\\\":\\\"github:thomasloven/lovelace-card-tools\\\"}}\");\n\n//# sourceURL=webpack:///./package.json?");
+        case "group":
+          if (!value.startsWith("group.") || !hass.states[value] || !hass.states[value].attributes.entity_id || !hass.states[value].attributes.entity_id.includes(entity.entity_id)) return false;
+          break;
 
-/***/ }),
+        case "attributes":
+          for (const [k, v] of Object.entries(value)) {
+            let attr = k.split(" ")[0].trim();
+            let entityAttribute = entity.attributes;
 
-/***/ "./src/filter.js":
-/*!***********************!*\
-  !*** ./src/filter.js ***!
-  \***********************/
-/*! exports provided: entity_filter */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+            while (attr && entityAttribute) {
+              let step;
+              [step, attr] = attr.split(":");
+              entityAttribute = entityAttribute[step];
+            }
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"entity_filter\", function() { return entity_filter; });\n/* harmony import */ var card_tools_src_devices__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! card-tools/src/devices */ \"./node_modules/card-tools/src/devices.js\");\n\n\nfunction match(pattern, value) {\n  if(typeof(value) === \"string\" && typeof(pattern) === \"string\") {\n    if((pattern.startsWith('/') && pattern.endsWith('/')) || pattern.indexOf('*') !== -1) {\n      if(!pattern.startsWith('/')) { // Convert globs to regex\n        pattern = pattern\n        .replace(/\\./g, '\\.')\n        .replace(/\\*/g, '.*');\n        pattern = `/^${pattern}$/`;\n      }\n      let regex = new RegExp(pattern.slice(1,-1));\n      return regex.test(value);\n    }\n  }\n\n  if(typeof(pattern) === \"string\") {\n    // Comparisons assume numerical values\n    if(pattern.startsWith(\"<=\")) return parseFloat(value) <= parseFloat(pattern.substr(2));\n    if(pattern.startsWith(\">=\")) return parseFloat(value) >= parseFloat(pattern.substr(2));\n    if(pattern.startsWith(\"<\")) return parseFloat(value) < parseFloat(pattern.substr(1));\n    if(pattern.startsWith(\">\")) return parseFloat(value) > parseFloat(pattern.substr(1));\n    if(pattern.startsWith(\"!\")) return parseFloat(value) != parseFloat(pattern.substr(1));\n    if(pattern.startsWith(\"=\")) return parseFloat(value) == parseFloat(pattern.substr(1));\n  }\n\n  return pattern === value;\n}\n\nfunction entity_filter(hass, filter) {\n  return function(e) {\n    const entity = typeof(e) === \"string\"\n    ? hass.states[e]\n    : hass.states[e.entity];\n    if(!entity) return false;\n    for (const [key, value] of Object.entries(filter)) {\n      switch(key.split(\" \")[0]) {\n        case \"options\":\n        case \"sort\":\n          break;\n\n        case \"domain\":\n          if(!match(value, entity.entity_id.split('.')[0]))\n            return false;\n          break;\n\n        case \"entity_id\":\n          if(!match(value, entity.entity_id))\n            return false;\n          break;\n\n        case \"state\":\n          if(!match(value, entity.state))\n            return false;\n          break;\n\n        case \"name\":\n          if(!entity.attributes.friendly_name\n            || !match(value, entity.attributes.friendly_name)\n          )\n            return false;\n          break;\n\n        case \"group\":\n          if(!value.startsWith(\"group.\")\n            || !hass.states[value]\n            || !hass.states[value].attributes.entity_id\n            || !hass.states[value].attributes.entity_id.includes(entity.entity_id)\n          )\n            return false;\n          break;\n\n        case \"attributes\":\n          for(const [k, v] of Object.entries(value)) {\n            let attr = k.split(\" \")[0].trim();\n            let entityAttribute = entity.attributes;\n            while(attr && entityAttribute) {\n              let step;\n              [step, attr] = attr.split(\":\");\n              entityAttribute = entityAttribute[step];\n            }\n            if(entityAttribute === undefined\n              || (v !== undefined && !match(v, entityAttribute))\n            )\n              return false;\n            continue;\n          }\n          break;\n\n        case \"not\":\n          if(entity_filter(hass,value)(e))\n            return false;\n          break;\n\n        case \"or\":\n          for(const f of value) {\n            if(entity_filter(hass, f)(e))\n              return true;\n          }\n          return false;\n\n        case \"device\":\n          if(!window.cardToolsData || !window.cardToolsData.devices)\n            return false;\n          let _deviceMatch = false;\n          for(const d of window.cardToolsData.devices) {\n            if (match(value, d.name_by_user) || match(value, d.name)){\n              if(Object(card_tools_src_devices__WEBPACK_IMPORTED_MODULE_0__[\"deviceEntities\"])(d).includes(entity.entity_id))\n                _deviceMatch = true;\n            }\n          }\n          if(!_deviceMatch)\n            return false;\n          break;\n\n        case \"area\":\n          if(!window.cardToolsData || !window.cardToolsData.areas)\n            return false;\n          let _areaMatch = false;\n          for (const a of window.cardToolsData.areas) {\n            if(match(value, a.name)) {\n              if(Object(card_tools_src_devices__WEBPACK_IMPORTED_MODULE_0__[\"areaDevices\"])(a).flatMap(card_tools_src_devices__WEBPACK_IMPORTED_MODULE_0__[\"deviceEntities\"]).includes(entity.entity_id))\n                _areaMatch = true;\n            }\n          }\n          if(!_areaMatch)\n            return false;\n          break;\n\n        case 'last_changed':\n          {\n            const now = new Date().getTime();\n            const changed = new Date(entity.last_changed).getTime();\n            if(!match(value, (now-changed)/60000))\n              return false;\n            break;\n          }\n\n        case 'last_updated':\n          {\n            const now = new Date().getTime();\n            const updated = new Date(entity.last_updated).getTime();\n\n            if(!match(value, (now-updated)/60000))\n              return false;\n            break;\n          }\n\n        default:\n          return false;\n      }\n    }\n    return true;\n  }\n}\n\n\n//# sourceURL=webpack:///./src/filter.js?");
+            if (entityAttribute === undefined || v !== undefined && !match(v, entityAttribute)) return false;
+            continue;
+          }
 
-/***/ }),
+          break;
 
-/***/ "./src/main.js":
-/*!*********************!*\
-  !*** ./src/main.js ***!
-  \*********************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+        case "not":
+          if (entity_filter(hass, value)(e)) return false;
+          break;
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var card_tools_src_lit_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! card-tools/src/lit-element */ \"./node_modules/card-tools/src/lit-element.js\");\n/* harmony import */ var _filter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./filter */ \"./src/filter.js\");\n/* harmony import */ var _sort__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sort */ \"./src/sort.js\");\n/* harmony import */ var card_tools_src_devices__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! card-tools/src/devices */ \"./node_modules/card-tools/src/devices.js\");\n/* harmony import */ var card_tools_src_event__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! card-tools/src/event */ \"./node_modules/card-tools/src/event.js\");\n/* harmony import */ var card_tools_src_lovelace_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! card-tools/src/lovelace-element */ \"./node_modules/card-tools/src/lovelace-element.js\");\n/* harmony import */ var card_tools_src_hass__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! card-tools/src/hass */ \"./node_modules/card-tools/src/hass.js\");\n/* harmony import */ var card_tools_src_templates__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! card-tools/src/templates */ \"./node_modules/card-tools/src/templates.js\");\n\n\n\n\n\n\n\n\n\nclass AutoEntities extends card_tools_src_lit_element__WEBPACK_IMPORTED_MODULE_0__[\"LitElement\"] {\n\n  static get properties() {\n    return {\n      hass: {},\n    };\n  }\n  setConfig(config) {\n    if(!config) {\n      throw new Error(\"No configuration.\");\n    }\n    if(!config.card || !config.card.type) {\n      throw new Error(\"No card type specified.\")\n    }\n    if(!config.filter && !config.entities) {\n      throw new Error(\"No filters specified.\");\n    }\n    config = JSON.parse(JSON.stringify(config));\n    if(!this._config) {\n      this._config = config;\n\n      this.hass = Object(card_tools_src_hass__WEBPACK_IMPORTED_MODULE_6__[\"hass\"])();\n      this._getEntities();\n      this.cardConfig = {[config.card_param || \"entities\"]: this.entities, ...config.card};\n      this.card = Object(card_tools_src_lovelace_element__WEBPACK_IMPORTED_MODULE_5__[\"createCard\"])(this.cardConfig);\n    } else {\n      this._config = config;\n      this.hass = this.hass;\n    }\n    if(config.filter && config.filter.template) {\n      this.template = \"\";\n      if(String(config.filter.template).includes(\"{%\") || String(config.filter.template).includes(\"{{\")) {\n        Object(card_tools_src_templates__WEBPACK_IMPORTED_MODULE_7__[\"subscribeRenderTemplate\"])(null, (res) => {\n          this.template = res;\n          this._getEntities();\n        }, {\n          template: config.filter.template,\n          variables: {config},\n          entity_ids: config.filter.entity_ids,\n        }, false);\n      }\n    }\n\n    // Reevaluate all filters once areas have been loaded\n    Object(card_tools_src_devices__WEBPACK_IMPORTED_MODULE_3__[\"getData\"])().then(() => this._getEntities());\n  }\n\n  _getEntities()\n  {\n\n    const format_entities = (e) => {\n      if(!e) return null;\n      if(typeof(e) === \"string\")\n        return {entity: e.trim()}\n      return e;\n    }\n\n    let entities = [];\n    // Start with any entities added by the `entities` parameter\n    if(this._config.entities)\n      entities = entities.concat(this._config.entities.map(format_entities));\n\n    if(!this.hass || !this._config.filter)\n    {\n      this.entities = entities;\n      return;\n    }\n\n    if(this.template) {\n      if(typeof(this.template) === \"string\")\n        entities = entities.concat(this.template.split(/[\\s,]+/).map(format_entities));\n      else\n        entities = entities.concat(this.template.map(format_entities));\n    }\n    entities = entities.filter(Boolean);\n\n    if(this._config.filter.include) {\n      const all_entities = Object.keys(this.hass.states).map(format_entities);\n\n      for(const f of this._config.filter.include) {\n        if(f.type !== undefined) {\n          // If the filter has a type, it's a special entry\n          entities.push(f);\n          continue;\n        }\n\n        let add = all_entities.filter(Object(_filter__WEBPACK_IMPORTED_MODULE_1__[\"entity_filter\"])(this.hass, f))\n        .map((e) =>\n          JSON.parse(\n            JSON.stringify(\n              new Object({\n                ...e,\n                ...f.options\n              })\n            )\n            .replace(/this.entity_id/g, e.entity)\n          )\n        );\n\n        if(f.sort !== undefined) {\n          // Sort per filter\n          add = add.sort(Object(_sort__WEBPACK_IMPORTED_MODULE_2__[\"entity_sorter\"])(this.hass, f.sort));\n        }\n        entities = entities.concat(add);\n      }\n    }\n    if(this._config.filter.exclude) {\n      for(const f of this._config.filter.exclude) {\n        entities = entities.filter((e) => {\n          // Don't exclude special entries\n          if(typeof(e) !== \"string\" && e.entity === undefined) return true;\n          return !Object(_filter__WEBPACK_IMPORTED_MODULE_1__[\"entity_filter\"])(this.hass,f)(e)\n        });\n      }\n    }\n\n    if(this._config.sort) {\n      // Sort everything\n      entities = entities.sort(Object(_sort__WEBPACK_IMPORTED_MODULE_2__[\"entity_sorter\"])(this.hass, this._config.sort));\n      if(this._config.sort.count) {\n        const start = this._config.sort.first || 0;\n        entities = entities.slice(start, start + this._config.sort.count);\n      }\n    }\n\n    if(this._config.unique) {\n      function compare(a,b) {\n        if(typeof(a) !== typeof(b)) return false;\n        if(typeof(a) !== \"object\") return a===b;\n        if(Object.keys(a).lenght !== Object.keys(b).length) return false;\n        if(Object.keys(a).some((k) => !Object.keys(b).includes(k))) return false;\n\n        return Object.keys(a).every((k) => compare(a[k], b[k]));\n      }\n      let newEntities = [];\n      for(const e of entities) {\n        if(this._config.unique === \"entity\"\n         && newEntities.some((i) => i.entity === e.entity)) continue;\n        if(newEntities.some((i) => compare(i,e))) continue;\n        newEntities.push(e);\n      }\n      entities = newEntities;\n    }\n    this.entities = entities;\n  }\n\n  set entities(ent) {\n    function compare(a,b) {\n      if( a === b )\n      return true;\n      if( a == null || b == null)\n      return false;\n      if(a.length != b.length)\n      return false;\n      for(var i = 0; i < a.length; i++)\n      if(JSON.stringify(a[i]) !== JSON.stringify(b[i]))\n      return false;\n      return true;\n    }\n    if(!compare(ent, this._entities))\n    {\n      this._entities = ent;\n      this.cardConfig = {...this.cardConfig, entities: this._entities};\n      if(ent.length === 0 && this._config.show_empty === false) {\n        this.style.display = \"none\";\n        this.style.margin = \"0\";\n      } else {\n        this.style.display = null;\n        this.style.margin = null;\n      }\n    }\n  }\n  get entities() {\n    return this._entities;\n  }\n\n  set cardConfig(cardConfig) {\n    this._cardConfig = cardConfig;\n    if(this.card)\n      this.card.setConfig(cardConfig);\n  }\n  get cardConfig() {\n    return this._cardConfig;\n  }\n\n  updated(changedProperties) {\n    if(changedProperties.has(\"hass\") && this.hass) {\n      this.card.hass = this.hass;\n      // Run this in a timeout to improve performance\n      setTimeout(() => this._getEntities(), 0);\n    }\n  }\n\n  createRenderRoot() {\n    return this;\n  }\n  render() {\n    return card_tools_src_lit_element__WEBPACK_IMPORTED_MODULE_0__[\"html\"]`\n    ${this.card}`;\n  }\n\n  getCardSize() {\n    let len = 0;\n    if(this.card && this.card.getCardSize)\n      len = this.card.getCardSize();\n    if(len === 1 && this.entities.length)\n      len = this.entities.length;\n    if(len === 0 && this._config.filter && this._config.filter.include)\n      len = Object.keys(this._config.filter.include).length;\n    return len || 1;\n  }\n}\n\nif(!customElements.get(\"auto-entities\")) {\n  customElements.define('auto-entities', AutoEntities);\n  const pjson = __webpack_require__(/*! ../package.json */ \"./package.json\");\n  console.info(`%cAUTO-ENTITIES ${pjson.version} IS INSTALLED`,\n  \"color: green; font-weight: bold\",\n  \"\");\n}\n\n\n//# sourceURL=webpack:///./src/main.js?");
+        case "or":
+          for (const f of value) {
+            if (entity_filter(hass, f)(e)) return true;
+          }
 
-/***/ }),
+          return false;
 
-/***/ "./src/sort.js":
-/*!*********************!*\
-  !*** ./src/sort.js ***!
-  \*********************/
-/*! exports provided: entity_sorter */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+        case "device":
+          if (!window.cardToolsData || !window.cardToolsData.devices) return false;
+          let _deviceMatch = false;
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"entity_sorter\", function() { return entity_sorter; });\nfunction entity_sorter(hass, method) {\n  if(typeof(method) === \"string\") {\n    method = {method};\n  }\n  return function(a, b) {\n    const entityA = typeof(a) === \"string\"\n    ? hass.states[a]\n    : hass.states[a.entity];\n    const entityB = typeof(b) === \"string\"\n    ? hass.states[b]\n    : hass.states[b.entity];\n\n    if(entityA === undefined || entityB === undefined) return 0;\n\n    const [lt, gt] = method.reverse ? [-1, 1] : [1, -1];\n    function compare(_a, _b) {\n      if(method.ignore_case && _a.toLowerCase) _a = _a.toLowerCase();\n      if(method.ignore_case && _b.toLowerCase) _b = _b.toLowerCase();\n      if(method.numeric) {\n        if (!(isNaN(parseFloat(_a)) && isNaN(parseFloat(_b)))) {\n          _a = isNaN(parseFloat(_a)) ? undefined : parseFloat(_a);\n          _b = isNaN(parseFloat(_b)) ? undefined : parseFloat(_b);\n        }\n      }\n      if(_a === undefined && _b === undefined) return 0;\n      if(_a === undefined) return lt;\n      if(_b === undefined) return gt;\n      if(_a < _b) return gt;\n      if(_a > _b) return lt;\n      return 0;\n    }\n    switch(method.method) {\n      case \"domain\":\n        return compare(\n        entityA.entity_id.split(\".\")[0],\n        entityB.entity_id.split(\".\")[0]\n        );\n      case \"entity_id\":\n        return compare(\n          entityA.entity_id,\n          entityB.entity_id\n          );\n      case \"friendly_name\":\n      case \"name\":\n        return compare(\n          entityA.attributes.friendly_name || entityA.entity_id.split(\".\")[1],\n          entityB.attributes.friendly_name || entityB.entity_id.split(\".\")[1]\n          );\n      case \"state\":\n        return compare(\n          entityA.state,\n          entityB.state\n          );\n      case \"attribute\":\n        let _a = entityA.attributes;\n        let _b = entityB.attributes;\n        let attr = method.attribute;\n        while(attr) {\n          let k;\n          [k, attr] = attr.split(\":\");\n          _a = _a[k];\n          _b = _b[k];\n          if(_a === undefined && _b === undefined) return 0;\n          if(_a === undefined) return lt;\n          if(_b === undefined) return gt;\n        }\n        return compare(_a, _b);\n      case \"last_changed\":\n        method.numeric = true;\n        // Note A and B are swapped because you'd most likely want to sort by most recently changed first\n        return compare(\n          new Date(entityB.last_changed).getTime(),\n          new Date(entityA.last_changed).getTime()\n        );\n      case \"last_updated\":\n        method.numeric=true;\n        return compare(\n          new Date(entityB.last_updated).getTime(),\n          new Date(entityA.last_updated).getTime()\n        );\n      case \"last_triggered\":\n        if(entityA.attributes.last_triggered == null\n          || entityB.attributes.last_triggered == null)\n          return 0;\n        method.numeric=true;\n        return compare(\n          new Date(entityB.attributes.last_triggered).getTime(),\n          new Date(entityA.attributes.last_triggered).getTime()\n        );\n      default:\n        return 0;\n    }\n  }\n}\n\n\n//# sourceURL=webpack:///./src/sort.js?");
+          for (const d of window.cardToolsData.devices) {
+            if (match(value, d.name_by_user) || match(value, d.name)) {
+              if (deviceEntities(d).includes(entity.entity_id)) _deviceMatch = true;
+            }
+          }
 
-/***/ })
+          if (!_deviceMatch) return false;
+          break;
 
-/******/ });
+        case "area":
+          if (!window.cardToolsData || !window.cardToolsData.areas) return false;
+          let _areaMatch = false;
+
+          for (const a of window.cardToolsData.areas) {
+            if (match(value, a.name)) {
+              if (areaDevices(a).flatMap(deviceEntities).includes(entity.entity_id)) _areaMatch = true;
+            }
+          }
+
+          if (!_areaMatch) return false;
+          break;
+
+        case 'last_changed':
+          {
+            const now = new Date().getTime();
+            const changed = new Date(entity.last_changed).getTime();
+            if (!match(value, (now - changed) / 60000)) return false;
+            break;
+          }
+
+        case 'last_updated':
+          {
+            const now = new Date().getTime();
+            const updated = new Date(entity.last_updated).getTime();
+            if (!match(value, (now - updated) / 60000)) return false;
+            break;
+          }
+
+        default:
+          return false;
+      }
+    }
+
+    return true;
+  };
+}
+
+function entity_sorter(hass, method) {
+  if (typeof method === "string") {
+    method = {
+      method
+    };
+  }
+
+  return function (a, b) {
+    const entityA = typeof a === "string" ? hass.states[a] : hass.states[a.entity];
+    const entityB = typeof b === "string" ? hass.states[b] : hass.states[b.entity];
+    if (entityA === undefined || entityB === undefined) return 0;
+    const [lt, gt] = method.reverse ? [-1, 1] : [1, -1];
+
+    function compare(_a, _b) {
+      if (method.ignore_case && _a.toLowerCase) _a = _a.toLowerCase();
+      if (method.ignore_case && _b.toLowerCase) _b = _b.toLowerCase();
+
+      if (method.numeric) {
+        if (!(isNaN(parseFloat(_a)) && isNaN(parseFloat(_b)))) {
+          _a = isNaN(parseFloat(_a)) ? undefined : parseFloat(_a);
+          _b = isNaN(parseFloat(_b)) ? undefined : parseFloat(_b);
+        }
+      }
+
+      if (_a === undefined && _b === undefined) return 0;
+      if (_a === undefined) return lt;
+      if (_b === undefined) return gt;
+      if (_a < _b) return gt;
+      if (_a > _b) return lt;
+      return 0;
+    }
+
+    switch (method.method) {
+      case "domain":
+        return compare(entityA.entity_id.split(".")[0], entityB.entity_id.split(".")[0]);
+
+      case "entity_id":
+        return compare(entityA.entity_id, entityB.entity_id);
+
+      case "friendly_name":
+      case "name":
+        return compare(entityA.attributes.friendly_name || entityA.entity_id.split(".")[1], entityB.attributes.friendly_name || entityB.entity_id.split(".")[1]);
+
+      case "state":
+        return compare(entityA.state, entityB.state);
+
+      case "attribute":
+        let _a = entityA.attributes;
+        let _b = entityB.attributes;
+        let attr = method.attribute;
+
+        while (attr) {
+          let k;
+          [k, attr] = attr.split(":");
+          _a = _a[k];
+          _b = _b[k];
+          if (_a === undefined && _b === undefined) return 0;
+          if (_a === undefined) return lt;
+          if (_b === undefined) return gt;
+        }
+
+        return compare(_a, _b);
+
+      case "last_changed":
+        method.numeric = true; // Note A and B are swapped because you'd most likely want to sort by most recently changed first
+
+        return compare(new Date(entityB.last_changed).getTime(), new Date(entityA.last_changed).getTime());
+
+      case "last_updated":
+        method.numeric = true;
+        return compare(new Date(entityB.last_updated).getTime(), new Date(entityA.last_updated).getTime());
+
+      case "last_triggered":
+        if (entityA.attributes.last_triggered == null || entityB.attributes.last_triggered == null) return 0;
+        method.numeric = true;
+        return compare(new Date(entityB.attributes.last_triggered).getTime(), new Date(entityA.attributes.last_triggered).getTime());
+
+      default:
+        return 0;
+    }
+  };
+}
+
+function fireEvent(ev, detail, entity=null) {
+  ev = new Event(ev, {
+    bubbles: true,
+    cancelable: false,
+    composed: true,
+  });
+  ev.detail = detail || {};
+  if(entity) {
+    entity.dispatchEvent(ev);
+  } else {
+    var root = lovelace_view();
+    if (root) root.dispatchEvent(ev);
+  }
+}
+
+const CUSTOM_TYPE_PREFIX = "custom:";
+
+let helpers = window.cardHelpers;
+const helperPromise = new Promise(async (resolve, reject) => {
+  if(helpers) resolve();
+
+  const updateHelpers = async () => {
+    helpers = await window.loadCardHelpers();
+    window.cardHelpers = helpers;
+    resolve();
+  };
+
+  if(window.loadCardHelpers) {
+    updateHelpers();
+  } else {
+    // If loadCardHelpers didn't exist, force load lovelace and try once more.
+    window.addEventListener("load", async () => {
+      load_lovelace();
+      if(window.loadCardHelpers) {
+        updateHelpers();
+      }
+    });
+  }
+});
+
+function errorElement(error, origConfig) {
+  const cfg = {
+    type: "error",
+    error,
+    origConfig,
+  };
+  const el = document.createElement("hui-error-card");
+  customElements.whenDefined("hui-error-card").then(() => {
+    const newel = document.createElement("hui-error-card");
+    newel.setConfig(cfg);
+    if(el.parentElement)
+      el.parentElement.replaceChild(newel, el);
+  });
+  helperPromise.then(() => {
+    fireEvent("ll-rebuild", {}, el);
+  });
+  return el;
+}
+
+function _createElement(tag, config) {
+  let el = document.createElement(tag);
+  try {
+    el.setConfig(JSON.parse(JSON.stringify(config)));
+  } catch (err) {
+    el = errorElement(err, config);
+  }
+  helperPromise.then(() => {
+    fireEvent("ll-rebuild", {}, el);
+  });
+  return el;
+}
+
+function createLovelaceElement(thing, config) {
+  if(!config || typeof config !== "object" || !config.type)
+    return errorElement(`No ${thing} type configured`, config);
+
+  let tag = config.type;
+  if(tag.startsWith(CUSTOM_TYPE_PREFIX))
+    tag = tag.substr(CUSTOM_TYPE_PREFIX.length);
+  else
+    tag = `hui-${tag}-${thing}`;
+
+  if(customElements.get(tag))
+    return _createElement(tag, config);
+
+  const el = errorElement(`Custom element doesn't exist: ${tag}.`, config);
+  el.style.display = "None";
+
+  const timer = setTimeout(() => {
+    el.style.display = "";
+  }, 2000);
+
+  customElements.whenDefined(tag).then(() => {
+    clearTimeout(timer);
+    fireEvent("ll-rebuild", {}, el);
+  });
+
+  return el;
+}
+
+function createCard(config) {
+  if(helpers) return helpers.createCardElement(config);
+  return createLovelaceElement('card', config);
+}
+
+const ID_STORAGE_KEY = 'lovelace-player-device-id';
+function _deviceID() {
+  if(!localStorage[ID_STORAGE_KEY])
+  {
+    const s4 = () => {
+      return Math.floor((1+Math.random())*100000).toString(16).substring(1);
+    };
+    if(window['fully'] && typeof fully.getDeviceId === "function")
+      localStorage[ID_STORAGE_KEY] = fully.getDeviceId();
+    else
+      localStorage[ID_STORAGE_KEY] = `${s4()}${s4()}-${s4()}${s4()}`;
+  }
+  return localStorage[ID_STORAGE_KEY];
+}
+let deviceID = _deviceID();
+
+const setDeviceID = (id) => {
+  if(id === null) return;
+  if(id === "clear") {
+    localStorage.removeItem(ID_STORAGE_KEY);
+  } else {
+    localStorage[ID_STORAGE_KEY] = id;
+  }
+  deviceID = _deviceID();
+};
+
+const params = new URLSearchParams(window.location.search);
+if(params.get('deviceID')) {
+  setDeviceID(params.get('deviceID'));
+}
+
+function subscribeRenderTemplate(conn, onChange, params, stringify=true) {
+  // params = {template, entity_ids, variables}
+  if(!conn)
+    conn = hass().connection;
+  let variables = {
+    user: hass().user.name,
+    browser: deviceID,
+    hash: location.hash.substr(1) || ' ',
+    ...params.variables,
+  };
+  let template = params.template;
+  let entity_ids = params.entity_ids;
+
+  return conn.subscribeMessage(
+    (msg) => {
+      if(stringify) {
+        let res = String(msg.result);
+        // Localize "_(key)" if found in template results
+        const localize_function = /_\([^)]*\)/g;
+        res = res.replace(localize_function, (key) => hass().localize(key.substring(2, key.length-1)) || key);
+        onChange(res);
+      } else {
+        onChange(msg.result);
+      }
+    },
+    { type: "render_template",
+      template,
+      variables,
+      entity_ids,
+    }
+  );
+}
+
+var name = "auto-entities";
+var version = "1.8.0b1";
+var description = "";
+var scripts = {
+	build: "rollup -c",
+	watch: "rollup -c --watch",
+	"update-card-tools": "npm uninstall card-tools && npm install thomasloven/lovelace-card-tools"
+};
+var author = "Thomas Lovén";
+var license = "MIT";
+var devDependencies = {
+	"@babel/core": "^7.13.1",
+	"@rollup/plugin-babel": "^5.3.0",
+	"@rollup/plugin-json": "^4.1.0",
+	"@rollup/plugin-node-resolve": "^11.2.0",
+	rollup: "^2.39.0",
+	"rollup-plugin-terser": "^7.0.2",
+	"rollup-plugin-typescript2": "^0.30.0",
+	typescript: "^4.1.5"
+};
+var dependencies = {
+	"card-tools": "github:thomasloven/lovelace-card-tools",
+	"lit-element": "^2.4.0",
+	tslib: "^2.1.0"
+};
+var pjson = {
+	name: name,
+	"private": true,
+	version: version,
+	description: description,
+	scripts: scripts,
+	author: author,
+	license: license,
+	devDependencies: devDependencies,
+	dependencies: dependencies
+};
+
+class AutoEntities extends LitElement {
+  static get properties() {
+    return {
+      hass: {}
+    };
+  }
+
+  setConfig(config) {
+    if (!config) {
+      throw new Error("No configuration.");
+    }
+
+    if (!config.card || !config.card.type) {
+      throw new Error("No card type specified.");
+    }
+
+    if (!config.filter && !config.entities) {
+      throw new Error("No filters specified.");
+    }
+
+    config = JSON.parse(JSON.stringify(config));
+
+    if (!this._config) {
+      this._config = config;
+      this.hass = hass();
+
+      this._getEntities();
+
+      this.cardConfig = {
+        [config.card_param || "entities"]: this.entities,
+        ...config.card
+      };
+      this.card = createCard(this.cardConfig);
+    } else {
+      this._config = config;
+      this.hass = this.hass;
+    }
+
+    if (config.filter && config.filter.template) {
+      this.template = "";
+
+      if (String(config.filter.template).includes("{%") || String(config.filter.template).includes("{{")) {
+        subscribeRenderTemplate(null, res => {
+          this.template = res;
+
+          this._getEntities();
+        }, {
+          template: config.filter.template,
+          variables: {
+            config
+          },
+          entity_ids: config.filter.entity_ids
+        }, false);
+      }
+    } // Reevaluate all filters once areas have been loaded
+
+
+    getData().then(() => this._getEntities());
+  }
+
+  _getEntities() {
+    const format_entities = e => {
+      if (!e) return null;
+      if (typeof e === "string") return {
+        entity: e.trim()
+      };
+      return e;
+    };
+
+    let entities = []; // Start with any entities added by the `entities` parameter
+
+    if (this._config.entities) entities = entities.concat(this._config.entities.map(format_entities));
+
+    if (!this.hass || !this._config.filter) {
+      this.entities = entities;
+      return;
+    }
+
+    if (this.template) {
+      if (typeof this.template === "string") entities = entities.concat(this.template.split(/[\s,]+/).map(format_entities));else entities = entities.concat(this.template.map(format_entities));
+    }
+
+    entities = entities.filter(Boolean);
+
+    if (this._config.filter.include) {
+      const all_entities = Object.keys(this.hass.states).map(format_entities);
+
+      for (const f of this._config.filter.include) {
+        if (f.type !== undefined) {
+          // If the filter has a type, it's a special entry
+          entities.push(f);
+          continue;
+        }
+
+        let add = all_entities.filter(entity_filter(this.hass, f)).map(e => JSON.parse(JSON.stringify(new Object({ ...e,
+          ...f.options
+        })).replace(/this.entity_id/g, e.entity)));
+
+        if (f.sort !== undefined) {
+          // Sort per filter
+          add = add.sort(entity_sorter(this.hass, f.sort));
+        }
+
+        entities = entities.concat(add);
+      }
+    }
+
+    if (this._config.filter.exclude) {
+      for (const f of this._config.filter.exclude) {
+        entities = entities.filter(e => {
+          // Don't exclude special entries
+          if (typeof e !== "string" && e.entity === undefined) return true;
+          return !entity_filter(this.hass, f)(e);
+        });
+      }
+    }
+
+    if (this._config.sort) {
+      // Sort everything
+      entities = entities.sort(entity_sorter(this.hass, this._config.sort));
+
+      if (this._config.sort.count) {
+        const start = this._config.sort.first || 0;
+        entities = entities.slice(start, start + this._config.sort.count);
+      }
+    }
+
+    if (this._config.unique) {
+      function compare(a, b) {
+        if (typeof a !== typeof b) return false;
+        if (typeof a !== "object") return a === b;
+        if (Object.keys(a).lenght !== Object.keys(b).length) return false;
+        if (Object.keys(a).some(k => !Object.keys(b).includes(k))) return false;
+        return Object.keys(a).every(k => compare(a[k], b[k]));
+      }
+
+      let newEntities = [];
+
+      for (const e of entities) {
+        if (this._config.unique === "entity" && newEntities.some(i => i.entity === e.entity)) continue;
+        if (newEntities.some(i => compare(i, e))) continue;
+        newEntities.push(e);
+      }
+
+      entities = newEntities;
+    }
+
+    this.entities = entities;
+  }
+
+  set entities(ent) {
+    function compare(a, b) {
+      if (a === b) return true;
+      if (a == null || b == null) return false;
+      if (a.length != b.length) return false;
+
+      for (var i = 0; i < a.length; i++) if (JSON.stringify(a[i]) !== JSON.stringify(b[i])) return false;
+
+      return true;
+    }
+
+    if (!compare(ent, this._entities)) {
+      this._entities = ent;
+      this.cardConfig = { ...this.cardConfig,
+        entities: this._entities
+      };
+
+      if (ent.length === 0 && this._config.show_empty === false) {
+        this.style.display = "none";
+        this.style.margin = "0";
+      } else {
+        this.style.display = null;
+        this.style.margin = null;
+      }
+    }
+  }
+
+  get entities() {
+    return this._entities;
+  }
+
+  set cardConfig(cardConfig) {
+    this._cardConfig = cardConfig;
+    if (this.card) this.card.setConfig(cardConfig);
+  }
+
+  get cardConfig() {
+    return this._cardConfig;
+  }
+
+  updated(changedProperties) {
+    if (changedProperties.has("hass") && this.hass) {
+      this.card.hass = this.hass; // Run this in a timeout to improve performance
+
+      setTimeout(() => this._getEntities(), 0);
+    }
+  }
+
+  createRenderRoot() {
+    return this;
+  }
+
+  render() {
+    return html` ${this.card}`;
+  }
+
+  getCardSize() {
+    let len = 0;
+    if (this.card && this.card.getCardSize) len = this.card.getCardSize();
+    if (len === 1 && this.entities.length) len = this.entities.length;
+    if (len === 0 && this._config.filter && this._config.filter.include) len = Object.keys(this._config.filter.include).length;
+    return len || 1;
+  }
+
+}
+
+if (!customElements.get("auto-entities")) {
+  customElements.define("auto-entities", AutoEntities);
+  console.info(`%cAUTO-ENTITIES ${pjson.version} IS INSTALLED`, "color: green; font-weight: bold", "");
+}
