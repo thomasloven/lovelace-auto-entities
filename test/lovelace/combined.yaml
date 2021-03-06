@@ -72,8 +72,8 @@ cards:
         filter:
           include:
             - or:
-              - domain: light
-              - domain: switch
+                - domain: light
+                - domain: switch
 
   - type: vertical-stack
     cards:
@@ -88,6 +88,12 @@ cards:
               - state: "on"
                 not:
                   domain: light
+          <<: *card
+          filter:
+            include:
+              - state: "on"
+            exclude:
+              - domain: light
           ```
       - <<: *card
         filter:
@@ -95,3 +101,9 @@ cards:
             - state: "on"
               not:
                 domain: light
+      - <<: *card
+        filter:
+          include:
+            - state: "on"
+          exclude:
+            - domain: light

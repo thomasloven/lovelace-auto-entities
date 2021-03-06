@@ -99,3 +99,30 @@ cards:
             - domain: light
               options:
                 name: this.entity_id
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 4: Updating template
+
+          ```
+          <<: *card
+          filter:
+          {%raw%}
+            template: |
+              {{ states.light
+              | selectattr("state", "==", "on")
+              | map(attribute="entity_id")
+              | list
+              }}
+          {% endraw%}
+          ```
+      - <<: *card
+        filter:
+          template: |
+            {{ states.light
+            | selectattr("state", "==", "on")
+            | map(attribute="entity_id")
+            | list
+            }}
