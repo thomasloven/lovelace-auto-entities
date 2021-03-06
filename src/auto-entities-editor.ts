@@ -23,19 +23,6 @@ const FILTER_OPTIONS = [
   "last_triggered",
 ];
 
-async function json2yaml(json) {
-  const el = document.createElement("hui-card-element-editor") as any;
-  el._setConfig = () => {};
-  el.value = json;
-  return el.yaml;
-}
-async function yaml2json(yaml) {
-  const el = document.createElement("hui-card-element-editor") as any;
-  el._setConfig = () => {};
-  el.yaml = yaml;
-  return el.value;
-}
-
 class AutoEntitiesEditor extends LitElement {
   @internalProperty() _config: AutoEntitiesConfig;
 
@@ -102,6 +89,14 @@ class AutoEntitiesEditor extends LitElement {
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
+  _changeGroupOptions(group, ev) {
+    if (!this._config) return;
+    this._config = { ...this._config };
+    this._config.filter.include[group].options = ev.detail.value;
+    this.dispatchEvent(
+      new CustomEvent("config-changed", { detail: { config: this._config } })
+    );
+  }
 
   _addFilter(group) {
     if (!this._config) return;
@@ -156,9 +151,21 @@ class AutoEntitiesEditor extends LitElement {
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
+  _changeCardParam(ev) {
+    if (!this._config) return;
+    const newParam = ev.target.value == "" ? undefined : ev.target.value;
+    this._config = {
+      ...this._config,
+      card_param: newParam,
+    };
+    delete this._config.card[newParam ?? "entities"];
+    this.dispatchEvent(
+      new CustomEvent("config-changed", { detail: { config: this._config } })
+    );
+  }
   _getCardConfig() {
     const cfg = { ...this._config.card };
-    cfg.entities = []; // TODO: card_param
+    cfg[this._config.card_param || "entities"] = []; // TODO: card_param
     return cfg;
   }
   _handleCardPicked(ev) {
@@ -175,7 +182,7 @@ class AutoEntitiesEditor extends LitElement {
     ev.stopPropagation();
     if (!this._config) return;
     const cardConfig = { ...ev.detail.config };
-    delete cardConfig.entities; //TODO: card_param
+    delete cardConfig[this._config.card_param || "entities"]; //TODO: card_param
 
     this._config = { ...this._config, card: cardConfig };
     this._cardGUIModeAvailable = ev.detail.guiModeAvailable;
@@ -254,38 +261,62 @@ class AutoEntitiesEditor extends LitElement {
               ? html`
                   ${Object.entries(group).map(
                     ([filter, value], key_idx) => html`
-                      <div class="option">
-                        <paper-dropdown-menu>
-                          <paper-listbox
-                            .selected=${FILTER_OPTIONS.indexOf(filter)}
-                            slot="dropdown-content"
-                            @selected-item-changed=${(ev) =>
-                              this._changeFilterKey(group_idx, filter, ev)}
-                          >
-                            ${FILTER_OPTIONS.map(
-                              (f) => html` <paper-item>${f}</paper-item> `
-                            )}
-                          </paper-listbox>
-                        </paper-dropdown-menu>
-                        <paper-input
-                          .value=${value}
-                          @change=${(ev) =>
-                            this._changeFilterValue(group_idx, filter, ev)}
-                        >
-                          <mwc-icon-button
-                            slot="suffix"
-                            @click=${() =>
-                              this._removeFilter(group_idx, filter)}
-                          >
-                            <ha-icon .icon=${"mdi:close"}></ha-icon>
-                          </mwc-icon-button>
-                        </paper-input>
-                      </div>
+                      ${FILTER_OPTIONS.includes(filter)
+                        ? html`
+                            <div class="option">
+                              <paper-dropdown-menu>
+                                <paper-listbox
+                                  .selected=${FILTER_OPTIONS.indexOf(filter)}
+                                  slot="dropdown-content"
+                                  @selected-item-changed=${(ev) =>
+                                    this._changeFilterKey(
+                                      group_idx,
+                                      filter,
+                                      ev
+                                    )}
+                                >
+                                  ${FILTER_OPTIONS.map(
+                                    (f) => html` <paper-item>${f}</paper-item> `
+                                  )}
+                                </paper-listbox>
+                              </paper-dropdown-menu>
+                              <paper-input
+                                .value=${value}
+                                @change=${(ev) =>
+                                  this._changeFilterValue(
+                                    group_idx,
+                                    filter,
+                                    ev
+                                  )}
+                              >
+                                <mwc-icon-button
+                                  slot="suffix"
+                                  @click=${() =>
+                                    this._removeFilter(group_idx, filter)}
+                                >
+                                  <ha-icon .icon=${"mdi:close"}></ha-icon>
+                                </mwc-icon-button>
+                              </paper-input>
+                            </div>
+                          `
+                        : filter === "options"
+                        ? html``
+                        : html`<p><b>Some filters are not shown</b></p>
+                            <p>
+                              Please switch to the CODE EDITOR to access all
+                              options.
+                            </p>`}
                     `
                   )}
                   <mwc-button @click=${() => this._addFilter(group_idx)}>
                     <ha-icon .icon=${"mdi:plus"}></ha-icon>Add filter
                   </mwc-button>
+                  <ha-yaml-editor
+                    .label=${"Options"}
+                    .defaultValue=${group.options ?? ""}
+                    @value-changed=${(ev) =>
+                      this._changeGroupOptions(group_idx, ev)}
+                  ></ha-yaml-editor>
                 `
               : html`<ha-yaml-editor
                   .defaultValue=${group}
@@ -313,6 +344,12 @@ class AutoEntitiesEditor extends LitElement {
             @change=${this._showEmptyToggle}
           ></ha-switch>
         </ha-formfield>
+        <paper-input
+          .label=${"Card parameter"}
+          .value=${this._config.card_param ?? ""}
+          @change=${this._changeCardParam}
+        >
+        </paper-input>
         ${this._config.card
           ? html`
               <div class="card-options">
