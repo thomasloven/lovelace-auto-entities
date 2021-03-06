@@ -112,11 +112,11 @@ const FILTERS: Record<
       (e) => e.entity_id === entity.entity_id
     );
     if (!ent) return false;
+    let area = (await getAreas(hass)).find((a) => a.area_id === ent.area_id);
+    if (area) return match(value, area.name);
     const device = (await getDevices(hass)).find((d) => d.id === ent.device_id);
     if (!device) return false;
-    const area = (await getAreas(hass)).find(
-      (a) => a.area_id === device.area_id
-    );
+    area = (await getAreas(hass)).find((a) => a.area_id === device.area_id);
     if (!area) return false;
     return match(value, area.name);
   },
