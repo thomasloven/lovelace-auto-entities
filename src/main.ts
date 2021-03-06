@@ -1,4 +1,4 @@
-import { LitElement, html, css, property } from "lit-element";
+import { LitElement, html, property } from "lit-element";
 import { hasTemplate } from "card-tools/src/templates";
 import { bind_template, unbind_template } from "./templates";
 import { filter_entity } from "./filter";
@@ -10,6 +10,7 @@ import {
   LovelaceRowConfig,
 } from "./types";
 import pjson from "../package.json";
+import "./auto-entities-editor";
 
 function compare_deep(a: any, b: any) {
   if (a === b) return true;
@@ -30,13 +31,17 @@ function compare_deep(a: any, b: any) {
 }
 
 class AutoEntities extends LitElement {
-  _config: AutoEntitiesConfig;
+  @property() _config: AutoEntitiesConfig;
   @property() hass: any;
   @property() card: LovelaceCard;
   @property() _template: string[];
   _entities: EntityList;
   _renderer;
+  _cardConfig;
 
+  static getConfigElement() {
+    return document.createElement("auto-entities-editor");
+  }
   static getStubConfig() {
     return {
       card: {
@@ -69,6 +74,12 @@ class AutoEntities extends LitElement {
     ) {
       bind_template(this._renderer, this._config.filter.template, { config });
     }
+
+    (async () => {
+      if (this.card) this.card.hass = this.hass;
+      const entities = await this.update_entities();
+      this.update_card(entities);
+    })();
   }
 
   connectedCallback() {
@@ -88,13 +99,20 @@ class AutoEntities extends LitElement {
   }
 
   async update_card(entities: EntityList) {
-    if (this._entities && compare_deep(entities, this._entities)) return;
+    if (
+      this._entities &&
+      compare_deep(entities, this._entities) &&
+      compare_deep(this._cardConfig, this._config.card)
+    )
+      return;
+    const newType = this._cardConfig?.type !== this._config.card.type;
     this._entities = entities;
+    this._cardConfig == JSON.parse(JSON.stringify(this._config.card));
     const cardConfig = {
       [this._config.card_param || "entities"]: entities,
       ...this._config.card,
     };
-    if (!this.card) {
+    if (!this.card || newType) {
       const helpers = await (window as any).loadCardHelpers();
       this.card = await helpers.createCardElement(cardConfig);
     } else {
@@ -226,12 +244,4 @@ if (!customElements.get("auto-entities")) {
     "color: green; font-weight: bold",
     ""
   );
-  (window as any).customCards = (window as any).customCards || [];
-  (window as any).customCards.push({
-    type: "auto-entities",
-    name: "Auto Entities",
-    preview: false,
-    description:
-      "Entity Filter on Steroids. Auto Entities allows you to fill other cards with entities automatically, based on a number of attributes.",
-  });
 }

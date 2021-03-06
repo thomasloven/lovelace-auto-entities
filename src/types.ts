@@ -20,11 +20,11 @@ interface FilterConfig {
   last_changed?: string | number;
   last_updated?: string | number;
 
-  not: FilterConfig;
-  or: FilterConfig[];
+  not?: FilterConfig;
+  or?: FilterConfig[];
 
   options?: any;
-  sort: SortConfig;
+  sort?: SortConfig;
   type?: string;
 }
 
