@@ -1,10 +1,15 @@
 import { LitElement, html, css, property } from "lit-element";
-import { filter_entity } from "./filter";
-import pjson from "../package.json";
-import { AutoEntitiesConfig, HACard } from "./types";
-import { bind_template, unbind_template } from "./templates";
 import { hasTemplate } from "card-tools/src/templates";
+import { bind_template, unbind_template } from "./templates";
+import { filter_entity } from "./filter";
 import { get_sorter } from "./sort";
+import {
+  AutoEntitiesConfig,
+  EntityList,
+  LovelaceCard,
+  LovelaceRowConfig,
+} from "./types";
+import pjson from "../package.json";
 
 function compare_deep(a: any, b: any) {
   if (a === b) return true;
@@ -27,9 +32,9 @@ function compare_deep(a: any, b: any) {
 class AutoEntities extends LitElement {
   _config: AutoEntitiesConfig;
   @property() hass: any;
-  @property() card: HACard;
+  @property() card: LovelaceCard;
   @property() _template: string[];
-  _entities;
+  _entities: EntityList;
   _renderer;
 
   setConfig(config: AutoEntitiesConfig) {
@@ -70,7 +75,7 @@ class AutoEntities extends LitElement {
     unbind_template(this._renderer);
   }
 
-  async update_card(entities: any) {
+  async update_card(entities: EntityList) {
     if (this._entities && compare_deep(entities, this._entities)) return;
     this._entities = entities;
     const cardConfig = {
@@ -90,11 +95,12 @@ class AutoEntities extends LitElement {
   }
 
   async update_entities() {
-    const format = (entity) => {
+    const format = (entity: LovelaceRowConfig | string): LovelaceRowConfig => {
       if (!entity) return null;
       return typeof entity === "string" ? { entity: entity.trim() } : entity;
     };
-    let entities = [...(this._config?.entities?.map(format) || [])];
+
+    let entities: EntityList = [...(this._config?.entities?.map(format) || [])];
 
     if (!this.hass || !this._config.filter) {
       return entities;
@@ -113,7 +119,7 @@ class AutoEntities extends LitElement {
           continue;
         }
 
-        let add = [];
+        let add: EntityList = [];
         for (const entity of all_entities) {
           if (await filter_entity(this.hass, filter, entity.entity))
             add.push(
@@ -157,7 +163,7 @@ class AutoEntities extends LitElement {
     }
 
     if (this._config.unique) {
-      let newEntities = [];
+      let newEntities: EntityList = [];
       for (const e of entities) {
         if (
           this._config.unique === "entity" &&
@@ -191,9 +197,9 @@ class AutoEntities extends LitElement {
     return html`${this.card}`;
   }
 
-  getCardSize() {
+  async getCardSize() {
     let len = 0;
-    if (this.card && this.card.getCardSize) len = this.card.getCardSize();
+    if (this.card && this.card.getCardSize) len = await this.card.getCardSize();
     if (len === 1 && this._entities?.length) len = this._entities.length;
     if (len === 0 && this._config.filter && this._config.filter.include)
       len = Object.keys(this._config.filter.include).length;

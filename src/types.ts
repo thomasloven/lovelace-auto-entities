@@ -1,4 +1,4 @@
-interface SortConfig {
+export interface SortConfig {
   method: string;
   reverse?: boolean;
   ignore_case?: boolean;
@@ -30,7 +30,7 @@ interface FilterConfig {
 
 export interface AutoEntitiesConfig {
   card: any;
-  entities: any[];
+  entities: Array<LovelaceRowConfig | string>;
   filter: {
     template?: string;
     include?: FilterConfig[];
@@ -46,10 +46,14 @@ export interface AutoEntitiesConfig {
   entity_ids?: any[];
 }
 
-export interface HACard {
+export interface LovelaceRowConfig {
+  entity?: string;
+  type?: string;
+}
+export interface LovelaceCard {
   hass: any;
-  setConfig: (_: any) => void;
-  getCardSize?: () => number;
+  setConfig(config: any): void;
+  getCardSize?(): number | Promise<number>;
 }
 
 export interface HAState {
@@ -66,3 +70,7 @@ export interface HassObject {
 }
 
 export type MatchValue = string | number;
+
+export type EntityList = Array<LovelaceRowConfig>;
+
+export interface CardEntity {}

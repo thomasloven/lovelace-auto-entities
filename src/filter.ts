@@ -1,9 +1,3 @@
-import {
-  areaByName,
-  areaDevices,
-  deviceByName,
-  deviceEntities,
-} from "card-tools/src/devices";
 import { HAState, HassObject } from "./types";
 
 function match(pattern: any, value: any) {

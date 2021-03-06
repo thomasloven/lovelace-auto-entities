@@ -1,7 +1,11 @@
-function compare(_a, _b, method) {
+import { HassObject, HAState, LovelaceRowConfig, SortConfig } from "./types";
+
+function compare(_a: any, _b: any, method: SortConfig) {
   const [lt, gt] = method.reverse ? [-1, 1] : [1, -1];
-  if (method.ignore_case && _a.toLowerCase) _a = _a.toLowerCase();
-  if (method.ignore_case && _b.toLowerCase) _b = _b.toLowerCase();
+  if (method.ignore_case) {
+    _a = _a.toLowerCase?.() ?? _a;
+    _b = _b.toLowerCase?.() ?? _b;
+  }
   if (method.numeric) {
     if (!(isNaN(parseFloat(_a)) && isNaN(parseFloat(_b)))) {
       _a = isNaN(parseFloat(_a)) ? undefined : parseFloat(_a);
@@ -16,7 +20,10 @@ function compare(_a, _b, method) {
   return 0;
 }
 
-const SORTERS: Record<string, (a: any, b: any, method: any) => number> = {
+const SORTERS: Record<
+  string,
+  (a: HAState, b: HAState, method: SortConfig) => number
+> = {
   domain: (a, b, method) => {
     return compare(
       a.entity_id.split(".")[0],
@@ -45,7 +52,16 @@ const SORTERS: Record<string, (a: any, b: any, method: any) => number> = {
     return compare(a.state, b.state, method);
   },
   attribute: (a, b, method) => {
-    return 0;
+    const [lt, gt] = method.reverse ? [-1, 1] : [1, -1];
+    let _a = a.attributes;
+    let _b = b.attributes;
+    for (const step of method.attribute.split(":")) {
+      [_a, _b] = [_a[step], _b[step]];
+      if (_a === undefined && _b === undefined) return 0;
+      if (_a === undefined) return lt;
+      if (_b === undefined) return gt;
+    }
+    return compare(_a, _b, method);
   },
   last_changed: (a, b, method) => {
     method.numeric = true;
@@ -78,7 +94,10 @@ const SORTERS: Record<string, (a: any, b: any, method: any) => number> = {
   },
 };
 
-export function get_sorter(hass, method) {
+export function get_sorter(
+  hass: HassObject,
+  method: SortConfig
+): (a: LovelaceRowConfig, b: LovelaceRowConfig) => number {
   return function (a, b) {
     return (
       SORTERS[method.method]?.(
