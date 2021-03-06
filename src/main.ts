@@ -37,6 +37,18 @@ class AutoEntities extends LitElement {
   _entities: EntityList;
   _renderer;
 
+  static getStubConfig() {
+    return {
+      card: {
+        type: "entities",
+      },
+      filter: {
+        include: [],
+        exclude: [],
+      },
+    };
+  }
+
   setConfig(config: AutoEntitiesConfig) {
     if (!config) {
       throw new Error("No configuration.");
@@ -214,4 +226,12 @@ if (!customElements.get("auto-entities")) {
     "color: green; font-weight: bold",
     ""
   );
+  (window as any).customCards = (window as any).customCards || [];
+  (window as any).customCards.push({
+    type: "auto-entities",
+    name: "Auto Entities",
+    preview: false,
+    description:
+      "Entity Filter on Steroids. Auto Entities allows you to fill other cards with entities automatically, based on a number of attributes.",
+  });
 }
