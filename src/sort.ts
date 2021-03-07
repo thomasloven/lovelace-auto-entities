@@ -24,6 +24,9 @@ const SORTERS: Record<
   string,
   (a: HAState, b: HAState, method: SortConfig) => number
 > = {
+  none: () => {
+    return 0;
+  },
   domain: (a, b, method) => {
     return compare(
       a.entity_id.split(".")[0],
@@ -88,7 +91,7 @@ const SORTERS: Record<
     method.numeric = true;
     return compare(
       new Date(a.attributes.last_triggered).getTime(),
-      new Date(b.attributes.lat_triggered).getTime(),
+      new Date(b.attributes.last_triggered).getTime(),
       method
     );
   },

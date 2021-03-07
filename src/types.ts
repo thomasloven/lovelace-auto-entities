@@ -53,7 +53,7 @@ export interface LovelaceRowConfig {
 export interface LovelaceCard {
   hass: any;
   setConfig(config: any): void;
-  getCardSize?(): number | Promise<number>;
+  getCardSize?(): number;
 }
 
 export interface HAState {

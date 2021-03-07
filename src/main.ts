@@ -38,6 +38,7 @@ class AutoEntities extends LitElement {
   _entities: EntityList;
   _renderer;
   _cardConfig;
+  _updateCooldown = { timer: undefined, rerun: false };
 
   static getConfigElement() {
     return document.createElement("auto-entities-editor");
@@ -75,11 +76,7 @@ class AutoEntities extends LitElement {
       bind_template(this._renderer, this._config.filter.template, { config });
     }
 
-    (async () => {
-      if (this.card) this.card.hass = this.hass;
-      const entities = await this.update_entities();
-      this.update_card(entities);
-    })();
+    queueMicrotask(() => this.update_all());
   }
 
   connectedCallback() {
@@ -98,6 +95,25 @@ class AutoEntities extends LitElement {
     unbind_template(this._renderer);
   }
 
+  async update_all() {
+    if (!this.hass) return;
+    if (this.card) this.card.hass = this.hass;
+
+    if (this._updateCooldown.timer) {
+      this._updateCooldown.rerun = true;
+      return;
+    } else {
+      this._updateCooldown.rerun = false;
+      this._updateCooldown.timer = window.setTimeout(() => {
+        this._updateCooldown.timer = undefined;
+        if (this._updateCooldown.rerun) this.update_all();
+      }, 500);
+    }
+
+    const entities = await this.update_entities();
+    this.update_card(entities);
+  }
+
   async update_card(entities: EntityList) {
     if (
       this._entities &&
@@ -107,7 +123,7 @@ class AutoEntities extends LitElement {
       return;
     const newType = this._cardConfig?.type !== this._config.card.type;
     this._entities = entities;
-    this._cardConfig == JSON.parse(JSON.stringify(this._config.card));
+    this._cardConfig = JSON.parse(JSON.stringify(this._config.card));
     const cardConfig = {
       [this._config.card_param || "entities"]: entities,
       ...this._config.card,
@@ -214,9 +230,7 @@ class AutoEntities extends LitElement {
       changedProperties.has("_template") ||
       (changedProperties.has("hass") && this.hass)
     ) {
-      if (this.card) this.card.hass = this.hass;
-      const entities = await this.update_entities();
-      this.update_card(entities);
+      queueMicrotask(() => this.update_all());
     }
   }
 
@@ -227,13 +241,14 @@ class AutoEntities extends LitElement {
     return html`${this.card}`;
   }
 
-  async getCardSize() {
+  getCardSize() {
+    return 100;
     let len = 0;
-    if (this.card && this.card.getCardSize) len = await this.card.getCardSize();
+    if (this.card && this.card.getCardSize) len = this.card.getCardSize();
     if (len === 1 && this._entities?.length) len = this._entities.length;
     if (len === 0 && this._config.filter && this._config.filter.include)
       len = Object.keys(this._config.filter.include).length;
-    return len || 1;
+    return len || 5;
   }
 }
 

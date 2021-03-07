@@ -7,7 +7,7 @@ import {
   css,
   query,
 } from "lit-element";
-
+import { until } from "lit-html/directives/until";
 import { AutoEntitiesConfig } from "./types";
 
 const FILTER_OPTIONS = [
@@ -23,6 +23,30 @@ const FILTER_OPTIONS = [
   "last_triggered",
 ];
 
+const SORT_METHODS = [
+  "none",
+  "domain",
+  "entity_id",
+  "friendly_name",
+  "state",
+  "last_changed",
+  "last_updated",
+  "last_triggered",
+];
+
+async function yaml2json(yaml) {
+  const el = document.createElement("hui-card-element-editor") as any;
+  el._setConfig = () => {};
+  el.yaml = yaml;
+  return el.value;
+}
+async function json2yaml(json) {
+  const el = document.createElement("hui-card-element-editor") as any;
+  el._setConfig = () => {};
+  el.value = json;
+  return el.yaml;
+}
+
 class AutoEntitiesEditor extends LitElement {
   @internalProperty() _config: AutoEntitiesConfig;
 
@@ -36,7 +60,24 @@ class AutoEntitiesEditor extends LitElement {
   @query("hui-card-element-editor") private _cardEditorEl?;
 
   setConfig(config) {
-    this._config = config;
+    this._config = JSON.parse(JSON.stringify(config));
+  }
+
+  async updated() {
+    const groupOptions = this.shadowRoot.querySelectorAll(".group-option");
+    for (const el of [...groupOptions]) {
+      if (!(el as any).value)
+        (el as any).value = await json2yaml(
+          this._config.filter.include[(el as any).group]?.options || {}
+        );
+    }
+    const groupEdits = this.shadowRoot.querySelectorAll(".group-edit");
+    for (const el of [...groupEdits]) {
+      if (!(el as any).value)
+        (el as any).value = await json2yaml(
+          this._config.filter.include[(el as any).group] || {}
+        );
+    }
   }
 
   _handleSwitchTab(ev: CustomEvent) {
@@ -81,18 +122,20 @@ class AutoEntitiesEditor extends LitElement {
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
-  _changeSpecialEntry(group, ev) {
+  async _changeSpecialEntry(group, ev) {
     if (!this._config) return;
     this._config = { ...this._config };
-    this._config.filter.include[group] = ev.detail.value;
+    this._config.filter.include[group] = await yaml2json(ev.detail.value);
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
-  _changeGroupOptions(group, ev) {
+  async _changeGroupOptions(group, ev) {
     if (!this._config) return;
     this._config = { ...this._config };
-    this._config.filter.include[group].options = ev.detail.value;
+    this._config.filter.include[group].options = await yaml2json(
+      ev.detail.value
+    );
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
@@ -114,6 +157,8 @@ class AutoEntitiesEditor extends LitElement {
     if (!this._config) return;
     this._config = { ...this._config };
     delete this._config.filter.include[group][key];
+    if (Object.keys(this._config.filter.include[group]).length === 0)
+      return this._deleteFilterGroup(group);
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
@@ -136,6 +181,26 @@ class AutoEntitiesEditor extends LitElement {
     if (!this._config) return;
     this._config = { ...this._config };
     this._config.filter.include[group][filter] = ev.target.value;
+    this.dispatchEvent(
+      new CustomEvent("config-changed", { detail: { config: this._config } })
+    );
+  }
+
+  _changeSortMethod(ev) {
+    if (!this._config) return;
+    this._config = { ...this._config };
+    const newMethod = SORT_METHODS[ev.target.selected];
+    this._config.sort = this._config.sort ?? {};
+    this._config.sort.method = newMethod;
+    this.dispatchEvent(
+      new CustomEvent("config-changed", { detail: { config: this._config } })
+    );
+  }
+  _sortOptionToggle(option, ev) {
+    if (!this._config) return;
+    this._config = { ...this._config };
+    this._config.sort = this._config.sort ?? {};
+    this._config.sort[option] = ev.target.checked;
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
@@ -165,7 +230,7 @@ class AutoEntitiesEditor extends LitElement {
   }
   _getCardConfig() {
     const cfg = { ...this._config.card };
-    cfg[this._config.card_param || "entities"] = []; // TODO: card_param
+    cfg[this._config.card_param || "entities"] = [];
     return cfg;
   }
   _handleCardPicked(ev) {
@@ -182,7 +247,7 @@ class AutoEntitiesEditor extends LitElement {
     ev.stopPropagation();
     if (!this._config) return;
     const cardConfig = { ...ev.detail.config };
-    delete cardConfig[this._config.card_param || "entities"]; //TODO: card_param
+    delete cardConfig[this._config.card_param || "entities"];
 
     this._config = { ...this._config, card: cardConfig };
     this._cardGUIModeAvailable = ev.detail.guiModeAvailable;
@@ -220,13 +285,16 @@ class AutoEntitiesEditor extends LitElement {
             @MDCTabBar:activated=${this._handleSwitchTab}
           >
             <mwc-tab .label=${"Filters"}></mwc-tab>
+            <mwc-tab .label=${"Sorting"}></mwc-tab>
             <mwc-tab .label=${"Card"}></mwc-tab>
           </mwc-tab-bar>
         </div>
         <div id="editor">
-          ${this._selectedTab === 0
-            ? this._renderFilterEditor()
-            : this._renderCardEditor()}
+          ${[
+            this._renderFilterEditor,
+            this._renderSortEditor,
+            this._renderCardEditor,
+          ][this._selectedTab].bind(this)()}
         </div>
       </div>
     `;
@@ -311,18 +379,20 @@ class AutoEntitiesEditor extends LitElement {
                   <mwc-button @click=${() => this._addFilter(group_idx)}>
                     <ha-icon .icon=${"mdi:plus"}></ha-icon>Add filter
                   </mwc-button>
-                  <ha-yaml-editor
-                    .label=${"Options"}
-                    .defaultValue=${group.options ?? ""}
+                  <p>Options</p>
+                  <ha-code-editor
+                    class="group-option"
+                    .group=${group_idx}
                     @value-changed=${(ev) =>
                       this._changeGroupOptions(group_idx, ev)}
-                  ></ha-yaml-editor>
+                  ></ha-code-editor>
                 `
-              : html`<ha-yaml-editor
-                  .defaultValue=${group}
+              : html`<ha-code-editor
+                  class="group-edit"
+                  .group=${group_idx}
                   @value-changed=${(ev) =>
                     this._changeSpecialEntry(group_idx, ev)}
-                ></ha-yaml-editor>`}
+                ></ha-code-editor>`}
           </div>
         `
       )}
@@ -332,6 +402,42 @@ class AutoEntitiesEditor extends LitElement {
       <mwc-button @click=${this._addSpecialEntry}>
         <ha-icon .icon=${"mdi:plus"}></ha-icon>Add non-filter entry
       </mwc-button>
+    `;
+  }
+
+  _renderSortEditor() {
+    return html`
+      <div class="sort">
+        ${this._config.sort?.method &&
+        !SORT_METHODS.includes(this._config.sort.method)
+          ? html`<p>
+                <b>Your sort method is not handled by the GUI editor.</b>
+              </p>
+              <p>Please switch to the CODE EDITOR to access all options.</p>`
+          : html`
+              Method:
+              <paper-dropdown-menu>
+                <paper-listbox
+                  .selected=${SORT_METHODS.includes(this._config.sort?.method)
+                    ? SORT_METHODS.indexOf(this._config.sort?.method)
+                    : 0}
+                  slot="dropdown-content"
+                  @selected-item-changed=${this._changeSortMethod}
+                >
+                  ${SORT_METHODS.map(
+                    (f) => html` <paper-item>${f}</paper-item> `
+                  )}
+                </paper-listbox>
+              </paper-dropdown-menu>
+              <ha-formfield .label=${"Reverse"}>
+                <ha-switch
+                  .checked=${this._config.sort?.reverse === true}
+                  @change=${(ev) => this._sortOptionToggle("reverse", ev)}
+                ></ha-switch>
+                <ha-formfield> </ha-formfield
+              ></ha-formfield>
+            `}
+      </div>
     `;
   }
 
