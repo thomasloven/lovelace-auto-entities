@@ -34,19 +34,6 @@ const SORT_METHODS = [
   "last_triggered",
 ];
 
-async function yaml2json(yaml) {
-  const el = document.createElement("hui-card-element-editor") as any;
-  el._setConfig = () => {};
-  el.yaml = yaml;
-  return el.value;
-}
-async function json2yaml(json) {
-  const el = document.createElement("hui-card-element-editor") as any;
-  el._setConfig = () => {};
-  el.value = json;
-  return el.yaml;
-}
-
 class AutoEntitiesEditor extends LitElement {
   @internalProperty() _config: AutoEntitiesConfig;
 
@@ -61,23 +48,6 @@ class AutoEntitiesEditor extends LitElement {
 
   setConfig(config) {
     this._config = JSON.parse(JSON.stringify(config));
-  }
-
-  async updated() {
-    const groupOptions = this.shadowRoot.querySelectorAll(".group-option");
-    for (const el of [...groupOptions]) {
-      if (!(el as any).value)
-        (el as any).value = await json2yaml(
-          this._config.filter.include[(el as any).group]?.options || {}
-        );
-    }
-    const groupEdits = this.shadowRoot.querySelectorAll(".group-edit");
-    for (const el of [...groupEdits]) {
-      if (!(el as any).value)
-        (el as any).value = await json2yaml(
-          this._config.filter.include[(el as any).group] || {}
-        );
-    }
   }
 
   _handleSwitchTab(ev: CustomEvent) {
@@ -125,7 +95,7 @@ class AutoEntitiesEditor extends LitElement {
   async _changeSpecialEntry(group, ev) {
     if (!this._config) return;
     this._config = { ...this._config };
-    this._config.filter.include[group] = await yaml2json(ev.detail.value);
+    this._config.filter.include[group] = ev.detail.value;
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
@@ -133,9 +103,7 @@ class AutoEntitiesEditor extends LitElement {
   async _changeGroupOptions(group, ev) {
     if (!this._config) return;
     this._config = { ...this._config };
-    this._config.filter.include[group].options = await yaml2json(
-      ev.detail.value
-    );
+    this._config.filter.include[group].options = ev.detail.value;
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
@@ -379,20 +347,21 @@ class AutoEntitiesEditor extends LitElement {
                   <mwc-button @click=${() => this._addFilter(group_idx)}>
                     <ha-icon .icon=${"mdi:plus"}></ha-icon>Add filter
                   </mwc-button>
-                  <p>Options</p>
-                  <ha-code-editor
-                    class="group-option"
+                  <ha-yaml-editor
+                    .label=${"Options"}
+                    .defaultValue=${this._config.filter.include[group_idx]
+                      .options}
                     .group=${group_idx}
                     @value-changed=${(ev) =>
                       this._changeGroupOptions(group_idx, ev)}
-                  ></ha-code-editor>
+                  ></ha-yaml-editor>
                 `
-              : html`<ha-code-editor
-                  class="group-edit"
+              : html`<ha-yaml-editor
+                  .defaultValue=${this._config.filter.include[group_idx]}
                   .group=${group_idx}
                   @value-changed=${(ev) =>
                     this._changeSpecialEntry(group_idx, ev)}
-                ></ha-code-editor>`}
+                ></ha-yaml-editor>`}
           </div>
         `
       )}
