@@ -39,6 +39,8 @@ class AutoEntities extends LitElement {
   _renderer;
   _cardConfig;
   _updateCooldown = { timer: undefined, rerun: false };
+  _cardBuilt?: Promise<void>;
+  _cardBuiltResolve?;
 
   static getConfigElement() {
     return document.createElement("auto-entities-editor");
@@ -75,6 +77,10 @@ class AutoEntities extends LitElement {
     ) {
       bind_template(this._renderer, this._config.filter.template, { config });
     }
+
+    this._cardBuilt = new Promise(
+      (resolve) => (this._cardBuiltResolve = resolve)
+    );
 
     queueMicrotask(() => this.update_all());
   }
@@ -134,6 +140,7 @@ class AutoEntities extends LitElement {
     } else {
       this.card.setConfig(cardConfig);
     }
+    this._cardBuiltResolve?.();
     this.card.hass = this.hass;
     const hide = entities.length === 0 && this._config.show_empty === false;
     this.style.display = hide ? "none" : null;
@@ -241,12 +248,12 @@ class AutoEntities extends LitElement {
     return html`${this.card}`;
   }
 
-  getCardSize() {
-    return 100;
+  async getCardSize() {
     let len = 0;
-    if (this.card && this.card.getCardSize) len = this.card.getCardSize();
+    await this._cardBuilt;
+    if (this.card && this.card.getCardSize) len = await this.card.getCardSize();
     if (len === 1 && this._entities?.length) len = this._entities.length;
-    if (len === 0 && this._config.filter && this._config.filter.include)
+    if (len === 0 && this._config.filter?.include)
       len = Object.keys(this._config.filter.include).length;
     return len || 5;
   }
