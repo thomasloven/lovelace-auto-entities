@@ -36,7 +36,7 @@ class AutoEntities extends LitElement {
   @property() card: LovelaceCard;
   @property() _template: string[];
   _entities: EntityList;
-  _renderer;
+  //_renderer;
   _cardConfig;
   _updateCooldown = { timer: undefined, rerun: false };
   _cardBuilt?: Promise<void>;
@@ -70,7 +70,6 @@ class AutoEntities extends LitElement {
     config = JSON.parse(JSON.stringify(config));
     this._config = config;
 
-    this._renderer = (tpl) => (this._template = tpl);
     if (
       this._config.filter?.template &&
       hasTemplate(this._config.filter.template)
@@ -84,6 +83,14 @@ class AutoEntities extends LitElement {
 
     queueMicrotask(() => this.update_all());
   }
+
+  _renderer = (tpl) => {
+    if (typeof tpl === "string") {
+      this._template = tpl.split(/[\s,]+/);
+    } else {
+      this._template = tpl;
+    }
+  };
 
   connectedCallback() {
     super.connectedCallback();

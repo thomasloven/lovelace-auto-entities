@@ -50,6 +50,9 @@ cards:
             'light.kitchen_lights',
             {'entity': 'light.ceiling_lights', 'icon': 'mdi:lamp'}
             ] }}"
+      - <<: *card
+        filter:
+          template: "{{ 'light.bed_light, light.kitchen_lights, light.ceiling_lights'}}"
 
   - type: vertical-stack
     cards:
