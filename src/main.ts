@@ -102,7 +102,6 @@ class AutoEntities extends LitElement {
   }
 
   async update_all() {
-    if (!this.hass) return;
     if (this.card) this.card.hass = this.hass;
 
     if (this._updateCooldown.timer) {
