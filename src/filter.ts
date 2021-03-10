@@ -1,5 +1,7 @@
 import { HAState, HassObject } from "./types";
 
+const agoSuffixRegex = new RegExp('\s+ago', 'g');
+
 function match(pattern: any, value: any) {
   if (typeof value === "string" && typeof pattern === "string") {
     if (
@@ -14,6 +16,23 @@ function match(pattern: any, value: any) {
       let regex = new RegExp(pattern.slice(1, -1));
       return regex.test(value);
     }
+  }
+
+  if (typeof pattern === "string" && agoSuffixRegex.test(pattern)) {
+  	pattern = pattern.replace(agoSuffixRegex, '');
+
+  	const now = new Date().getTime();
+    const updated = new Date(value).getTime();
+    value = (now - updated) / 60000;
+    if (pattern.endsWith('m')) {
+    	pattern = pattern.slice(0, -1);
+    } else if (pattern.endsWith('h')) {
+  		value = value / 60;
+  		pattern = pattern.slice(0, -1);
+  	} else if (pattern.endsWith('d')) {
+  		value = value / 60 / 24;
+  		pattern = pattern.slice(0, -1);
+  	}
   }
 
   if (typeof pattern === "string") {
