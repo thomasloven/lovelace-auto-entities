@@ -1,5 +1,8 @@
 import { HAState, HassObject } from "./types";
 
+const ago_suffix_regex = /([mhd])\s+ago\s*$/i;
+const default_ago_suffix = 'm ago';
+
 function match(pattern: any, value: any) {
   if (typeof pattern === "string" && pattern.startsWith("$$")) {
     pattern = pattern.substring(2);
@@ -17,6 +20,23 @@ function match(pattern: any, value: any) {
       }
       let regex = new RegExp(pattern.slice(1, -1));
       return regex.test(value);
+    }
+  }
+
+  if (typeof pattern === "string") {
+    const match = ago_suffix_regex.exec(pattern);
+    if (match) {
+      pattern = pattern.replace(match[0], '');
+
+      const now = new Date().getTime();
+      const updated = new Date(value).getTime();
+      value = (now - updated) / 60000;
+      const period = match[1];
+      if (period === 'h') {
+        value = value / 60;
+      } else if (period === 'd') {
+        value = value / 60 / 24;
+      }
     }
   }
 
@@ -157,20 +177,23 @@ const FILTERS: Record<
     return match(value, ent.entity_category);
   },
   last_changed: async (hass, value, entity) => {
-    const now = new Date().getTime();
-    const changed = new Date(entity.last_changed).getTime();
-    return match(value, (now - changed) / 60000);
+    if (!ago_suffix_regex.test(value))
+      value = value + default_ago_suffix;
+    
+    return match(value, entity.last_changed);
   },
   last_updated: async (hass, value, entity) => {
-    const now = new Date().getTime();
-    const updated = new Date(entity.last_updated).getTime();
-    return match(value, (now - updated) / 60000);
+    if (!ago_suffix_regex.test(value))
+      value = value + default_ago_suffix;
+    
+    return match(value, entity.last_updated);
   },
   last_triggered: async (hass, value, entity) => {
     if (entity.attributes.last_triggered == null) return false;
-    const now = new Date().getTime();
-    const updated = new Date(entity.attributes.last_triggered).getTime();
-    return match(value, (now - updated) / 60000);
+    if (!ago_suffix_regex.test(value))
+      value = value + default_ago_suffix;
+    
+    return match(value, entity.attributes.last_triggered);
   },
   integration: async (hass, value, entity) => {
     const ent = (await getEntities(hass)).find(
