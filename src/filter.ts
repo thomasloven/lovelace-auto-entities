@@ -1,6 +1,6 @@
 import { HAState, HassObject } from "./types";
 
-const agoSuffixRegex = /\s+ago$/gi;
+const ago_suffix_regex = /\s+ago\s*$/i;
 
 function match(pattern: any, value: any) {
   if (typeof value === "string" && typeof pattern === "string") {
@@ -18,8 +18,8 @@ function match(pattern: any, value: any) {
     }
   }
 
-  if (typeof pattern === "string" && agoSuffixRegex.test(pattern)) {
-  	pattern = pattern.replace(agoSuffixRegex, '');
+  if (typeof pattern === "string" && ago_suffix_regex.test(pattern)) {
+  	pattern = pattern.replace(ago_suffix_regex, '');
 
   	const now = new Date().getTime();
     const updated = new Date(value).getTime();
@@ -140,20 +140,23 @@ const FILTERS: Record<
     return match(value, area.name);
   },
   last_changed: async (hass, value, entity) => {
-    const now = new Date().getTime();
-    const changed = new Date(entity.last_changed).getTime();
-    return match(value, (now - changed) / 60000);
+  	if (!ago_suffix_regex.test(value))
+  		value = value + 'm ago';
+  	
+    return match(value, entity.last_changed);
   },
   last_updated: async (hass, value, entity) => {
-    const now = new Date().getTime();
-    const updated = new Date(entity.last_updated).getTime();
-    return match(value, (now - updated) / 60000);
+  	if (!ago_suffix_regex.test(value))
+  		value = value + 'm ago';
+  	
+    return match(value, entity.last_updated);
   },
   last_triggered: async (hass, value, entity) => {
     if (entity.attributes.last_triggered == null) return false;
-    const now = new Date().getTime();
-    const updated = new Date(entity.attributes.last_triggered).getTime();
-    return match(value, (now - updated) / 60000);
+  	if (!ago_suffix_regex.test(value))
+  		value = value + 'm ago';
+  	
+    return match(value, entity.attributes.last_triggered);
   },
 };
 
