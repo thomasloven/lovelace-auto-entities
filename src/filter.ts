@@ -1,6 +1,6 @@
 import { HAState, HassObject } from "./types";
 
-const agoSuffixRegex = new RegExp('\s+ago', 'g');
+const agoSuffixRegex = /\s+ago$/gi;
 
 function match(pattern: any, value: any) {
   if (typeof value === "string" && typeof pattern === "string") {
