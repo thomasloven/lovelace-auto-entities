@@ -72,7 +72,7 @@ The filter section `template` takes a jinja2 template which evaluates to a list 
 
 ## How it works
 `auto-entities` creates a list of entities by:
-1. Including every entitiy given in `entities:` (this allow nesting of `auto-entities`if you'd want to do that for some reason...)
+1. Including every entity given in `entities:` (this allow nesting of `auto-entities`if you'd want to do that for some reason...)
 2. Include every entity listed in a `filter.template` evaluation
 3. Include all entities that matches **ALL** options of **ANY** filter in the `filter.include` section. The same entity may be included several times by different filters.
 4. Remove all entities that matches **ALL** options on **ANY** filter in the `filter.exclude` section.
@@ -115,6 +115,20 @@ filter:
     - state: "= 12" # State is exactly 12 (also matches "12", "12.0" etc.)
     - state: 12 # State is exactly 12 but not "12"
 ```
+
+### Time since an event
+Any filter option dealing with an event time can filter entities by time elapsed since that event:
+
+```yaml
+filter:
+  include:
+    - attributes:
+        last_seen: "> 1h ago" # Entity was seen more that 1 hour ago
+    - last_updated: "< 20m ago" # Entity was updated less than 20 minutes ago
+    - last_triggered: "> 1d ago" # Entity was triggered more than 1 day ago
+```
+
+All the numeric comparison operators are available.
 
 ### Repeating options
 Any option can be used more than once by appending a number or string to the option name:
