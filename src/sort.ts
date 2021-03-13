@@ -59,10 +59,10 @@ const SORTERS: Record<
     let _a = a?.attributes;
     let _b = b?.attributes;
     for (const step of method?.attribute?.split(":")) {
-      [_a, _b] = [_a[step], _b[step]];
       if (_a === undefined && _b === undefined) return 0;
       if (_a === undefined) return lt;
       if (_b === undefined) return gt;
+      [_a, _b] = [_a[step], _b[step]];
     }
     return compare(_a, _b, method);
   },
