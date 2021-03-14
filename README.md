@@ -123,7 +123,7 @@ Any filter option dealing with an event time can filter entities by time elapsed
 filter:
   include:
     - attributes:
-        last_seen: "> 1h ago" # Entity was seen more that 1 hour ago
+        last_seen: "> 1h ago" # Entity was seen more than 1 hour ago
     - last_updated: "< 20m ago" # Entity was updated less than 20 minutes ago
     - last_triggered: "> 1d ago" # Entity was triggered more than 1 day ago
 ```
