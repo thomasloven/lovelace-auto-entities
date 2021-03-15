@@ -47,7 +47,7 @@ class AutoEntitiesEditor extends LitElement {
   @query("hui-card-element-editor") private _cardEditorEl?;
 
   setConfig(config) {
-    this._config = JSON.parse(JSON.stringify(config));
+    this._config = config;
   }
 
   _handleSwitchTab(ev: CustomEvent) {
@@ -56,54 +56,74 @@ class AutoEntitiesEditor extends LitElement {
 
   _addFilterGroup() {
     if (!this._config) return;
-    this._config = { ...this._config };
-    this._config.filter.include.push({ domain: "" });
+
+    const include = [...this._config.filter?.include];
+    include.push({ domain: "" });
+    const filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
   _deleteFilterGroup(idx) {
     if (!this._config) return;
-    this._config = { ...this._config };
-    this._config.filter.include.splice(idx, 1);
+
+    const include = [...this._config.filter?.include];
+    include.splice(idx, 1);
+    const filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
   _moveFilterGroup(idx, pos) {
     if (!this._config) return;
-    this._config = { ...this._config };
-    [
-      this._config.filter.include[idx],
-      this._config.filter.include[idx + pos],
-    ] = [
-      this._config.filter.include[idx + pos],
-      this._config.filter.include[idx],
-    ];
+
+    const include = [...this._config.filter?.include];
+    [include[idx], include[idx + pos]] = [include[idx + pos], include[idx]];
+    const filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
   _addSpecialEntry() {
     if (!this._config) return;
-    this._config = { ...this._config };
-    this._config.filter.include.push({ type: "" });
+
+    const include = [...this._config.filter?.include];
+    include.push({ type: "" });
+    const filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
   async _changeSpecialEntry(group, ev) {
     if (!this._config) return;
-    this._config = { ...this._config };
-    this._config.filter.include[group] = ev.detail.value;
+
+    const include = [...this._config.filter?.include];
+    include[group] = ev.detail.value;
+    const filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
   async _changeGroupOptions(group, ev) {
     if (!this._config) return;
-    this._config = { ...this._config };
-    this._config.filter.include[group].options = ev.detail.value;
+
+    const options = ev.detail.value;
+
+    const include = [...this._config.filter?.include];
+    include[group] = { ...include[group], options };
+    const filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
@@ -111,44 +131,66 @@ class AutoEntitiesEditor extends LitElement {
 
   _addFilter(group) {
     if (!this._config) return;
-    this._config = { ...this._config };
+
     const newFilter = FILTER_OPTIONS.find(
       (f) => this._config.filter.include[group][f] === undefined
     );
     if (newFilter === undefined) return;
-    this._config.filter.include[group][newFilter] = "";
+
+    const include = [...this._config.filter?.include];
+    include[group] = { ...include[group], [newFilter]: "" };
+    const filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
-  _removeFilter(group, key) {
+  _removeFilter(group_index, key) {
     if (!this._config) return;
-    this._config = { ...this._config };
-    delete this._config.filter.include[group][key];
-    if (Object.keys(this._config.filter.include[group]).length === 0)
-      return this._deleteFilterGroup(group);
+
+    const include = [...this._config.filter?.include];
+    const group = { ...include[group_index] };
+    delete group[key];
+    if (Object.keys(group).length === 0)
+      return this._deleteFilterGroup(group_index);
+    include[group_index] = group;
+    const filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
-  _changeFilterKey(group, oldFilter, ev) {
+  _changeFilterKey(group_index, oldFilter, ev) {
     if (!this._config) return;
+
     const newFilter = FILTER_OPTIONS[ev.target.selected];
     if (newFilter === undefined || newFilter === oldFilter) return;
-    if (this._config.filter.include[group][oldFilter] === undefined) return;
-    this._config = { ...this._config };
-    this._config.filter.include[group][newFilter] = this._config.filter.include[
-      group
-    ][oldFilter];
-    delete this._config.filter.include[group][oldFilter];
+
+    const include = [...this._config.filter?.include];
+    const group = { ...include[group_index] };
+    if (group[oldFilter] === undefined) return;
+    group[newFilter] = group[oldFilter];
+    delete group[oldFilter];
+    include[group_index] = group;
+    const filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
-  _changeFilterValue(group, filter, ev) {
+  _changeFilterValue(group, filter_property, ev) {
     if (!this._config) return;
-    this._config = { ...this._config };
-    this._config.filter.include[group][filter] = ev.target.value;
+
+    const include = [...this._config.filter?.include];
+    const _group = { ...include[group] };
+    _group[filter_property] = ev.target.value;
+    include[group] = _group;
+    const filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
@@ -156,19 +198,22 @@ class AutoEntitiesEditor extends LitElement {
 
   _changeSortMethod(ev) {
     if (!this._config) return;
-    this._config = { ...this._config };
-    const newMethod = SORT_METHODS[ev.target.selected];
-    this._config.sort = this._config.sort ?? {};
-    this._config.sort.method = newMethod;
+
+    const method = SORT_METHODS[ev.target.selected];
+    const sort = { ...this._config.sort, method };
+    this._config = { ...this._config, sort };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
   _sortOptionToggle(option, ev) {
     if (!this._config) return;
-    this._config = { ...this._config };
-    this._config.sort = this._config.sort ?? {};
-    this._config.sort[option] = ev.target.checked;
+
+    const sort = { ...this._config.sort };
+    sort[option] = ev.target.checked;
+    this._config = { ...this._config, sort };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
@@ -176,22 +221,23 @@ class AutoEntitiesEditor extends LitElement {
 
   _showEmptyToggle() {
     if (!this._config) return;
-    this._config = {
-      ...this._config,
-      show_empty: this._config.show_empty === false,
-    };
+
+    const show_empty = this._config.show_empty === false;
+    this._config = { ...this._config, show_empty };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
   _changeCardParam(ev) {
     if (!this._config) return;
-    const newParam = ev.target.value == "" ? undefined : ev.target.value;
-    this._config = {
-      ...this._config,
-      card_param: newParam,
-    };
-    delete this._config.card[newParam ?? "entities"];
+
+    const card_param =
+      ev.target.value === "" || ev.target.value === "entities"
+        ? undefined
+        : ev.target.value;
+    this._config = { ...this._config, card_param };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
@@ -204,9 +250,11 @@ class AutoEntitiesEditor extends LitElement {
   _handleCardPicked(ev) {
     ev.stopPropagation();
     if (!this._config) return;
-    const cardConfig = { ...ev.detail.config };
-    delete cardConfig.entities;
-    this._config = { ...this._config, card: cardConfig };
+
+    const card = { ...ev.detail.config };
+    delete card.entities;
+    this._config = { ...this._config, card };
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
@@ -214,19 +262,23 @@ class AutoEntitiesEditor extends LitElement {
   _handleCardConfigChanged(ev) {
     ev.stopPropagation();
     if (!this._config) return;
-    const cardConfig = { ...ev.detail.config };
-    delete cardConfig[this._config.card_param || "entities"];
 
-    this._config = { ...this._config, card: cardConfig };
+    const card = { ...ev.detail.config };
+    delete card[this._config.card_param || "entities"];
+    this._config = { ...this._config, card };
+
     this._cardGUIModeAvailable = ev.detail.guiModeAvailable;
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
   _deleteCard(ev) {
     if (!this._config) return;
+
     this._config = { ...this._config };
     delete this._config.card;
+
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
