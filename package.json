@@ -1,7 +1,7 @@
 {
   "name": "auto-entities",
   "private": true,
-  "version": "1.8.5b0",
+  "version": "1.8.5",
   "description": "",
   "scripts": {
     "build": "rollup -c",

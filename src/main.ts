@@ -151,6 +151,10 @@ class AutoEntities extends LitElement {
     const hide = entities.length === 0 && this._config.show_empty === false;
     this.style.display = hide ? "none" : null;
     this.style.margin = hide ? "0" : null;
+    if ((this.card as any).requestUpdate) {
+      await this.updateComplete;
+      (this.card as any).requestUpdate();
+    }
   }
 
   async update_entities() {
