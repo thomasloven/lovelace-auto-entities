@@ -47,9 +47,12 @@ cards:
       - <<: *card
         filter:
           template: "{{ ['light.bed_light',
-              'light.kitchen_lights',
-              {'entity': 'light.ceiling_lights', 'icon': 'mdi:lamp'}
+            'light.kitchen_lights',
+            {'entity': 'light.ceiling_lights', 'icon': 'mdi:lamp'}
             ] }}"
+      - <<: *card
+        filter:
+          template: "{{ 'light.bed_light, light.kitchen_lights, light.ceiling_lights'}}"
 
   - type: vertical-stack
     cards:
@@ -68,7 +71,6 @@ cards:
                   <<: *card
                   filter:
                     template: "{{state_attr(config.entity, 'entity_id')}}"
-          {%endraw%}
           ```
           {% endraw %}
       - <<: *card
@@ -79,7 +81,6 @@ cards:
                 <<: *card
                 filter:
                   template: "{{state_attr(config.entity, 'entity_id')}}"
-
 
   - type: vertical-stack
     cards:
@@ -101,3 +102,30 @@ cards:
             - domain: light
               options:
                 name: this.entity_id
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 4: Updating template
+
+          ```
+          <<: *card
+          filter:
+          {%raw%}
+            template: |
+              {{ states.light
+              | selectattr("state", "==", "on")
+              | map(attribute="entity_id")
+              | list
+              }}
+          {% endraw%}
+          ```
+      - <<: *card
+        filter:
+          template: |
+            {{ states.light
+            | selectattr("state", "==", "on")
+            | map(attribute="entity_id")
+            | list
+            }}

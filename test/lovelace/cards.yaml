@@ -14,5 +14,9 @@ cards:
     filter:
       include:
         - domain: light
+          state: "on"
+          options:
+            type: entity
+        - domain: light
           options:
             type: entity

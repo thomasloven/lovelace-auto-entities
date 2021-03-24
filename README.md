@@ -1,5 +1,4 @@
-auto-entities
-=============
+# auto-entities
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
@@ -7,13 +6,11 @@ Automatically populate lovelace cards with entities matching certain criteria.
 
 For installation instructions [see this guide](https://github.com/thomasloven/hass-config/wiki/Lovelace-Plugins).
 
-
 ## Usage
 
 ```yaml
 type: custom:auto-entities
-card:
-  <card>
+card: <card>
 entities:
   - <entity>
   - <entity>
@@ -45,6 +42,7 @@ sort: <sort_method>
 - `card_param:` The parameter of the card to populate. Default: `entities`.
 
 ### Filters
+
 The two main filter sections `include` and `exclude` each takes a list of filters.
 
 Filters have the following options, and will match any entity fulfilling **ALL** options:
@@ -61,17 +59,21 @@ Filters have the following options, and will match any entity fulfilling **ALL**
 - `last_updated:` Match minutes since last update
 
 Special options:
+
 - `options:` Map of options to apply to entity when passed to card.
 - `type:` Type of special entries to include in entity list. Entries with a `type:` will not be filtered.
-- `not:` Specifies a filter that entities must *not* match.
-- `sort:` Specifies a method to sort entities matched by *this filter only*.
+- `not:` Specifies a filter that entities must _not_ match.
+- `sort:` Specifies a method to sort entities matched by _this filter only_.
 - `or:` Match any in a list of filters.
 
 ### Template filter
+
 The filter section `template` takes a jinja2 template which evaluates to a list of entities or entity objects.
 
 ## How it works
+
 `auto-entities` creates a list of entities by:
+
 1. Including every entitiy given in `entities:` (this allow nesting of `auto-entities`if you'd want to do that for some reason...)
 2. Include every entity listed in a `filter.template` evaluation
 3. Include all entities that matches **ALL** options of **ANY** filter in the `filter.include` section. The same entity may be included several times by different filters.
@@ -82,6 +84,7 @@ It then creates a card based on the configuration given in `card:`, and fills in
 ## Matching rules
 
 ### Wildcards
+
 Any filter option can use `*` as a wildcard for string comparison. Note that strings must be quoted when doing this:
 
 ```yaml
@@ -92,6 +95,7 @@ filter:
 ```
 
 ### Regular expressions
+
 Any filter option can use [javascript Regular Expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) for string comparison. To do this, enclose the regex in `/`. Also make sure to quote the string:
 
 ```yaml
@@ -102,6 +106,7 @@ filter:
 ```
 
 ### Numerical comparison
+
 Any filter option dealing with numerical quantities can use comparison operators if specified as a string (must be quoted):
 
 ```yaml
@@ -117,6 +122,7 @@ filter:
 ```
 
 ### Repeating options
+
 Any option can be used more than once by appending a number or string to the option name:
 
 ```yaml
@@ -125,6 +131,7 @@ filter:
     - state 1: "> 100"
       state 2: "< 200"
 ```
+
 The filter above matches entities where the state is above 100 **AND** below 200. Compare to the following:
 
 ```yaml
@@ -137,6 +144,7 @@ filter:
 The two filters above together match entities where the state is below 100 **OR** above 200.
 
 ### Object attributes
+
 Some entity attributes actually contain several values. One example is `hs_color` for a light, which has one value for Hue and one for Saturation. Such values can be stepped into using keys or indexes separated by a colon (`:`):
 
 ```yaml
@@ -149,6 +157,7 @@ filter:
 The example above matches lights with a `hs_color` saturation value greater than 30.
 
 ## Sorting entities
+
 Entities can be sorted, either on a filter-by-filter basis by adding a `sort:` option to the filter, or all at once after all filters have been applied using the `sort:` option of `auto-entities` itself.
 
 Sorting methods are specified as:
@@ -168,15 +177,17 @@ sort:
 - `reverse:` Set to `true` to reverse the order. Default: `false`.
 - `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
 - `numeric:` Set to `true` to sort by numeric value. Default: `false` except for `last_changed`, `last_updated` and `last_triggered` sorting methods.
-- `attribute:` Attribute to sort by if `method: attribute`. Can be an *object attribute* as above (e.g. `attribute: rgb_color:2`)
+- `attribute:` Attribute to sort by if `method: attribute`. Can be an _object attribute_ as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
 
 ## Entity options
+
 In the `options:` option of the filters, the string `this.entity_id` will be replaced with the matched entity_id. Useful for service calls - see below.
 
 ## Examples
 
 Show all entities, except yahoo weather, groups and zones in a glance card:
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -190,6 +201,7 @@ filter:
 ```
 
 Show all gps `device_tracker`s with battery level less than 50:
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -206,6 +218,7 @@ filter:
 ```
 
 Show all lights that are on:
+
 ```yaml
 type: custom:auto-entities
 show_empty: false
@@ -220,7 +233,9 @@ filter:
         tap_action:
           action: toggle
 ```
+
 Also show all lights that are on:
+
 ```yaml
 type: custom:auto-entities
 show_empty: false
@@ -232,11 +247,12 @@ filter:
   include:
     - domain: light
   exclude:
-  - state: "off"
-  - state: "unavailable"
+    - state: "off"
+    - state: "unavailable"
 ```
 
 Show everything that has "light" in its name, but isn't a light, and all switches in the living room:
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -254,6 +270,7 @@ filter:
 ```
 
 List every sensor belonging to any iPhone:
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -266,6 +283,7 @@ filter:
 ```
 
 List the five last triggered motion sensors:
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -274,13 +292,14 @@ filter:
   include:
     - domain: binary_sensor
       attributes:
-       device_class: motion
+        device_class: motion
 sort:
   method: last_changed
   count: 5
 ```
 
 Put all sensors in individual entity cards in a grid card:
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -294,6 +313,7 @@ filter:
 ```
 
 Turn on scenes by clicking them:
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -311,6 +331,7 @@ filter:
 ```
 
 Example using templates:
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -323,11 +344,13 @@ filter:
       {% endif %}
     {% endfor %}
 ```
+
 Or:
+
 ```yaml
-...
-  template: "{{states.light | selectattr('state', '==', 'on') | list}}"
+template: "{{states.light | selectattr('state', '==', 'on') | list}}"
 ```
 
 ---
+
 <a href="https://www.buymeacoffee.com/uqD6KHCdJ" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/white_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>

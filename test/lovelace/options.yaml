@@ -58,6 +58,8 @@ cards:
           include:
             - domain: light
               state: "off"
+      - type: markdown
+        content: This card is intentionally left blank.
 
   - type: vertical-stack
     cards:
@@ -118,6 +120,7 @@ cards:
                 - domain: light
                   options:
                     icon: mdi:lamp
+                - domain: light
           - <<: *card
             unique: entity
             filter:
@@ -135,6 +138,7 @@ cards:
             - domain: light
               options:
                 icon: mdi:lamp
+            - domain: light
       - <<: *card
         unique: entity
         filter:

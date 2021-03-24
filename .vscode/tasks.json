@@ -1,0 +1,31 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "npm: build",
+      "type": "npm",
+      "script": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: watch",
+      "type": "npm",
+      "script": "watch",
+      "problemMatcher": [],
+      "presentation": {
+        "panel": "shared",
+        "group": "test"
+      }
+    },
+    {
+      "label": "Run hass",
+      "type": "shell",
+      "command": "sudo container launch",
+      "problemMatcher": [],
+      "presentation": {
+        "panel": "shared",
+        "group": "test"
+      }
+    }
+  ]
+}
