@@ -136,6 +136,28 @@ const FILTERS: Record<
     const updated = new Date(entity.attributes.last_triggered).getTime();
     return match(value, (now - updated) / 60000);
   },
+  when: async (hass, value, entity) => {
+    for (var i = 0; i < value.length; i++) {
+      var val = value[i];
+      if (val.entity_id) {
+        const whenEntity = hass.states[val.entity_id];
+        if (whenEntity) {
+          if (val.state) {
+            if (!match(val.state, whenEntity.state))
+              return false;
+          }
+          if (val.attributes) {
+            let entityAttributes = whenEntity.attributes;
+            for(const [attribute, attributeCondition] of Object.entries(val.attributes)) {
+              if (!match(attributeCondition, entityAttributes[attribute.trim()]))
+                return false;
+            }
+          }
+        }
+      }
+    }
+    return true;
+  },
 };
 
 export async function filter_entity(
