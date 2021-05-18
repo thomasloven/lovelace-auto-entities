@@ -230,6 +230,7 @@ class AutoEntities extends LitElement {
       for (const e of entities) {
         if (
           this._config.unique === "entity" &&
+          e.entity &&
           newEntities.some((i) => i.entity === e.entity)
         )
           continue;
