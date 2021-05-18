@@ -450,13 +450,22 @@ class AutoEntitiesEditor extends LitElement {
                   )}
                 </paper-listbox>
               </paper-dropdown-menu>
-              <ha-formfield .label=${"Reverse"}>
-                <ha-switch
-                  .checked=${this._config.sort?.reverse === true}
-                  @change=${(ev) => this._sortOptionToggle("reverse", ev)}
-                ></ha-switch>
-                <ha-formfield> </ha-formfield
-              ></ha-formfield>
+              <p>
+                <ha-formfield .label=${"Reverse"}>
+                  <ha-switch
+                    .checked=${this._config.sort?.reverse === true}
+                    @change=${(ev) => this._sortOptionToggle("reverse", ev)}
+                  ></ha-switch>
+                </ha-formfield>
+              </p>
+              <p>
+                <ha-formfield .label=${"Numeric"}>
+                  <ha-switch
+                    .checked=${this._config.sort?.numeric === true}
+                    @change=${(ev) => this._sortOptionToggle("numeric", ev)}
+                  ></ha-switch>
+                </ha-formfield>
+              </p>
             `}
       </div>
     `;
