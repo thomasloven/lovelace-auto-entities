@@ -6,11 +6,15 @@ import { get_sorter } from "./sort";
 import {
   AutoEntitiesConfig,
   EntityList,
+  HuiErrorCard,
   LovelaceCard,
   LovelaceRowConfig,
 } from "./types";
 import pjson from "../package.json";
 import "./auto-entities-editor";
+
+window.queueMicrotask =
+  window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
 
 function compare_deep(a: any, b: any) {
   if (a === b) return true;
@@ -143,6 +147,16 @@ class AutoEntities extends LitElement {
     if (!this.card || newType) {
       const helpers = await (window as any).loadCardHelpers();
       this.card = await helpers.createCardElement(cardConfig);
+      if (
+        this.card.localName === "hui-error-card" &&
+        (this.card as HuiErrorCard)._config?.error?.startsWith?.("Entities")
+      ) {
+        this.card = undefined;
+        this._entities = undefined;
+        this._cardConfig = undefined;
+        this._cardBuiltResolve?.();
+        return;
+      }
     } else {
       this.card.setConfig(cardConfig);
     }

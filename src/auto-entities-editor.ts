@@ -321,6 +321,15 @@ class AutoEntitiesEditor extends LitElement {
   }
 
   _renderFilterEditor() {
+    if (this._config.filter.template)
+      return html`
+        <div class="filter">
+          <p>
+            <b>Your filter method is not handled by the GUI editor.</b>
+          </p>
+          <p>Please switch to the CODE EDITOR to access all options.</p>
+        </div>
+      `;
     return html`
       ${this._config.filter.include.map(
         (group, group_idx) => html`
