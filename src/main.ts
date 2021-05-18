@@ -209,7 +209,13 @@ class AutoEntities extends LitElement {
             );
         }
 
-        if (filter.sort) add = add.sort(get_sorter(this.hass, filter.sort));
+        if (filter.sort) {
+          add = add.sort(get_sorter(this.hass, filter.sort));
+          if (filter.sort.count) {
+            const start = filter.sort.first ?? 0;
+            add = add.slice(start, start + filter.sort.count);
+          }
+        }
         entities = entities.concat(add);
       }
     }
@@ -230,10 +236,8 @@ class AutoEntities extends LitElement {
     }
 
     if (this._config.sort) {
-      // TODO: Add tests for sorting methods
       entities = entities.sort(get_sorter(this.hass, this._config.sort));
       if (this._config.sort.count) {
-        // TODO: Add tests for pagination
         const start = this._config.sort.first ?? 0;
         entities = entities.slice(start, start + this._config.sort.count);
       }
