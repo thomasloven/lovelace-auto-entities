@@ -179,7 +179,7 @@ class AutoEntities extends LitElement {
 
     let entities: EntityList = [...(this._config?.entities?.map(format) || [])];
 
-    if (!this.hass || !this._config.filter) {
+    if (!this.hass) {
       return entities;
     }
 
@@ -188,7 +188,7 @@ class AutoEntities extends LitElement {
     }
     entities = entities.filter(Boolean);
 
-    if (this._config.filter.include) {
+    if (this._config.filter?.include) {
       const all_entities = Object.keys(this.hass.states).map(format);
       for (const filter of this._config.filter.include) {
         if (filter.type) {
@@ -215,7 +215,7 @@ class AutoEntities extends LitElement {
     }
 
     // TODO: Add tests for exclusions
-    if (this._config.filter.exclude) {
+    if (this._config.filter?.exclude) {
       for (const filter of this._config.filter.exclude) {
         const newEntities = [];
         for (const entity of entities) {

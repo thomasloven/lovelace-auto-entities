@@ -321,7 +321,7 @@ class AutoEntitiesEditor extends LitElement {
   }
 
   _renderFilterEditor() {
-    if (this._config.filter.template)
+    if (this._config.filter?.template || this._config.entities)
       return html`
         <div class="filter">
           <p>
