@@ -146,11 +146,29 @@ class AutoEntities extends LitElement {
     };
     if (!this.card || newType) {
       const helpers = await (window as any).loadCardHelpers();
+
+      // Replace console.error in order to catch errors from cards which don't like to be given an empty entities list
+      const _consoleError = console.error;
+      let failed = false;
+      console.error = (...args) => {
+        if (args.length === 3 && args[2].message) {
+          if (
+            args[2].message.startsWith?.("Entities") || // Logbook-card
+            args[2].message.startsWith?.("Either entities") || // Map card
+            args[2].message.endsWith?.("entity") // History-graph card
+          ) {
+            failed = true;
+            return;
+          }
+        }
+        _consoleError(...args);
+      };
+
       this.card = await helpers.createCardElement(cardConfig);
-      if (
-        this.card.localName === "hui-error-card" &&
-        (this.card as HuiErrorCard)._config?.error?.startsWith?.("Entities")
-      ) {
+
+      console.error = _consoleError;
+
+      if (failed) {
         this.card = undefined;
         this._entities = undefined;
         this._cardConfig = undefined;
