@@ -40,6 +40,15 @@ sort: <sort_method>
 - `unique:` Whether to remove duplicate values after filtering and sorting. Set to `true` to remove exact duplicate entries. Set to `entity` to remove entries with the same entity id. Default: `false`.
 - `sort:` How to sort the entities of the card. Default: `none`. See [Sorting entities for details](#sorting-entities)
 - `card_param:` The parameter of the card to populate. Default: `entities`.
+- `card_options:` Map of options to apply to entity when passed to card.
+
+### Entities
+
+Entites have the following special option:
+
+Special options:
+
+- `options:` Map of options to apply to entity when passed to card. This gets merged with `card_options`.
 
 ### Filters
 

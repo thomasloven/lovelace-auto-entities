@@ -39,6 +39,9 @@ export interface AutoEntitiesConfig {
 
   card_param?: string;
 
+  /** Map of options to apply to entity when passed to card. */
+  card_options?: any;
+
   show_empty?: boolean;
   unique?: boolean | string;
   sort?: any;
@@ -49,6 +52,9 @@ export interface AutoEntitiesConfig {
 export interface LovelaceRowConfig {
   entity?: string;
   type?: string;
+
+  /** Map of options to apply to entity when passed to card. */
+  options?: any;
 }
 export interface LovelaceCard extends HTMLElement {
   hass: any;

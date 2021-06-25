@@ -192,7 +192,17 @@ class AutoEntities extends LitElement {
   async update_entities() {
     const format = (entity: LovelaceRowConfig | string): LovelaceRowConfig => {
       if (!entity) return null;
-      return typeof entity === "string" ? { entity: entity.trim() } : entity;
+      entity = typeof entity === "string" ? { entity: entity.trim() } : entity;
+      //Return entity definition with card_options and options
+      const new_entity = JSON.parse(
+        JSON.stringify({
+          ...entity,
+          ...this._config.card_options,
+          ...entity.options,
+        }).replace(/this.entity_id/g, entity.entity)
+      );
+
+      return new_entity;
     };
 
     let entities: EntityList = [...(this._config?.entities?.map(format) || [])];
@@ -215,14 +225,19 @@ class AutoEntities extends LitElement {
         }
 
         let add: EntityList = [];
+        const filter_options = {
+          ...this._config.card_options,
+          ...filter.options,
+        };
+
         for (const entity of all_entities) {
           if (await filter_entity(this.hass, filter, entity.entity))
             add.push(
               JSON.parse(
-                JSON.stringify({ ...entity, ...filter.options }).replace(
-                  /this.entity_id/g,
-                  entity.entity
-                )
+                JSON.stringify({
+                  ...entity,
+                  ...filter_options,
+                }).replace(/this.entity_id/g, entity.entity)
               )
             );
         }
