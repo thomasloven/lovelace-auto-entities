@@ -17,7 +17,7 @@ function compare(_a: any, _b: any, method: SortConfig) {
   if (_b === undefined) return gt;
   return (
     (method.reverse ? -1 : 1) *
-    String(_a).localeCompare(String(_b), undefined, method)
+    (_a - _b || String(_a).localeCompare(String(_b), undefined, method))
   );
 }
 
