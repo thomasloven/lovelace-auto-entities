@@ -129,7 +129,7 @@ Any option can be used more than once by appending a number or string to the opt
 filter:
   include:
     - state 1: "> 100"
-      state 2: "< 200"
+    - state 2: "< 200"
 ```
 
 The filter above matches entities where the state is above 100 **AND** below 200. Compare to the following:
