@@ -64,6 +64,13 @@ const FILTERS: Record<
   domain: async (hass, value, entity) => {
     return match(value, entity.entity_id.split(".")[0]);
   },
+  platform: async (hass, value, entity) => {
+    const ent = (await getEntities(hass)).find(
+      (e) => e.entity_id === entity.entity_id
+    );
+    
+    return ent ? match(value, ent.platform) : false;
+  },
   entity_id: async (hass, value, entity) => {
     return match(value, entity.entity_id);
   },
