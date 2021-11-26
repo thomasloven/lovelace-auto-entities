@@ -70,7 +70,7 @@ const FILTERS: Record<
     );
     
     return ent ? match(value, ent.platform) : false;
-  },
+  },  
   entity_id: async (hass, value, entity) => {
     return match(value, entity.entity_id);
   },
