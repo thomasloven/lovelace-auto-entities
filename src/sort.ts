@@ -15,9 +15,10 @@ function compare(_a: any, _b: any, method: SortConfig) {
   if (_a === undefined && _b === undefined) return 0;
   if (_a === undefined) return lt;
   if (_b === undefined) return gt;
-  if (_a < _b) return gt;
-  if (_a > _b) return lt;
-  return 0;
+  return (
+    (method.reverse ? -1 : 1) *
+    String(_a).localeCompare(String(_b), undefined, method)
+  );
 }
 
 const SORTERS: Record<
@@ -67,6 +68,10 @@ const SORTERS: Record<
     return compare(_a, _b, method);
   },
   last_changed: (a, b, method) => {
+    const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
+    if (a?.last_changed == null && b?.last_changed == null) return 0;
+    if (a?.last_changed == null) return lt;
+    if (b?.last_changed == null) return gt;
     method.numeric = true;
     return compare(
       new Date(a?.last_changed).getTime(),
@@ -75,6 +80,10 @@ const SORTERS: Record<
     );
   },
   last_updated: (a, b, method) => {
+    const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
+    if (a?.last_updated == null && b?.last_updated == null) return 0;
+    if (a?.last_updated == null) return lt;
+    if (b?.last_updated == null) return gt;
     method.numeric = true;
     return compare(
       new Date(a?.last_updated).getTime(),
@@ -83,11 +92,14 @@ const SORTERS: Record<
     );
   },
   last_triggered: (a, b, method) => {
+    const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
     if (
-      a?.attributes?.last_triggered == null ||
+      a?.attributes?.last_triggered == null &&
       b?.attributes?.last_triggered == null
     )
       return 0;
+    if (a?.attributes?.last_triggered == null) return lt;
+    if (b?.attributes?.last_triggered == null) return gt;
     method.numeric = true;
     return compare(
       new Date(a?.attributes?.last_triggered).getTime(),

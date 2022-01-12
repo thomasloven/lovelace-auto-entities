@@ -1,0 +1,40 @@
+title: Pagination
+cards:
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Global 1-10
+    filter:
+      include:
+        - entity_id: sensor.a*
+    sort:
+      count: 10
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Global 11-20
+    filter:
+      include:
+        - entity_id: sensor.a*
+    sort:
+      count: 10
+      first: 10
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Local 1-10
+    filter:
+      include:
+        - entity_id: sensor.a*
+          sort:
+            count: 10
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Local 11-20
+    filter:
+      include:
+        - entity_id: sensor.a*
+          sort:
+            count: 10
+            first: 10

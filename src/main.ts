@@ -6,11 +6,15 @@ import { get_sorter } from "./sort";
 import {
   AutoEntitiesConfig,
   EntityList,
+  HuiErrorCard,
   LovelaceCard,
   LovelaceRowConfig,
 } from "./types";
 import pjson from "../package.json";
 import "./auto-entities-editor";
+
+window.queueMicrotask =
+  window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
 
 function compare_deep(a: any, b: any) {
   if (a === b) return true;
@@ -142,7 +146,35 @@ class AutoEntities extends LitElement {
     };
     if (!this.card || newType) {
       const helpers = await (window as any).loadCardHelpers();
+
+      // Replace console.error in order to catch errors from cards which don't like to be given an empty entities list
+      const _consoleError = console.error;
+      let failed = false;
+      console.error = (...args) => {
+        if (args.length === 3 && args[2].message) {
+          if (
+            args[2].message.startsWith?.("Entities") || // Logbook-card
+            args[2].message.startsWith?.("Either entities") || // Map card
+            args[2].message.endsWith?.("entity") // History-graph card
+          ) {
+            failed = true;
+            return;
+          }
+        }
+        _consoleError(...args);
+      };
+
       this.card = await helpers.createCardElement(cardConfig);
+
+      console.error = _consoleError;
+
+      if (failed) {
+        this.card = undefined;
+        this._entities = undefined;
+        this._cardConfig = undefined;
+        this._cardBuiltResolve?.();
+        return;
+      }
     } else {
       this.card.setConfig(cardConfig);
     }
@@ -165,7 +197,7 @@ class AutoEntities extends LitElement {
 
     let entities: EntityList = [...(this._config?.entities?.map(format) || [])];
 
-    if (!this.hass || !this._config.filter) {
+    if (!this.hass) {
       return entities;
     }
 
@@ -174,7 +206,7 @@ class AutoEntities extends LitElement {
     }
     entities = entities.filter(Boolean);
 
-    if (this._config.filter.include) {
+    if (this._config.filter?.include) {
       const all_entities = Object.keys(this.hass.states).map(format);
       for (const filter of this._config.filter.include) {
         if (filter.type) {
@@ -195,13 +227,19 @@ class AutoEntities extends LitElement {
             );
         }
 
-        if (filter.sort) add = add.sort(get_sorter(this.hass, filter.sort));
+        if (filter.sort) {
+          add = add.sort(get_sorter(this.hass, filter.sort));
+          if (filter.sort.count) {
+            const start = filter.sort.first ?? 0;
+            add = add.slice(start, start + filter.sort.count);
+          }
+        }
         entities = entities.concat(add);
       }
     }
 
     // TODO: Add tests for exclusions
-    if (this._config.filter.exclude) {
+    if (this._config.filter?.exclude) {
       for (const filter of this._config.filter.exclude) {
         const newEntities = [];
         for (const entity of entities) {
@@ -216,10 +254,8 @@ class AutoEntities extends LitElement {
     }
 
     if (this._config.sort) {
-      // TODO: Add tests for sorting methods
       entities = entities.sort(get_sorter(this.hass, this._config.sort));
       if (this._config.sort.count) {
-        // TODO: Add tests for pagination
         const start = this._config.sort.first ?? 0;
         entities = entities.slice(start, start + this._config.sort.count);
       }
@@ -230,6 +266,7 @@ class AutoEntities extends LitElement {
       for (const e of entities) {
         if (
           this._config.unique === "entity" &&
+          e.entity &&
           newEntities.some((i) => i.entity === e.entity)
         )
           continue;

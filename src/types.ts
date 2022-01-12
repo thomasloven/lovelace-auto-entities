@@ -50,10 +50,13 @@ export interface LovelaceRowConfig {
   entity?: string;
   type?: string;
 }
-export interface LovelaceCard {
+export interface LovelaceCard extends HTMLElement {
   hass: any;
   setConfig(config: any): void;
   getCardSize?(): number;
+}
+export interface HuiErrorCard extends LovelaceCard {
+  _config: any;
 }
 
 export interface HAState {

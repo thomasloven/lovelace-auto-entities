@@ -321,6 +321,15 @@ class AutoEntitiesEditor extends LitElement {
   }
 
   _renderFilterEditor() {
+    if (this._config.filter?.template || this._config.entities)
+      return html`
+        <div class="filter">
+          <p>
+            <b>Your filter method is not handled by the GUI editor.</b>
+          </p>
+          <p>Please switch to the CODE EDITOR to access all options.</p>
+        </div>
+      `;
     return html`
       ${this._config.filter.include.map(
         (group, group_idx) => html`
@@ -450,13 +459,22 @@ class AutoEntitiesEditor extends LitElement {
                   )}
                 </paper-listbox>
               </paper-dropdown-menu>
-              <ha-formfield .label=${"Reverse"}>
-                <ha-switch
-                  .checked=${this._config.sort?.reverse === true}
-                  @change=${(ev) => this._sortOptionToggle("reverse", ev)}
-                ></ha-switch>
-                <ha-formfield> </ha-formfield
-              ></ha-formfield>
+              <p>
+                <ha-formfield .label=${"Reverse"}>
+                  <ha-switch
+                    .checked=${this._config.sort?.reverse === true}
+                    @change=${(ev) => this._sortOptionToggle("reverse", ev)}
+                  ></ha-switch>
+                </ha-formfield>
+              </p>
+              <p>
+                <ha-formfield .label=${"Numeric"}>
+                  <ha-switch
+                    .checked=${this._config.sort?.numeric === true}
+                    @change=${(ev) => this._sortOptionToggle("numeric", ev)}
+                  ></ha-switch>
+                </ha-formfield>
+              </p>
             `}
       </div>
     `;
