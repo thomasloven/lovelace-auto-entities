@@ -20,7 +20,7 @@
     {
       "label": "Run hass",
       "type": "shell",
-      "command": "sudo container launch",
+      "command": "sudo -E container launch",
       "problemMatcher": [],
       "presentation": {
         "panel": "shared",

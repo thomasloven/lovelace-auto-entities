@@ -7,7 +7,6 @@ import {
   css,
   query,
 } from "lit-element";
-import { until } from "lit-html/directives/until";
 import { AutoEntitiesConfig } from "./types";
 
 const FILTER_OPTIONS = [
@@ -165,7 +164,7 @@ class AutoEntitiesEditor extends LitElement {
   _changeFilterKey(group_index, oldFilter, ev) {
     if (!this._config) return;
 
-    const newFilter = FILTER_OPTIONS[ev.target.selected];
+    const newFilter = ev.target.value;
     if (newFilter === undefined || newFilter === oldFilter) return;
 
     const include = [...this._config.filter?.include];
@@ -199,7 +198,7 @@ class AutoEntitiesEditor extends LitElement {
   _changeSortMethod(ev) {
     if (!this._config) return;
 
-    const method = SORT_METHODS[ev.target.selected];
+    const method = ev.target.value;
     const sort = { ...this._config.sort, method };
     this._config = { ...this._config, sort };
 
@@ -361,22 +360,22 @@ class AutoEntitiesEditor extends LitElement {
                       ${FILTER_OPTIONS.includes(filter)
                         ? html`
                             <div class="option">
-                              <paper-dropdown-menu>
-                                <paper-listbox
-                                  .selected=${FILTER_OPTIONS.indexOf(filter)}
-                                  slot="dropdown-content"
-                                  @selected-item-changed=${(ev) =>
-                                    this._changeFilterKey(
-                                      group_idx,
-                                      filter,
-                                      ev
-                                    )}
-                                >
-                                  ${FILTER_OPTIONS.map(
-                                    (f) => html` <paper-item>${f}</paper-item> `
-                                  )}
-                                </paper-listbox>
-                              </paper-dropdown-menu>
+                              <mwc-select
+                                .value=${filter}
+                                @selected=${(ev) =>
+                                  this._changeFilterKey(group_idx, filter, ev)}
+                                @closed=${(ev) => ev.stopPropagation()}
+                                fixedMenuPosition
+                                naturalMenuWidth
+                              >
+                                ${FILTER_OPTIONS.map(
+                                  (f) => html`
+                                    <mwc-list-item .value=${f}
+                                      >${f}</mwc-list-item
+                                    >
+                                  `
+                                )}
+                              </mwc-select>
                               <paper-input
                                 .value=${value}
                                 @change=${(ev) =>
@@ -445,20 +444,18 @@ class AutoEntitiesEditor extends LitElement {
               </p>
               <p>Please switch to the CODE EDITOR to access all options.</p>`
           : html`
-              Method:
-              <paper-dropdown-menu>
-                <paper-listbox
-                  .selected=${SORT_METHODS.includes(this._config.sort?.method)
-                    ? SORT_METHODS.indexOf(this._config.sort?.method)
-                    : 0}
-                  slot="dropdown-content"
-                  @selected-item-changed=${this._changeSortMethod}
-                >
-                  ${SORT_METHODS.map(
-                    (f) => html` <paper-item>${f}</paper-item> `
-                  )}
-                </paper-listbox>
-              </paper-dropdown-menu>
+              <mwc-select
+                .label=${"Method"}
+                .value=${this._config.sort?.method ?? "none"}
+                @selected=${this._changeSortMethod}
+                @closed=${(ev) => ev.stopPropagation()}
+                fixedMenuPosition
+                naturalMenuWidth
+              >
+                ${SORT_METHODS.map(
+                  (f) => html` <mwc-list-item .value=${f}>${f}</mwc-list-item> `
+                )}
+              </mwc-select>
               <p>
                 <ha-formfield .label=${"Reverse"}>
                   <ha-switch
@@ -550,7 +547,7 @@ class AutoEntitiesEditor extends LitElement {
           display: flex;
           align-items: flex-end;
         }
-        .filter .option paper-dropdown-menu {
+        .filter .option mwc-select {
           margin-right: 16px;
           width: 150px;
         }
