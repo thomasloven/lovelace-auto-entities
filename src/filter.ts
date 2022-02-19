@@ -23,17 +23,17 @@ function match(pattern: any, value: any) {
   if (typeof pattern === "string") {
     // Comparisons assume numerical values
     if (pattern.startsWith("<="))
-      return parseFloat(value) <= parseFloat(pattern.substr(2));
+      return parseFloat(value) <= parseFloat(pattern.substring(2));
     if (pattern.startsWith(">="))
-      return parseFloat(value) >= parseFloat(pattern.substr(2));
+      return parseFloat(value) >= parseFloat(pattern.substring(2));
     if (pattern.startsWith("<"))
-      return parseFloat(value) < parseFloat(pattern.substr(1));
+      return parseFloat(value) < parseFloat(pattern.substring(1));
     if (pattern.startsWith(">"))
-      return parseFloat(value) > parseFloat(pattern.substr(1));
+      return parseFloat(value) > parseFloat(pattern.substring(1));
     if (pattern.startsWith("!"))
-      return parseFloat(value) != parseFloat(pattern.substr(1));
+      return parseFloat(value) != parseFloat(pattern.substring(1));
     if (pattern.startsWith("="))
-      return parseFloat(value) == parseFloat(pattern.substr(1));
+      return parseFloat(value) == parseFloat(pattern.substring(1));
   }
 
   return pattern === value;
@@ -58,6 +58,13 @@ async function getEntities(hass) {
     (await hass.callWS({ type: "config/entity_registry/list" }));
   return cache.entities;
 }
+
+// Debugging helper
+// (window as any).AutoEntities = {
+//   getAreas,
+//   getDevices,
+//   getEntities,
+// };
 
 const FILTERS: Record<
   string,
@@ -111,6 +118,24 @@ const FILTERS: Record<
     if (!device) return false;
     return match(value, device.name_by_user) || match(value, device.name);
   },
+  device_manufacturer: async (hass, value, entity) => {
+    const ent = (await getEntities(hass)).find(
+      (e) => e.entity_id === entity.entity_id
+    );
+    if (!ent) return false;
+    const device = (await getDevices(hass)).find((d) => d.id === ent.device_id);
+    if (!device) return false;
+    return match(value, device.manufacturer);
+  },
+  device_model: async (hass, value, entity) => {
+    const ent = (await getEntities(hass)).find(
+      (e) => e.entity_id === entity.entity_id
+    );
+    if (!ent) return false;
+    const device = (await getDevices(hass)).find((d) => d.id === ent.device_id);
+    if (!device) return false;
+    return match(value, device.model);
+  },
   area: async (hass, value, entity) => {
     const ent = (await getEntities(hass)).find(
       (e) => e.entity_id === entity.entity_id
@@ -123,6 +148,13 @@ const FILTERS: Record<
     area = (await getAreas(hass)).find((a) => a.area_id === device.area_id);
     if (!area) return false;
     return match(value, area.name);
+  },
+  entity_category: async (hass, value, entity) => {
+    const ent = (await getEntities(hass)).find(
+      (e) => e.entity_id === entity.entity_id
+    );
+    if (!ent) return false;
+    return match(value, ent.entity_category);
   },
   last_changed: async (hass, value, entity) => {
     const now = new Date().getTime();
