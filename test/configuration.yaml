@@ -24,6 +24,14 @@ group:
       - climate.heatpump
       - climate.hvac
 
+light:
+  - platform: group
+    name: Light Group
+    entities:
+      - light.bed_light
+      - light.ceiling_lights
+      - light.kitchen_lights
+
 template:
   sensor:
     - { name: a1, state: a1 }

@@ -1,6 +1,10 @@
 import { HAState, HassObject } from "./types";
 
 function match(pattern: any, value: any) {
+  if (pattern.startsWith("$$")) {
+    pattern = pattern.substring(2);
+    value = JSON.stringify(value);
+  }
   if (typeof value === "string" && typeof pattern === "string") {
     if (
       (pattern.startsWith("/") && pattern.endsWith("/")) ||

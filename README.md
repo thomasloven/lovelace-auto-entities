@@ -157,6 +157,19 @@ filter:
 
 The example above matches lights with a `hs_color` saturation value greater than 30.
 
+### Stringification
+
+Some entity attributes are not text strings, but can be advanced structures. By starting the pattern to match with `$$` auto-entities will convert the attribute to JSON before comparing:
+
+```yaml
+filter:
+  include:
+    - attributes:
+        entity_id: "$$*"
+```
+
+The example above matches any entity that has a `entity_id` attribute - i.e. all kinds of group entities.
+
 ## Sorting entities
 
 Entities can be sorted, either on a filter-by-filter basis by adding a `sort:` option to the filter, or all at once after all filters have been applied using the `sort:` option of `auto-entities` itself.
