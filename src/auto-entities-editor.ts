@@ -17,6 +17,7 @@ const FILTER_OPTIONS = [
   "group",
   "device",
   "area",
+  "integration",
   "last_changed",
   "last_updated",
   "last_triggered",

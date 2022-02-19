@@ -54,6 +54,7 @@ Filters have the following options, and will match any entity fulfilling **ALL**
 - `group:` Match entities in given group (e.g. `group.living_room_lights`)
 - `area:` Match entities in given area (e.g. `Kitchen`)
 - `device:` Match entities belonging to given device (e.g. `Thomas iPhone`)
+- `integration:` Match entities by the integration name
 - `attributes:` Map of `attribute: value` pairs to match.
 - `last_changed:` Match minutes since last state change (most useful as a comparison, e.g. `last_changed: < 15`)
 - `last_updated:` Match minutes since last update

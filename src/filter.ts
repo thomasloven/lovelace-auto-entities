@@ -136,6 +136,13 @@ const FILTERS: Record<
     const updated = new Date(entity.attributes.last_triggered).getTime();
     return match(value, (now - updated) / 60000);
   },
+  integration: async (hass, value, entity) => {
+    const ent = (await getEntities(hass)).find(
+      (e) => e.entity_id === entity.entity_id
+    );
+    if (!ent) return false;
+    return match(value, ent.platform);
+  },
 };
 
 export async function filter_entity(
