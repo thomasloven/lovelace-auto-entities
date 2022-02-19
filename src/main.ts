@@ -148,8 +148,9 @@ class AutoEntities extends LitElement {
       const helpers = await (window as any).loadCardHelpers();
 
       // Replace console.error in order to catch errors from cards which don't like to be given an empty entities list
+      (console as any).oldError = (console as any).oldError || [];
       const _consoleError = console.error;
-      let failed = false;
+      (console as any).oldError.push(_consoleError);
       console.error = (...args) => {
         if (args.length === 3 && args[2].message) {
           if (
@@ -157,27 +158,42 @@ class AutoEntities extends LitElement {
             args[2].message.startsWith?.("Either entities") || // Map card
             args[2].message.endsWith?.("entity") // History-graph card
           ) {
-            failed = true;
             return;
           }
         }
         _consoleError(...args);
       };
 
-      this.card = await helpers.createCardElement(cardConfig);
+      try {
+        this.card = await helpers.createCardElement(cardConfig);
 
-      console.error = _consoleError;
-
-      if (failed) {
-        this.card = undefined;
-        this._entities = undefined;
-        this._cardConfig = undefined;
-        this._cardBuiltResolve?.();
-        return;
+        if (this.card.localName === "hui-error-card") {
+          const errorCard = this.card as HuiErrorCard;
+          await customElements.whenDefined("hui-error-card");
+          let ctr = 10;
+          while (!errorCard._config && ctr) {
+            await new Promise((resolve) => window.setTimeout(resolve, 100));
+            ctr--;
+          }
+          if (
+            errorCard._config?.error?.startsWith?.("Entities") ||
+            errorCard._config?.error?.startsWith?.("Either entities") ||
+            errorCard._config?.error?.endsWith?.("entity")
+          ) {
+            this.card = undefined;
+            this._entities = undefined;
+            this._cardConfig = undefined;
+            this._cardBuiltResolve?.();
+            return;
+          }
+        }
+      } finally {
+        console.error = (console as any).oldError.pop();
       }
     } else {
       this.card.setConfig(cardConfig);
     }
+
     this._cardBuiltResolve?.();
     this.card.hass = this.hass;
     const hide = entities.length === 0 && this._config.show_empty === false;
