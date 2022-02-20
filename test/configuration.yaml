@@ -1,5 +1,12 @@
 homeassistant:
   legacy_templates: false
+  customize:
+    sensor.a1:
+      custom_name: a1_sensor
+    sensor.a2:
+      custom_name: a2_sensor
+    sensor.a3:
+      custom_name: a3_sensor
 default_config:
 
 demo:
