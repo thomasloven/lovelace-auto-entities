@@ -1,12 +1,5 @@
-import {
-  LitElement,
-  html,
-  property,
-  internalProperty,
-  CSSResultArray,
-  css,
-  query,
-} from "lit-element";
+import { LitElement, html, CSSResultArray, css } from "lit";
+import { property, state, query } from "lit/decorators.js";
 import { AutoEntitiesConfig } from "./types";
 
 const FILTER_OPTIONS = [
@@ -35,14 +28,14 @@ const SORT_METHODS = [
 ];
 
 class AutoEntitiesEditor extends LitElement {
-  @internalProperty() _config: AutoEntitiesConfig;
+  @state() _config: AutoEntitiesConfig;
 
   @property() lovelace;
   @property() hass;
 
-  @internalProperty() _selectedTab = 0;
-  @internalProperty() _cardGUIMode = true;
-  @internalProperty() _cardGUIModeAvailable = true;
+  @state() _selectedTab = 0;
+  @state() _cardGUIMode = true;
+  @state() _cardGUIModeAvailable = true;
 
   @query("hui-card-element-editor") private _cardEditorEl?;
 

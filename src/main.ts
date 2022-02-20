@@ -1,4 +1,5 @@
-import { LitElement, html, property } from "lit-element";
+import { LitElement, html } from "lit";
+import { property } from "lit/decorators.js";
 import { hasTemplate } from "card-tools/src/templates";
 import { bind_template, unbind_template } from "./templates";
 import { filter_entity } from "./filter";
