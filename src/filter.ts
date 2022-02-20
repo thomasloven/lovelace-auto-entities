@@ -1,7 +1,7 @@
 import { HAState, HassObject } from "./types";
 
 function match(pattern: any, value: any) {
-  if (pattern.startsWith("$$")) {
+  if (typeof pattern === "string" && pattern.startsWith("$$")) {
     pattern = pattern.substring(2);
     value = JSON.stringify(value);
   }
