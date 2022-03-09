@@ -354,7 +354,7 @@ class AutoEntitiesEditor extends LitElement {
                       ${FILTER_OPTIONS.includes(filter)
                         ? html`
                             <div class="option">
-                              <mwc-select
+                              <ha-select
                                 .value=${filter}
                                 @selected=${(ev) =>
                                   this._changeFilterKey(group_idx, filter, ev)}
@@ -369,7 +369,7 @@ class AutoEntitiesEditor extends LitElement {
                                     >
                                   `
                                 )}
-                              </mwc-select>
+                              </ha-select>
                               <paper-input
                                 .value=${value}
                                 @change=${(ev) =>
@@ -438,7 +438,7 @@ class AutoEntitiesEditor extends LitElement {
               </p>
               <p>Please switch to the CODE EDITOR to access all options.</p>`
           : html`
-              <mwc-select
+              <ha-select
                 .label=${"Method"}
                 .value=${this._config.sort?.method ?? "none"}
                 @selected=${this._changeSortMethod}
@@ -449,7 +449,7 @@ class AutoEntitiesEditor extends LitElement {
                 ${SORT_METHODS.map(
                   (f) => html` <mwc-list-item .value=${f}>${f}</mwc-list-item> `
                 )}
-              </mwc-select>
+              </ha-select>
               <p>
                 <ha-formfield .label=${"Reverse"}>
                   <ha-switch
