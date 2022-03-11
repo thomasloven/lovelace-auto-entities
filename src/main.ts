@@ -12,36 +12,19 @@ import {
   LovelaceRowConfig,
 } from "./types";
 import pjson from "../package.json";
-import "./auto-entities-editor";
+import "./editor/auto-entities-editor";
+import { compare_deep } from "./helpers";
 
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
-
-function compare_deep(a: any, b: any) {
-  if (a === b) return true;
-  if (typeof a !== typeof b) return false;
-  if (!(a instanceof Object && b instanceof Object)) return false;
-  for (const x in a) {
-    if (!a.hasOwnProperty(x)) continue;
-    if (!b.hasOwnProperty(x)) return false;
-    if (a[x] === b[x]) continue;
-    if (typeof a[x] !== "object") return false;
-    if (!compare_deep(a[x], b[x])) return false;
-  }
-  for (const x in b) {
-    if (!b.hasOwnProperty(x)) continue;
-    if (!a.hasOwnProperty(x)) return false;
-  }
-  return true;
-}
 
 class AutoEntities extends LitElement {
   @property() _config: AutoEntitiesConfig;
   @property() hass: any;
   @property() card: LovelaceCard;
   @property() _template: string[];
+
   _entities: EntityList;
-  //_renderer;
   _cardConfig;
   _updateCooldown = { timer: undefined, rerun: false };
   _cardBuilt?: Promise<void>;
@@ -325,9 +308,13 @@ class AutoEntities extends LitElement {
 
 if (!customElements.get("auto-entities")) {
   customElements.define("auto-entities", AutoEntities);
-  console.info(
+  console.groupCollapsed(
     `%cAUTO-ENTITIES ${pjson.version} IS INSTALLED`,
-    "color: green; font-weight: bold",
-    ""
+    "color: green; font-weight: bold"
   );
+  console.log(
+    "Readme:",
+    "https://github.com/thomasloven/lovelace-auto-entities"
+  );
+  console.groupEnd();
 }
