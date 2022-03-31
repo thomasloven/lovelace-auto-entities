@@ -1,31 +1,16 @@
 import { LitElement, html, CSSResultArray, css } from "lit";
 import { property, state, query } from "lit/decorators.js";
-import { AutoEntitiesConfig } from "./types";
-
-const FILTER_OPTIONS = [
-  "domain",
-  "entity_id",
-  "state",
-  "name",
-  "group",
-  "device",
-  "area",
-  "integration",
-  "last_changed",
-  "last_updated",
-  "last_triggered",
-];
-
-const SORT_METHODS = [
-  "none",
-  "domain",
-  "entity_id",
-  "friendly_name",
-  "state",
-  "last_changed",
-  "last_updated",
-  "last_triggered",
-];
+import { AutoEntitiesConfig } from "../types";
+import { loadHaForm } from "../helpers";
+import {
+  filterGroupSchema,
+  filterGroupOptionsSchema,
+  filter2form,
+  form2filter,
+  specialGroupSchema,
+  cardOptionsSchema,
+  sortSchema,
+} from "./schema";
 
 class AutoEntitiesEditor extends LitElement {
   @state() _config: AutoEntitiesConfig;
@@ -43,6 +28,11 @@ class AutoEntitiesEditor extends LitElement {
     this._config = config;
   }
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    loadHaForm();
+  }
+
   _handleSwitchTab(ev: CustomEvent) {
     this._selectedTab = parseInt(ev.detail.index, 10);
   }
@@ -51,7 +41,7 @@ class AutoEntitiesEditor extends LitElement {
     if (!this._config) return;
 
     const include = [...this._config.filter?.include];
-    include.push({ domain: "" });
+    include.push({});
     const filter = { ...this._config.filter, include };
     this._config = { ...this._config, filter };
 
@@ -98,8 +88,11 @@ class AutoEntitiesEditor extends LitElement {
   async _changeSpecialEntry(group, ev) {
     if (!this._config) return;
 
+    const data = { ...ev.detail.value?.data } ?? { type: "" };
+    data.type = data.type ?? "";
+
     const include = [...this._config.filter?.include];
-    include[group] = ev.detail.value;
+    include[group] = data;
     const filter = { ...this._config.filter, include };
     this._config = { ...this._config, filter };
 
@@ -110,10 +103,10 @@ class AutoEntitiesEditor extends LitElement {
   async _changeGroupOptions(group, ev) {
     if (!this._config) return;
 
-    const options = ev.detail.value;
+    const data = ev.detail.value;
 
     const include = [...this._config.filter?.include];
-    include[group] = { ...include[group], options };
+    include[group] = { ...data };
     const filter = { ...this._config.filter, include };
     this._config = { ...this._config, filter };
 
@@ -122,96 +115,37 @@ class AutoEntitiesEditor extends LitElement {
     );
   }
 
-  _addFilter(group) {
+  _changeFilter(group, ev) {
     if (!this._config) return;
 
-    const newFilter = FILTER_OPTIONS.find(
-      (f) => this._config.filter.include[group][f] === undefined
-    );
-    if (newFilter === undefined) return;
-
+    const data = form2filter(this._config, ev.detail.value);
     const include = [...this._config.filter?.include];
-    include[group] = { ...include[group], [newFilter]: "" };
-    const filter = { ...this._config.filter, include };
-    this._config = { ...this._config, filter };
-
-    this.dispatchEvent(
-      new CustomEvent("config-changed", { detail: { config: this._config } })
-    );
-  }
-  _removeFilter(group_index, key) {
-    if (!this._config) return;
-
-    const include = [...this._config.filter?.include];
-    const group = { ...include[group_index] };
-    delete group[key];
-    if (Object.keys(group).length === 0)
-      return this._deleteFilterGroup(group_index);
-    include[group_index] = group;
-    const filter = { ...this._config.filter, include };
-    this._config = { ...this._config, filter };
-
-    this.dispatchEvent(
-      new CustomEvent("config-changed", { detail: { config: this._config } })
-    );
-  }
-  _changeFilterKey(group_index, oldFilter, ev) {
-    if (!this._config) return;
-
-    const newFilter = ev.target.value;
-    if (newFilter === undefined || newFilter === oldFilter) return;
-
-    const include = [...this._config.filter?.include];
-    const group = { ...include[group_index] };
-    if (group[oldFilter] === undefined) return;
-    group[newFilter] = group[oldFilter];
-    delete group[oldFilter];
-    include[group_index] = group;
-    const filter = { ...this._config.filter, include };
-    this._config = { ...this._config, filter };
-
-    this.dispatchEvent(
-      new CustomEvent("config-changed", { detail: { config: this._config } })
-    );
-  }
-  _changeFilterValue(group, filter_property, ev) {
-    if (!this._config) return;
-
-    const include = [...this._config.filter?.include];
-    const _group = { ...include[group] };
-    _group[filter_property] = ev.target.value;
-    include[group] = _group;
-    const filter = { ...this._config.filter, include };
-    this._config = { ...this._config, filter };
-
+    include[group] = { ...data, options: include[group].options };
+    this._config.filter = { ...this._config.filter, include };
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
 
-  _changeSortMethod(ev) {
+  _changeSortOptions(ev) {
     if (!this._config) return;
-
-    const method = ev.target.value;
-    const sort = { ...this._config.sort, method };
+    const sort = ev.detail.value;
     this._config = { ...this._config, sort };
-
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
-  _sortOptionToggle(option, ev) {
+
+  _changeCardOptions(ev) {
     if (!this._config) return;
 
-    const sort = { ...this._config.sort };
-    sort[option] = ev.target.checked;
-    this._config = { ...this._config, sort };
+    const data = ev.detail.value;
 
+    this._config = { ...this._config, ...data };
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
-
   _showEmptyToggle() {
     if (!this._config) return;
 
@@ -239,18 +173,6 @@ class AutoEntitiesEditor extends LitElement {
     const cfg = { ...this._config.card };
     cfg[this._config.card_param || "entities"] = [];
     return cfg;
-  }
-  _handleCardPicked(ev) {
-    ev.stopPropagation();
-    if (!this._config) return;
-
-    const card = { ...ev.detail.config };
-    delete card.entities;
-    this._config = { ...this._config, card };
-
-    this.dispatchEvent(
-      new CustomEvent("config-changed", { detail: { config: this._config } })
-    );
   }
   _handleCardConfigChanged(ev) {
     ev.stopPropagation();
@@ -300,6 +222,7 @@ class AutoEntitiesEditor extends LitElement {
             <mwc-tab .label=${"Filters"}></mwc-tab>
             <mwc-tab .label=${"Sorting"}></mwc-tab>
             <mwc-tab .label=${"Card"}></mwc-tab>
+            <mwc-tab .label=${"?"} style="flex: 0 1 min-content;"></mwc-tab>
           </mwc-tab-bar>
         </div>
         <div id="editor">
@@ -307,8 +230,29 @@ class AutoEntitiesEditor extends LitElement {
             this._renderFilterEditor,
             this._renderSortEditor,
             this._renderCardEditor,
+            this._renderHelp,
           ][this._selectedTab].bind(this)()}
         </div>
+      </div>
+    `;
+  }
+
+  _renderHelp() {
+    return html`
+      <div class="box">
+        <p>Auto entities</p>
+        <p>
+          See
+          <a
+            href="https://github.com/thomasloven/lovelace-auto-entities"
+            target="_blank"
+            rel="no referrer"
+          >
+            euto-entities on github
+          </a>
+          for usage instructions.
+        </p>
+        <p>Not all options are available in the GUI editor.</p>
       </div>
     `;
   }
@@ -316,17 +260,18 @@ class AutoEntitiesEditor extends LitElement {
   _renderFilterEditor() {
     if (this._config.filter?.template || this._config.entities)
       return html`
-        <div class="filter">
+        <div class="box">
           <p>
             <b>Your filter method is not handled by the GUI editor.</b>
           </p>
           <p>Please switch to the CODE EDITOR to access all options.</p>
         </div>
       `;
+
     return html`
       ${this._config.filter.include.map(
         (group, group_idx) => html`
-          <div class="filter">
+          <div class="box">
             <div class="toolbar">
               <mwc-icon-button
                 .disabled=${group_idx === 0}
@@ -349,73 +294,31 @@ class AutoEntitiesEditor extends LitElement {
             </div>
             ${group.type === undefined
               ? html`
-                  ${Object.entries(group).map(
-                    ([filter, value], key_idx) => html`
-                      ${FILTER_OPTIONS.includes(filter)
-                        ? html`
-                            <div class="option">
-                              <mwc-select
-                                .value=${filter}
-                                @selected=${(ev) =>
-                                  this._changeFilterKey(group_idx, filter, ev)}
-                                @closed=${(ev) => ev.stopPropagation()}
-                                fixedMenuPosition
-                                naturalMenuWidth
-                              >
-                                ${FILTER_OPTIONS.map(
-                                  (f) => html`
-                                    <mwc-list-item .value=${f}
-                                      >${f}</mwc-list-item
-                                    >
-                                  `
-                                )}
-                              </mwc-select>
-                              <paper-input
-                                .value=${value}
-                                @change=${(ev) =>
-                                  this._changeFilterValue(
-                                    group_idx,
-                                    filter,
-                                    ev
-                                  )}
-                              >
-                                <mwc-icon-button
-                                  slot="suffix"
-                                  @click=${() =>
-                                    this._removeFilter(group_idx, filter)}
-                                >
-                                  <ha-icon .icon=${"mdi:close"}></ha-icon>
-                                </mwc-icon-button>
-                              </paper-input>
-                            </div>
-                          `
-                        : filter === "options"
-                        ? html``
-                        : html`<p><b>Some filters are not shown</b></p>
-                            <p>
-                              Please switch to the CODE EDITOR to access all
-                              options.
-                            </p>`}
-                    `
-                  )}
-                  <mwc-button @click=${() => this._addFilter(group_idx)}>
-                    <ha-icon .icon=${"mdi:plus"}></ha-icon>Add filter
-                  </mwc-button>
-                  <ha-yaml-editor
-                    .label=${"Options"}
-                    .defaultValue=${this._config.filter.include[group_idx]
-                      .options}
-                    .group=${group_idx}
+                  <ha-form
+                    .hass=${this.hass}
+                    .schema=${filterGroupSchema(group)}
+                    .data=${filter2form(group)}
+                    .computeLabel=${(s) => s.label ?? s.name}
+                    @value-changed=${(ev) => this._changeFilter(group_idx, ev)}
+                  ></ha-form>
+                  <p>Options:</p>
+                  <ha-form
+                    .hass=${this.hass}
+                    .schema=${filterGroupOptionsSchema}
+                    .data=${group}
                     @value-changed=${(ev) =>
                       this._changeGroupOptions(group_idx, ev)}
-                  ></ha-yaml-editor>
+                  ></ha-form>
                 `
-              : html`<ha-yaml-editor
-                  .defaultValue=${this._config.filter.include[group_idx]}
-                  .group=${group_idx}
-                  @value-changed=${(ev) =>
-                    this._changeSpecialEntry(group_idx, ev)}
-                ></ha-yaml-editor>`}
+              : html`
+                  <ha-form
+                    .hass=${this.hass}
+                    .schema=${specialGroupSchema}
+                    .data=${{ data: group }}
+                    @value-changed=${(ev) =>
+                      this._changeSpecialEntry(group_idx, ev)}
+                  ></ha-form>
+                `}
           </div>
         `
       )}
@@ -429,66 +332,36 @@ class AutoEntitiesEditor extends LitElement {
   }
 
   _renderSortEditor() {
+    const data = this._config.sort ?? { method: "none" };
+
     return html`
-      <div class="sort">
-        ${this._config.sort?.method &&
-        !SORT_METHODS.includes(this._config.sort.method)
-          ? html`<p>
-                <b>Your sort method is not handled by the GUI editor.</b>
-              </p>
-              <p>Please switch to the CODE EDITOR to access all options.</p>`
-          : html`
-              <mwc-select
-                .label=${"Method"}
-                .value=${this._config.sort?.method ?? "none"}
-                @selected=${this._changeSortMethod}
-                @closed=${(ev) => ev.stopPropagation()}
-                fixedMenuPosition
-                naturalMenuWidth
-              >
-                ${SORT_METHODS.map(
-                  (f) => html` <mwc-list-item .value=${f}>${f}</mwc-list-item> `
-                )}
-              </mwc-select>
-              <p>
-                <ha-formfield .label=${"Reverse"}>
-                  <ha-switch
-                    .checked=${this._config.sort?.reverse === true}
-                    @change=${(ev) => this._sortOptionToggle("reverse", ev)}
-                  ></ha-switch>
-                </ha-formfield>
-              </p>
-              <p>
-                <ha-formfield .label=${"Numeric"}>
-                  <ha-switch
-                    .checked=${this._config.sort?.numeric === true}
-                    @change=${(ev) => this._sortOptionToggle("numeric", ev)}
-                  ></ha-switch>
-                </ha-formfield>
-              </p>
-            `}
+      <div class="box">
+        <ha-form
+          .hass=${this.hass}
+          .data=${data}
+          .schema=${sortSchema}
+          .computeLabel=${(s) => s.label ?? s.name}
+          @value-changed=${this._changeSortOptions}
+        ></ha-form>
       </div>
     `;
   }
 
   _renderCardEditor() {
+    const data = { ...this._config };
+    data.show_empty = data.show_empty ?? true;
     return html`
-      <div class="card">
-        <ha-formfield .label=${"Display when empty"}>
-          <ha-switch
-            .checked=${this._config!.show_empty !== false}
-            @change=${this._showEmptyToggle}
-          ></ha-switch>
-        </ha-formfield>
-        <paper-input
-          .label=${"Card parameter"}
-          .value=${this._config.card_param ?? ""}
-          @change=${this._changeCardParam}
-        >
-        </paper-input>
+      <div class="box cards">
+        <ha-form
+          .hass=${this.hass}
+          .schema=${cardOptionsSchema}
+          .computeLabel=${(s) => s.label ?? s.name}
+          .data=${data}
+          @value-changed=${this._changeCardOptions}
+        ></ha-form>
         ${this._config.card
           ? html`
-              <div class="card-options">
+              <div>
                 <mwc-button
                   @click=${this._toggleCardMode}
                   .disabled=${!this._cardGUIModeAvailable}
@@ -498,12 +371,12 @@ class AutoEntitiesEditor extends LitElement {
                     ? "Show code editor"
                     : "Show Visual Editor"}
                 </mwc-button>
-                <mwc-icon-button
-                  .title=${"Delete card"}
+                <mwc-button
+                  .title=${"Change card type"}
                   @click=${this._deleteCard}
                 >
-                  <ha-icon .icon=${"mdi:delete"}></ha-icon>
-                </mwc-icon-button>
+                  Change card type
+                </mwc-button>
               </div>
               <hui-card-element-editor
                 .hass=${this.hass}
@@ -517,7 +390,7 @@ class AutoEntitiesEditor extends LitElement {
               <hui-card-picker
                 .hass=${this.hass}
                 .lovelace=${this.lovelace}
-                @config-changed=${this._handleCardPicked}
+                @config-changed=${this._handleCardConfigChanged}
               ></hui-card-picker>
             `}
       </div>
@@ -531,32 +404,28 @@ class AutoEntitiesEditor extends LitElement {
           border-bottom: 1px solid var(--divider-color);
         }
 
-        .filter,
-        .card {
+        .box {
           margin-top: 8px;
           border: 1px solid var(--divider-color);
           padding: 12px;
         }
-        .filter .option {
+        .option {
           display: flex;
-          align-items: flex-end;
-        }
-        .filter .option mwc-select {
-          margin-right: 16px;
-          width: 150px;
-        }
-        .filter .option paper-input {
-          flex-grow: 2;
+          align-items: center;
+          gap: 8px;
         }
 
-        .filter .toolbar,
-        .card .card-options {
+        .box .toolbar {
           display: flex;
           justify-content: flex-end;
           width: 100%;
+          gap: 8px;
         }
         .gui-mode-button {
           margin-right: auto;
+        }
+        a {
+          color: var(--primary-color);
         }
       `,
     ];
