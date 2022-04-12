@@ -179,6 +179,13 @@ const FILTERS: Record<
     if (!ent) return false;
     return match(value, ent.platform);
   },
+  hidden_by: async (hass, value, entity) => {
+    const ent = (await getEntities(hass)).find(
+      (e) => e.entity_id === entity.entity_id
+    );
+    if (!ent) return false;
+    return match(value, ent.hidden_by);
+  },
 };
 
 export async function filter_entity(
