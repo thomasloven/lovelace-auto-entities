@@ -246,9 +246,9 @@ class AutoEntitiesEditor extends LitElement {
           <a
             href="https://github.com/thomasloven/lovelace-auto-entities"
             target="_blank"
-            rel="no referrer"
+            rel="noreferrer"
           >
-            euto-entities on github
+            lovelace-auto-entities on github
           </a>
           for usage instructions.
         </p>
