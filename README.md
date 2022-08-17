@@ -366,7 +366,7 @@ filter:
 Or:
 
 ```yaml
-template: "{{states.light | selectattr('state', '==', 'on') | list}}"
+template: "{{states.light | selectattr('state', '==', 'on') | map(attribute='entity_id') | list}}"
 ```
 
 ---
