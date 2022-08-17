@@ -312,6 +312,7 @@ filter:
         device_class: motion
 sort:
   method: last_changed
+  reverse: true
   count: 5
 ```
 
