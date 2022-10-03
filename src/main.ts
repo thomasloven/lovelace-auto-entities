@@ -224,7 +224,7 @@ class AutoEntities extends LitElement {
                   entity.entity
                 ).replace(
                   /this.entity_name/g,
-                  this.hass.states.get(entity.entity).name
+                  this.hass.states[entity.entity].name
                 )
               )
             );
