@@ -199,7 +199,7 @@ sort:
 
 ## Entity options
 
-In the `options:` option of the filters, the string `this.entity_id` will be replaced with the matched entity_id. Useful for service calls - see below.
+In the `options:` option of the filters, the string `this.entity_id` will be replaced with the matched entity_id, and `this.entity_name` will be replaced with the matched entity's friendly name. Useful for service calls - see below.
 
 ## Examples
 
