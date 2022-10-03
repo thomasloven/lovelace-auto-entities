@@ -199,7 +199,7 @@ sort:
 
 ## Entity options
 
-In the `options:` option of the filters, the string `this.entity_id` will be replaced with the matched entity_id. Useful for service calls - see below.
+In the `options:` option of the filters, the string `this.entity_id` will be replaced with the matched entity_id. `this.entity_attribute[attribute]` will be replaced with the value of the `attribute` attribute of the matched entity. Useful for service calls - see below.
 
 ## Examples
 
