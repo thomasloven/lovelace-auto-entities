@@ -222,6 +222,9 @@ class AutoEntities extends LitElement {
                 JSON.stringify({ ...entity, ...filter.options }).replace(
                   /this.entity_id/g,
                   entity.entity
+                ).replace(
+                  /this.entity_name/g,
+                  this.hass.states.get(entity.entity).name
                 )
               )
             );
