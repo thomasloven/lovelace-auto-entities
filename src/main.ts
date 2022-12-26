@@ -191,7 +191,7 @@ class AutoEntities extends LitElement {
 
     this._cardBuiltResolve?.();
     this.card.hass = this.hass;
-    this.empty = entities.length === 0;
+    this.empty = entities.filter((e) => e.type === undefined).length === 0;
     const hide =
       this.empty &&
       this._config.show_empty === false &&
@@ -307,7 +307,10 @@ class AutoEntities extends LitElement {
     return this;
   }
   render() {
-    return html`${this.empty ? this.else : this.card}`;
+    return html`${this.empty &&
+    (this._config.show_empty === false || this._config.else)
+      ? this.else
+      : this.card}`;
   }
 
   async getCardSize() {

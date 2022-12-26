@@ -67,6 +67,13 @@ cards:
             - domain: light
               state: "off"
       - <<: *card
+        show_empty: true
+        filter:
+          include:
+            - type: section
+            - domain: light
+              state: "off"
+      - <<: *card
         else:
           type: markdown
           content: All lights are on
