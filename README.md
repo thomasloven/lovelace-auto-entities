@@ -58,7 +58,7 @@ Filters have the following options, and will match any entity fulfilling **ALL**
 - `device_manufacturer` Match entities belonging to a device by a given manufacturer (e.g. `IKEA`)
 - `device_model` Match entities belonging to a device of a given model (e.g. `Hue white ambiance E26/E27 (8718696548738)`)
 - `integration:` Match entities by integration identifier (e.g. `plex`, `input_boolean`, `xiaomi_miio`, `mobile_app` - Many integrations cannot be matched due to Home Assistant limitations)
-- `hidden_by:` Match the feature from HASS2022.4 for hidden entities. If a entity is hidden, the field hidden_by is set to `user`
+- `hidden_by:` Match who has hidden an entity (e.g. `user`, `integration`)
 - `attributes:` Map of `attribute: value` pairs to match.
 - `last_changed:` Match minutes since last state change (most useful as a comparison, e.g. `last_changed: < 15`)
 - `last_updated:` Match minutes since last update
