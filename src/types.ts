@@ -10,15 +10,24 @@ export interface SortConfig {
 
 interface FilterConfig {
   domain?: string;
-  state?: string;
   entity_id?: string;
+  state?: string;
   name?: string;
   group?: string;
+
   area?: string;
   device?: string;
+  device_manufacturer?: string;
+  device_model?: string;
+
   attributes?: Record<string, string>;
+
   last_changed?: string | number;
   last_updated?: string | number;
+  last_triggered?: string | number;
+
+  entity_category?: string;
+  integration?: string;
 
   not?: FilterConfig;
   or?: FilterConfig[];
@@ -50,10 +59,13 @@ export interface LovelaceRowConfig {
   entity?: string;
   type?: string;
 }
-export interface LovelaceCard {
+export interface LovelaceCard extends HTMLElement {
   hass: any;
   setConfig(config: any): void;
   getCardSize?(): number;
+}
+export interface HuiErrorCard extends LovelaceCard {
+  _config: any;
 }
 
 export interface HAState {

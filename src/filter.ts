@@ -4,6 +4,10 @@ const ago_suffix_regex = /([mhd])\s+ago\s*$/i;
 const default_ago_suffix = 'm ago';
 
 function match(pattern: any, value: any) {
+  if (typeof pattern === "string" && pattern.startsWith("$$")) {
+    pattern = pattern.substring(2);
+    value = JSON.stringify(value);
+  }
   if (typeof value === "string" && typeof pattern === "string") {
     if (
       (pattern.startsWith("/") && pattern.endsWith("/")) ||
@@ -39,17 +43,17 @@ function match(pattern: any, value: any) {
   if (typeof pattern === "string") {
     // Comparisons assume numerical values
     if (pattern.startsWith("<="))
-      return parseFloat(value) <= parseFloat(pattern.substr(2));
+      return parseFloat(value) <= parseFloat(pattern.substring(2));
     if (pattern.startsWith(">="))
-      return parseFloat(value) >= parseFloat(pattern.substr(2));
+      return parseFloat(value) >= parseFloat(pattern.substring(2));
     if (pattern.startsWith("<"))
-      return parseFloat(value) < parseFloat(pattern.substr(1));
+      return parseFloat(value) < parseFloat(pattern.substring(1));
     if (pattern.startsWith(">"))
-      return parseFloat(value) > parseFloat(pattern.substr(1));
+      return parseFloat(value) > parseFloat(pattern.substring(1));
     if (pattern.startsWith("!"))
-      return parseFloat(value) != parseFloat(pattern.substr(1));
+      return parseFloat(value) != parseFloat(pattern.substring(1));
     if (pattern.startsWith("="))
-      return parseFloat(value) == parseFloat(pattern.substr(1));
+      return parseFloat(value) == parseFloat(pattern.substring(1));
   }
 
   return pattern === value;
@@ -74,6 +78,13 @@ async function getEntities(hass) {
     (await hass.callWS({ type: "config/entity_registry/list" }));
   return cache.entities;
 }
+
+// Debugging helper
+// (window as any).AutoEntities = {
+//   getAreas,
+//   getDevices,
+//   getEntities,
+// };
 
 const FILTERS: Record<
   string,
@@ -127,18 +138,43 @@ const FILTERS: Record<
     if (!device) return false;
     return match(value, device.name_by_user) || match(value, device.name);
   },
+  device_manufacturer: async (hass, value, entity) => {
+    const ent = (await getEntities(hass)).find(
+      (e) => e.entity_id === entity.entity_id
+    );
+    if (!ent) return false;
+    const device = (await getDevices(hass)).find((d) => d.id === ent.device_id);
+    if (!device) return false;
+    return match(value, device.manufacturer);
+  },
+  device_model: async (hass, value, entity) => {
+    const ent = (await getEntities(hass)).find(
+      (e) => e.entity_id === entity.entity_id
+    );
+    if (!ent) return false;
+    const device = (await getDevices(hass)).find((d) => d.id === ent.device_id);
+    if (!device) return false;
+    return match(value, device.model);
+  },
   area: async (hass, value, entity) => {
     const ent = (await getEntities(hass)).find(
       (e) => e.entity_id === entity.entity_id
     );
     if (!ent) return false;
     let area = (await getAreas(hass)).find((a) => a.area_id === ent.area_id);
-    if (area) return match(value, area.name);
+    if (area) return match(value, area.name) || match(value, area.area_id);
     const device = (await getDevices(hass)).find((d) => d.id === ent.device_id);
     if (!device) return false;
     area = (await getAreas(hass)).find((a) => a.area_id === device.area_id);
     if (!area) return false;
-    return match(value, area.name);
+    return match(value, area.name) || match(value, area.area_id);
+  },
+  entity_category: async (hass, value, entity) => {
+    const ent = (await getEntities(hass)).find(
+      (e) => e.entity_id === entity.entity_id
+    );
+    if (!ent) return false;
+    return match(value, ent.entity_category);
   },
   last_changed: async (hass, value, entity) => {
     if (!ago_suffix_regex.test(value))
@@ -158,6 +194,13 @@ const FILTERS: Record<
       value = value + default_ago_suffix;
     
     return match(value, entity.attributes.last_triggered);
+  },
+  integration: async (hass, value, entity) => {
+    const ent = (await getEntities(hass)).find(
+      (e) => e.entity_id === entity.entity_id
+    );
+    if (!ent) return false;
+    return match(value, ent.platform);
   },
 };
 

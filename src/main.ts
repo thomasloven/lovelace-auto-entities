@@ -1,4 +1,5 @@
-import { LitElement, html, property } from "lit-element";
+import { LitElement, html } from "lit";
+import { property } from "lit/decorators.js";
 import { hasTemplate } from "card-tools/src/templates";
 import { bind_template, unbind_template } from "./templates";
 import { filter_entity } from "./filter";
@@ -6,37 +7,24 @@ import { get_sorter } from "./sort";
 import {
   AutoEntitiesConfig,
   EntityList,
+  HuiErrorCard,
   LovelaceCard,
   LovelaceRowConfig,
 } from "./types";
 import pjson from "../package.json";
-import "./auto-entities-editor";
+import "./editor/auto-entities-editor";
+import { compare_deep } from "./helpers";
 
-function compare_deep(a: any, b: any) {
-  if (a === b) return true;
-  if (typeof a !== typeof b) return false;
-  if (!(a instanceof Object && b instanceof Object)) return false;
-  for (const x in a) {
-    if (!a.hasOwnProperty(x)) continue;
-    if (!b.hasOwnProperty(x)) return false;
-    if (a[x] === b[x]) continue;
-    if (typeof a[x] !== "object") return false;
-    if (!compare_deep(a[x], b[x])) return false;
-  }
-  for (const x in b) {
-    if (!b.hasOwnProperty(x)) continue;
-    if (!a.hasOwnProperty(x)) return false;
-  }
-  return true;
-}
+window.queueMicrotask =
+  window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
 
 class AutoEntities extends LitElement {
   @property() _config: AutoEntitiesConfig;
   @property() hass: any;
   @property() card: LovelaceCard;
   @property() _template: string[];
+
   _entities: EntityList;
-  //_renderer;
   _cardConfig;
   _updateCooldown = { timer: undefined, rerun: false };
   _cardBuilt?: Promise<void>;
@@ -142,15 +130,63 @@ class AutoEntities extends LitElement {
     };
     if (!this.card || newType) {
       const helpers = await (window as any).loadCardHelpers();
-      this.card = await helpers.createCardElement(cardConfig);
+
+      // Replace console.error in order to catch errors from cards which don't like to be given an empty entities list
+      (console as any).oldError = (console as any).oldError || [];
+      const _consoleError = console.error;
+      (console as any).oldError.push(_consoleError);
+      console.error = (...args) => {
+        if (args.length === 3 && args[2].message) {
+          if (
+            args[2].message.startsWith?.("Entities") || // Logbook-card
+            args[2].message.startsWith?.("Either entities") || // Map card
+            args[2].message.endsWith?.("entity") // History-graph card
+          ) {
+            return;
+          }
+        }
+        _consoleError(...args);
+      };
+
+      try {
+        this.card = await helpers.createCardElement(cardConfig);
+
+        if (this.card.localName === "hui-error-card") {
+          const errorCard = this.card as HuiErrorCard;
+          await customElements.whenDefined("hui-error-card");
+          let ctr = 10;
+          while (!errorCard._config && ctr) {
+            await new Promise((resolve) => window.setTimeout(resolve, 100));
+            ctr--;
+          }
+          if (
+            errorCard._config?.error?.startsWith?.("Entities") ||
+            errorCard._config?.error?.startsWith?.("Either entities") ||
+            errorCard._config?.error?.endsWith?.("entity")
+          ) {
+            this.card = undefined;
+            this._entities = undefined;
+            this._cardConfig = undefined;
+            this._cardBuiltResolve?.();
+            return;
+          }
+        }
+      } finally {
+        console.error = (console as any).oldError.pop();
+      }
     } else {
       this.card.setConfig(cardConfig);
     }
+
     this._cardBuiltResolve?.();
     this.card.hass = this.hass;
     const hide = entities.length === 0 && this._config.show_empty === false;
     this.style.display = hide ? "none" : null;
     this.style.margin = hide ? "0" : null;
+    if ((this.card as any).requestUpdate) {
+      await this.updateComplete;
+      (this.card as any).requestUpdate();
+    }
   }
 
   async update_entities() {
@@ -161,7 +197,7 @@ class AutoEntities extends LitElement {
 
     let entities: EntityList = [...(this._config?.entities?.map(format) || [])];
 
-    if (!this.hass || !this._config.filter) {
+    if (!this.hass) {
       return entities;
     }
 
@@ -170,7 +206,7 @@ class AutoEntities extends LitElement {
     }
     entities = entities.filter(Boolean);
 
-    if (this._config.filter.include) {
+    if (this._config.filter?.include) {
       const all_entities = Object.keys(this.hass.states).map(format);
       for (const filter of this._config.filter.include) {
         if (filter.type) {
@@ -191,13 +227,19 @@ class AutoEntities extends LitElement {
             );
         }
 
-        if (filter.sort) add = add.sort(get_sorter(this.hass, filter.sort));
+        if (filter.sort) {
+          add = add.sort(get_sorter(this.hass, filter.sort));
+          if (filter.sort.count) {
+            const start = filter.sort.first ?? 0;
+            add = add.slice(start, start + filter.sort.count);
+          }
+        }
         entities = entities.concat(add);
       }
     }
 
     // TODO: Add tests for exclusions
-    if (this._config.filter.exclude) {
+    if (this._config.filter?.exclude) {
       for (const filter of this._config.filter.exclude) {
         const newEntities = [];
         for (const entity of entities) {
@@ -212,10 +254,8 @@ class AutoEntities extends LitElement {
     }
 
     if (this._config.sort) {
-      // TODO: Add tests for sorting methods
       entities = entities.sort(get_sorter(this.hass, this._config.sort));
       if (this._config.sort.count) {
-        // TODO: Add tests for pagination
         const start = this._config.sort.first ?? 0;
         entities = entities.slice(start, start + this._config.sort.count);
       }
@@ -226,6 +266,7 @@ class AutoEntities extends LitElement {
       for (const e of entities) {
         if (
           this._config.unique === "entity" &&
+          e.entity &&
           newEntities.some((i) => i.entity === e.entity)
         )
           continue;
@@ -267,9 +308,13 @@ class AutoEntities extends LitElement {
 
 if (!customElements.get("auto-entities")) {
   customElements.define("auto-entities", AutoEntities);
-  console.info(
+  console.groupCollapsed(
     `%cAUTO-ENTITIES ${pjson.version} IS INSTALLED`,
-    "color: green; font-weight: bold",
-    ""
+    "color: green; font-weight: bold"
   );
+  console.log(
+    "Readme:",
+    "https://github.com/thomasloven/lovelace-auto-entities"
+  );
+  console.groupEnd();
 }

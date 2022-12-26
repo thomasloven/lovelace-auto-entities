@@ -1,5 +1,12 @@
 homeassistant:
   legacy_templates: false
+  customize:
+    sensor.a1:
+      custom_name: a1_sensor
+    sensor.a2:
+      custom_name: a2_sensor
+    sensor.a3:
+      custom_name: a3_sensor
 default_config:
 
 demo:
@@ -23,3 +30,64 @@ group:
       - climate.ecobee
       - climate.heatpump
       - climate.hvac
+
+light:
+  - platform: group
+    name: Light Group
+    entities:
+      - light.bed_light
+      - light.ceiling_lights
+      - light.kitchen_lights
+
+template:
+  sensor:
+    - { name: a1, state: a1 }
+    - { name: a2, state: a2 }
+    - { name: a3, state: a3 }
+    - { name: a4, state: a4 }
+    - { name: a5, state: a5 }
+    - { name: a6, state: a6 }
+    - { name: a7, state: a7 }
+    - { name: a8, state: a8 }
+    - { name: a9, state: a9 }
+    - { name: a10, state: a10 }
+    - { name: a11, state: a11 }
+    - { name: a12, state: a12 }
+    - { name: a13, state: a13 }
+    - { name: a14, state: a14 }
+    - { name: a15, state: a15 }
+    - { name: a16, state: a16 }
+    - { name: a17, state: a17 }
+    - { name: a18, state: a18 }
+    - { name: a19, state: a19 }
+    - { name: a20, state: a20 }
+    - { name: a21, state: a21 }
+    - { name: a22, state: a22 }
+    - { name: a23, state: a23 }
+    - { name: a24, state: a24 }
+    - { name: a25, state: a25 }
+    - { name: a26, state: a26 }
+    - { name: a27, state: a27 }
+    - { name: a28, state: a28 }
+    - { name: a29, state: a29 }
+    - { name: a30, state: a30 }
+    - { name: a31, state: a31 }
+    - { name: a32, state: a32 }
+    - { name: a33, state: a33 }
+    - { name: a34, state: a34 }
+    - { name: a35, state: a35 }
+    - { name: a36, state: a36 }
+    - { name: a37, state: a37 }
+    - { name: a38, state: a38 }
+    - { name: a39, state: a39 }
+    - { name: a40, state: a40 }
+    - { name: a41, state: a41 }
+    - { name: a42, state: a42 }
+    - { name: a43, state: a43 }
+    - { name: a44, state: a44 }
+    - { name: a45, state: a45 }
+    - { name: a46, state: a46 }
+    - { name: a47, state: a47 }
+    - { name: a48, state: a48 }
+    - { name: a49, state: a49 }
+    - { name: a50, state: a50 }
