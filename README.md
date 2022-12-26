@@ -38,6 +38,7 @@ sort: <sort_method>
   - `include:` A list of filters specifying which entities to add to the card
   - `exclude:` A list of filters specifying which entities to remove from the card
 - `show_empty:` Whether to display the card if it has no entities. Default: `true`.
+- `else:` Card to display if main card has no entities. Overrides `show_empty`.
 - `unique:` Whether to remove duplicate values after filtering and sorting. Set to `true` to remove exact duplicate entries. Set to `entity` to remove entries with the same entity id. Default: `false`.
 - `sort:` How to sort the entities of the card. Default: `none`. See [Sorting entities for details](#sorting-entities)
 - `card_param:` The parameter of the card to populate. Default: `entities`.

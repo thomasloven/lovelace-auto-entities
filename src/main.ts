@@ -1,5 +1,5 @@
 import { LitElement, html } from "lit";
-import { property } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 import { hasTemplate } from "card-tools/src/templates";
 import { bind_template, unbind_template } from "./templates";
 import { filter_entity } from "./filter";
@@ -22,7 +22,9 @@ class AutoEntities extends LitElement {
   @property() _config: AutoEntitiesConfig;
   @property() hass: any;
   @property() card: LovelaceCard;
+  @property() else?: LovelaceCard;
   @property() _template: string[];
+  @state() empty = false;
 
   _entities: EntityList;
   _cardConfig;
@@ -69,6 +71,7 @@ class AutoEntities extends LitElement {
       (resolve) => (this._cardBuiltResolve = resolve)
     );
 
+    queueMicrotask(() => this.build_else());
     queueMicrotask(() => this.update_all());
   }
 
@@ -98,6 +101,7 @@ class AutoEntities extends LitElement {
 
   async update_all() {
     if (this.card) this.card.hass = this.hass;
+    if (this.else) this.else.hass = this.hass;
 
     if (this._updateCooldown.timer) {
       this._updateCooldown.rerun = true;
@@ -112,6 +116,13 @@ class AutoEntities extends LitElement {
 
     const entities = await this.update_entities();
     this.update_card(entities);
+  }
+
+  async build_else() {
+    if (this._config.else === undefined) return;
+    const helpers = await (window as any).loadCardHelpers();
+    this.else = await helpers.createCardElement(this._config.else);
+    this.else.hass = this.hass;
   }
 
   async update_card(entities: EntityList) {
@@ -180,7 +191,11 @@ class AutoEntities extends LitElement {
 
     this._cardBuiltResolve?.();
     this.card.hass = this.hass;
-    const hide = entities.length === 0 && this._config.show_empty === false;
+    this.empty = entities.length === 0;
+    const hide =
+      this.empty &&
+      this._config.show_empty === false &&
+      this._config.else === undefined;
     this.style.display = hide ? "none" : null;
     this.style.margin = hide ? "0" : null;
     if ((this.card as any).requestUpdate) {
@@ -292,7 +307,7 @@ class AutoEntities extends LitElement {
     return this;
   }
   render() {
-    return html`${this.card}`;
+    return html`${this.empty ? this.else : this.card}`;
   }
 
   async getCardSize() {

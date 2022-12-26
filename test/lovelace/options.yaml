@@ -46,6 +46,14 @@ cards:
               include:
                 - domain: light
                   state: "off"
+          - <<: *card
+            else:
+              type: markdown
+              content: All lights are on
+            filter:
+              include:
+                - domain: light
+                  state: "off"
           ```
       - <<: *card
         filter:
@@ -54,6 +62,14 @@ cards:
               state: "on"
       - <<: *card
         show_empty: false
+        filter:
+          include:
+            - domain: light
+              state: "off"
+      - <<: *card
+        else:
+          type: markdown
+          content: All lights are on
         filter:
           include:
             - domain: light

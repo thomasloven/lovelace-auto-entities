@@ -50,6 +50,7 @@ export interface AutoEntitiesConfig {
   card_param?: string;
 
   show_empty?: boolean;
+  else?: any;
   unique?: boolean | string;
   sort?: any;
 
