@@ -28,6 +28,7 @@ interface FilterConfig {
 
   entity_category?: string;
   integration?: string;
+  hidden_by?: string;
 
   not?: FilterConfig;
   or?: FilterConfig[];

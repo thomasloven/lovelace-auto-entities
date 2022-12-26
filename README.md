@@ -1,6 +1,6 @@
 # auto-entities
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
 
 Automatically populate lovelace cards with entities matching certain criteria.
 
@@ -58,6 +58,7 @@ Filters have the following options, and will match any entity fulfilling **ALL**
 - `device_manufacturer` Match entities belonging to a device by a given manufacturer (e.g. `IKEA`)
 - `device_model` Match entities belonging to a device of a given model (e.g. `Hue white ambiance E26/E27 (8718696548738)`)
 - `integration:` Match entities by integration identifier (e.g. `plex`, `input_boolean`, `xiaomi_miio`, `mobile_app` - Many integrations cannot be matched due to Home Assistant limitations)
+- `hidden_by:` Match who has hidden an entity (e.g. `user`, `integration`)
 - `attributes:` Map of `attribute: value` pairs to match.
 - `last_changed:` Match minutes since last state change (most useful as a comparison, e.g. `last_changed: < 15`)
 - `last_updated:` Match minutes since last update
@@ -78,7 +79,7 @@ The filter section `template` takes a jinja2 template which evaluates to a list 
 
 `auto-entities` creates a list of entities by:
 
-1. Including every entitiy given in `entities:` (this allow nesting of `auto-entities`if you'd want to do that for some reason...)
+1. Including every entity given in `entities:` (this allow nesting of `auto-entities`if you'd want to do that for some reason...)
 2. Include every entity listed in a `filter.template` evaluation
 3. Include all entities that matches **ALL** options of **ANY** filter in the `filter.include` section. The same entity may be included several times by different filters.
 4. Remove all entities that matches **ALL** options on **ANY** filter in the `filter.exclude` section.
@@ -124,6 +125,21 @@ filter:
     - state: "= 12" # State is exactly 12 (also matches "12", "12.0" etc.)
     - state: 12 # State is exactly 12 but not "12"
 ```
+
+### Time since an event
+
+Any filter option dealing with an event time can filter entities by time elapsed since that event:
+
+```yaml
+filter:
+  include:
+    - attributes:
+        last_seen: "> 1h ago" # Entity was seen more than 1 hour ago
+    - last_updated: "< 20m ago" # Entity was updated less than 20 minutes ago
+    - last_triggered: "> 1d ago" # Entity was triggered more than 1 day ago
+```
+
+All the numeric comparison operators are available.
 
 ### Repeating options
 
@@ -251,7 +267,7 @@ filter:
           action: toggle
 ```
 
-Also show all lights that are on:
+Also show all lights that are on, except the hidden ones:
 
 ```yaml
 type: custom:auto-entities
@@ -266,6 +282,7 @@ filter:
   exclude:
     - state: "off"
     - state: "unavailable"
+    - hidden_by: "user"
 ```
 
 Show everything that has "light" in its name, but isn't a light, and all switches in the living room:
@@ -312,6 +329,7 @@ filter:
         device_class: motion
 sort:
   method: last_changed
+  reverse: true
   count: 5
 ```
 
@@ -365,7 +383,7 @@ filter:
 Or:
 
 ```yaml
-template: "{{states.light | selectattr('state', '==', 'on') | list}}"
+template: "{{states.light | selectattr('state', '==', 'on') | map(attribute='entity_id') | list}}"
 ```
 
 ---

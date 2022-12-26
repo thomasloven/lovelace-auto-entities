@@ -15,6 +15,7 @@ const GUI_EDITOR_FILTERS = [
   "last_triggered",
   "entity_category",
   "integration",
+  "hidden_by",
 ];
 
 const filterKeySelector = {
@@ -35,6 +36,7 @@ const filterKeySelector = {
     ["last_triggered", "Last Trigger"],
     ["entity_category", "Entity Category"],
     ["integration", "Governing integration"],
+    ["hidden_by", "Hidden by"],
   ],
 };
 
