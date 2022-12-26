@@ -78,3 +78,16 @@ cards:
               sort:
                 method: state
                 reverse: true
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 3: Ip sorting
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+              name: "ip*"
+              sort:
+                method: state
+                ip: true

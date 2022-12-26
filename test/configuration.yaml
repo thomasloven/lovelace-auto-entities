@@ -41,6 +41,11 @@ light:
 
 template:
   sensor:
+    - { name: ip1, state: 192.168.1.10 }
+    - { name: ip2, state: 192.168.1.100 }
+    - { name: ip3, state: 192.168.1.2 }
+    - { name: ip4, state: 192.168.1.200 }
+    - { name: ip5, state: 192.168.1.21 }
     - { name: a1, state: a1 }
     - { name: a2, state: a2 }
     - { name: a3, state: a3 }

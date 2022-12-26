@@ -19,6 +19,17 @@ function compare(_a: any, _b: any, method: SortConfig) {
     if (_a === _b) return 0;
     return (method.reverse ? -1 : 1) * (_a < _b ? -1 : 1);
   }
+  if (method.ip) {
+    _a = _a.split(".");
+    _b = _b.split(".");
+    return (
+      (method.reverse ? -1 : 1) *
+      (compare(_a[0], _b[0], { method: "", numeric: true }) ||
+        compare(_a[1], _b[1], { method: "", numeric: true }) ||
+        compare(_a[2], _b[2], { method: "", numeric: true }) ||
+        compare(_a[3], _b[3], { method: "", numeric: true }))
+    );
+  }
   return (
     (method.reverse ? -1 : 1) *
     String(_a).localeCompare(String(_b), undefined, method)

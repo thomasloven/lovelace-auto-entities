@@ -6,6 +6,7 @@ export interface SortConfig {
   first?: number;
   count?: number;
   numeric?: boolean;
+  ip?: boolean;
 }
 
 interface FilterConfig {
