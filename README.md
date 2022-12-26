@@ -58,6 +58,7 @@ Filters have the following options, and will match any entity fulfilling **ALL**
 - `device_manufacturer` Match entities belonging to a device by a given manufacturer (e.g. `IKEA`)
 - `device_model` Match entities belonging to a device of a given model (e.g. `Hue white ambiance E26/E27 (8718696548738)`)
 - `integration:` Match entities by integration identifier (e.g. `plex`, `input_boolean`, `xiaomi_miio`, `mobile_app` - Many integrations cannot be matched due to Home Assistant limitations)
+- `hidden_by:` Match who has hidden an entity (e.g. `user`, `integration`)
 - `attributes:` Map of `attribute: value` pairs to match.
 - `last_changed:` Match minutes since last state change (most useful as a comparison, e.g. `last_changed: < 15`)
 - `last_updated:` Match minutes since last update
@@ -77,6 +78,7 @@ The filter section `template` takes a jinja2 template which evaluates to a list 
 ## How it works
 
 `auto-entities` creates a list of entities by:
+
 1. Including every entity given in `entities:` (this allow nesting of `auto-entities`if you'd want to do that for some reason...)
 2. Include every entity listed in a `filter.template` evaluation
 3. Include all entities that matches **ALL** options of **ANY** filter in the `filter.include` section. The same entity may be included several times by different filters.
@@ -125,6 +127,7 @@ filter:
 ```
 
 ### Time since an event
+
 Any filter option dealing with an event time can filter entities by time elapsed since that event:
 
 ```yaml
@@ -264,7 +267,7 @@ filter:
           action: toggle
 ```
 
-Also show all lights that are on:
+Also show all lights that are on, except the hidden ones:
 
 ```yaml
 type: custom:auto-entities
@@ -279,6 +282,7 @@ filter:
   exclude:
     - state: "off"
     - state: "unavailable"
+    - hidden_by: "user"
 ```
 
 Show everything that has "light" in its name, but isn't a light, and all switches in the living room:

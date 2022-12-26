@@ -3,9 +3,20 @@ cards:
   - type: custom:auto-entities
     card:
       type: entities
+      title: Light with hidden ones
     filter:
       include:
         - domain: light
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Lights without hidden ones
+    filter:
+      include:
+        - domain: light
+      exclude:
+        - hidden_by: user
 
   - type: custom:auto-entities
     card:
