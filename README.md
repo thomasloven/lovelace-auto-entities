@@ -70,6 +70,7 @@ Special options:
 - `not:` Specifies a filter that entities must _not_ match.
 - `sort:` Specifies a method to sort entities matched by _this filter only_.
 - `or:` Match any in a list of filters.
+- `and:` Match all in a list of filters (not necessary since `and` is implicit).
 
 ### Template filter
 

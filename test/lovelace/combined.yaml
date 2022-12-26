@@ -44,6 +44,10 @@ cards:
               - type: section
               - domain: light
                 state: "on"
+              - type: section
+              - and:
+                - domain: light
+                - state: "on"
           ```
       - <<: *card
         filter:
@@ -54,6 +58,10 @@ cards:
             - type: section
             - domain: light
               state: "on"
+            - type: section
+            - and:
+                - domain: light
+                - state: "on"
   - type: vertical-stack
     cards:
       - <<: *desc
