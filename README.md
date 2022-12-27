@@ -63,6 +63,7 @@ Filters have the following options, and will match any entity fulfilling **ALL**
 - `attributes:` Map of `attribute: value` pairs to match.
 - `last_changed:` Match minutes since last state change (most useful as a comparison, e.g. `last_changed: < 15`)
 - `last_updated:` Match minutes since last update
+- `entity_category:` Match [entity category](https://developers.home-assistant.io/docs/core/entity#generic-properties) (Currently `config` or `diagnostic`)
 
 Special options:
 
