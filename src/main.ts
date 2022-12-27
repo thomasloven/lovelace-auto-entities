@@ -247,9 +247,9 @@ class AutoEntities extends LitElement {
           await getDevices(this.hass);
           await getAreas(this.hass);
           add = add.sort(get_sorter(this.hass, filter.sort));
-          if (filter.sort.count) {
+          if (filter.sort.count ?? filter.sort.first) {
             const start = filter.sort.first ?? 0;
-            add = add.slice(start, start + filter.sort.count);
+            add = add.slice(start, start + (filter.sort.count ?? Infinity));
           }
         }
         entities = entities.concat(add);
