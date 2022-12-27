@@ -13,7 +13,7 @@ import {
 } from "./types";
 import pjson from "../package.json";
 import "./editor/auto-entities-editor";
-import { compare_deep } from "./helpers";
+import { compare_deep, getAreas, getDevices, getEntities } from "./helpers";
 
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
@@ -243,6 +243,9 @@ class AutoEntities extends LitElement {
         }
 
         if (filter.sort) {
+          await getEntities(this.hass);
+          await getDevices(this.hass);
+          await getAreas(this.hass);
           add = add.sort(get_sorter(this.hass, filter.sort));
           if (filter.sort.count) {
             const start = filter.sort.first ?? 0;

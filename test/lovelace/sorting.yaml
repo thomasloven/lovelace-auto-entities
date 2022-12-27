@@ -91,3 +91,15 @@ cards:
               sort:
                 method: state
                 ip: true
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 3: Sort by device
+      - <<: *card
+        filter:
+          include:
+            - domain: light
+              device: "*"
+              sort:
+                method: device

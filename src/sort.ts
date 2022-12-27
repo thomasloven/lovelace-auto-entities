@@ -1,3 +1,4 @@
+import { cached_areas, cached_devices, cached_entities } from "./helpers";
 import { HassObject, HAState, LovelaceRowConfig, SortConfig } from "./types";
 
 function compare(_a: any, _b: any, method: SortConfig) {
@@ -66,6 +67,31 @@ const SORTERS: Record<
       b?.attributes?.friendly_name || b?.entity_id?.split(".")[1],
       method
     );
+  },
+  device: (a, b, method) => {
+    const entity_a = cached_entities().find((e) => e.entity_id === a.entity_id);
+    const entity_b = cached_entities().find((e) => e.entity_id === b.entity_id);
+    if (!entity_a || !entity_b) return 0;
+    const device_a = cached_devices().find((d) => d.id === entity_a.device_id);
+    const device_b = cached_devices().find((d) => d.id === entity_b.device_id);
+    if (!device_a || !device_b) return 0;
+    return compare(
+      device_a.name_by_user ?? device_a.name,
+      device_b.name_by_user ?? device_b.name,
+      method
+    );
+  },
+  area: (a, b, method) => {
+    const entity_a = cached_entities().find((e) => e.entity_id === a.entity_id);
+    const entity_b = cached_entities().find((e) => e.entity_id === b.entity_id);
+    if (!entity_a || !entity_b) return 0;
+    const device_a = cached_devices().find((d) => d.id === entity_a.device_id);
+    const device_b = cached_devices().find((d) => d.id === entity_b.device_id);
+    if (!device_a || !device_b) return 0;
+    const area_a = cached_areas().find((a) => a.area_id === device_a.area_id);
+    const area_b = cached_areas().find((a) => a.area_id === device_b.area_id);
+    if (!area_a || !area_b) return 0;
+    return compare(area_a.name, area_b.name, method);
   },
   state: (a, b, method) => {
     return compare(a?.state, b?.state, method);

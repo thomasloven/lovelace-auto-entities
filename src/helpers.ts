@@ -25,3 +25,39 @@ export const compare_deep = (a: any, b: any) => {
   }
   return true;
 };
+
+(window as any).autoEntities_cache = (window as any).autoEntities_cache ?? {};
+const cache = (window as any).autoEntities_cache;
+export async function getAreas(hass) {
+  cache.areas =
+    cache.areas ?? (await hass.callWS({ type: "config/area_registry/list" }));
+  return cache.areas;
+}
+export function cached_areas() {
+  return cache.areas;
+}
+export async function getDevices(hass) {
+  cache.devices =
+    cache.devices ??
+    (await hass.callWS({ type: "config/device_registry/list" }));
+  return cache.devices;
+}
+export function cached_devices() {
+  return cache.devices;
+}
+export async function getEntities(hass) {
+  cache.entities =
+    cache.entities ??
+    (await hass.callWS({ type: "config/entity_registry/list" }));
+  return cache.entities;
+}
+export function cached_entities() {
+  return cache.entities;
+}
+
+// Debugging helper
+// (window as any).AutoEntities = {
+//   getAreas,
+//   getDevices,
+//   getEntities,
+// };

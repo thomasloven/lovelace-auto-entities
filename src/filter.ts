@@ -1,4 +1,5 @@
 import { HAState, HassObject } from "./types";
+import { getAreas, getDevices, getEntities } from "./helpers";
 
 const ago_suffix_regex = /([mhd])\s+ago\s*$/i;
 const default_ago_suffix = "m ago";
@@ -58,33 +59,6 @@ function match(pattern: any, value: any) {
 
   return pattern === value;
 }
-
-(window as any).autoEntities_cache = (window as any).autoEntities_cache ?? {};
-const cache = (window as any).autoEntities_cache;
-async function getAreas(hass) {
-  cache.areas =
-    cache.areas ?? (await hass.callWS({ type: "config/area_registry/list" }));
-  return cache.areas;
-}
-async function getDevices(hass) {
-  cache.devices =
-    cache.devices ??
-    (await hass.callWS({ type: "config/device_registry/list" }));
-  return cache.devices;
-}
-async function getEntities(hass) {
-  cache.entities =
-    cache.entities ??
-    (await hass.callWS({ type: "config/entity_registry/list" }));
-  return cache.entities;
-}
-
-// Debugging helper
-// (window as any).AutoEntities = {
-//   getAreas,
-//   getDevices,
-//   getEntities,
-// };
 
 const FILTERS: Record<
   string,
