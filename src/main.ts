@@ -18,6 +18,8 @@ import { compare_deep, getAreas, getDevices, getEntities } from "./helpers";
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
 
+const HIDDEN_TYPES = ["section", "divider"];
+
 class AutoEntities extends LitElement {
   @property() _config: AutoEntitiesConfig;
   @property() hass: any;
@@ -191,11 +193,10 @@ class AutoEntities extends LitElement {
 
     this._cardBuiltResolve?.();
     this.card.hass = this.hass;
-    const HIDDEN_TYPES = ["section", "divider"];
+
     this.empty =
       entities.length === 0 ||
       entities.every((e) => HIDDEN_TYPES.includes(e.type));
-    //this.empty = entities.filter((e) => e.type === undefined).length === 0;
     const hide =
       this.empty &&
       this._config.show_empty === false &&
