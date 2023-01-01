@@ -191,7 +191,11 @@ class AutoEntities extends LitElement {
 
     this._cardBuiltResolve?.();
     this.card.hass = this.hass;
-    this.empty = entities.filter((e) => e.type === undefined).length === 0;
+    const HIDDEN_TYPES = ["section", "divider"];
+    this.empty =
+      entities.length === 0 ||
+      entities.every((e) => HIDDEN_TYPES.includes(e.type));
+    //this.empty = entities.filter((e) => e.type === undefined).length === 0;
     const hide =
       this.empty &&
       this._config.show_empty === false &&
