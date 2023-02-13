@@ -79,7 +79,13 @@ const FILTERS: Record<
     return match(value, entity.attributes?.friendly_name);
   },
   group: async (hass, value, entity) => {
-    return hass.states[value]?.attributes?.entity_id?.includes(
+    return Object.keys(hass.states).filter(k => match(value, k)).reduce((results, item) => {
+      let groupedEntities = hass.states[item].attributes?.entity_id;
+      if (groupedEntities) {
+        return results.concat(groupedEntities);
+      }
+      return results;
+    }, []).includes(
       entity.entity_id
     );
   },
