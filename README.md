@@ -370,6 +370,43 @@ filter:
             entity_id: this.entity_id
 ```
 
+The three most recently used Philips HUE scenes from a room, with friendly scenes Names:
+
+Example scene name
+- Bathroom HUEz Chinatown
+- Bathroom HUEz Tokyo
+- Bathroom HUEz XHA Morning
+- Bathroom HUEz XHA Night
+
+Everything with xHA should be ignored, as these are only used for automations.
+The scenes must be controlled via HA and not via the HUE app so that HA knows when the scene was last used.
+
+```yaml
+type: custom:auto-entities
+show_empty: false
+sort:
+  method: last_changed
+  reverse: true
+  count: 3
+card:
+  title: Szenen
+  type: grid
+  square: false
+  columns: 3
+card_param: cards
+filter:
+  include:
+    - domain: scene
+      name: Bathroom*HUE*
+      options:
+        type: tile
+        name: ' '
+        state_content: name
+  exclude:
+    - domain: scene
+      name: ^*XHA-*
+```
+
 Example using templates:
 
 ```yaml
