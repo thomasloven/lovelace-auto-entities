@@ -150,7 +150,7 @@ export const sortSchema = [
       { name: "reverse", type: "boolean", label: "Reverse" },
       { name: "ignore_case", type: "boolean", label: "Ignore case" },
       { name: "numeric", type: "boolean", label: "Numeric sort" },
-      { name: "ip", type: "boolean", label: "IP address short" },
+      { name: "ip", type: "boolean", label: "IP address sort" },
     ],
   },
 ];
