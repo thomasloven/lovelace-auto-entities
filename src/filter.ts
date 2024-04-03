@@ -1,5 +1,5 @@
 import { HAState, HassObject } from "./types";
-import { getAreas, getDevices, getEntities } from "./helpers";
+import { getAreas, getDevices, getEntities, getLabels } from "./helpers";
 
 const ago_suffix_regex = /([mhd])\s+ago\s*$/i;
 const default_ago_suffix = "m ago";
@@ -185,6 +185,30 @@ const FILTERS: Record<
     );
     if (!ent) return false;
     return match(value, ent.hidden_by);
+  },
+  label: async (hass, value, entity) => {
+    const ent = (await getEntities(hass)).find(
+      (e) => e.entity_id === entity.entity_id
+    );
+    const labels = await getLabels(hass);
+
+    const match_label = (value, lbl) => {
+      if (match(value, lbl)) return true;
+      const label = labels.find((l) => l.label_id === lbl);
+      if (!label) return false;
+      const result = match(value, label.name);
+      return result;
+    };
+
+    if (!ent) return false;
+    if (!ent.labels) return false;
+    const entity_match = ent.labels.some((lbl) => match_label(value, lbl));
+    if (entity_match) return entity_match;
+
+    const device = (await getDevices(hass)).find((d) => d.id === ent.device_id);
+    if (!device) return false;
+    const device_match = device.labels.some((lbl) => match_label(value, lbl));
+    return device_match;
   },
 };
 

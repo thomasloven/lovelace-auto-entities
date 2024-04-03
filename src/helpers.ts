@@ -54,6 +54,11 @@ export async function getEntities(hass) {
 export function cached_entities() {
   return cache.entities;
 }
+export async function getLabels(hass) {
+  cache.labels =
+    cache.labels ?? (await hass.callWS({ type: "config/label_registry/list" }));
+  return cache.labels;
+}
 
 // Debugging helper
 // (window as any).AutoEntities = {

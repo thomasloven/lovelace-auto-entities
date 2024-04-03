@@ -16,6 +16,7 @@ const GUI_EDITOR_FILTERS = [
   "entity_category",
   "integration",
   "hidden_by",
+  "label",
 ];
 
 const filterKeySelector = {
@@ -28,6 +29,7 @@ const filterKeySelector = {
     ["group", "Member of Group"],
     ["area", "In area"],
     ["device", "Device"],
+    ["label", "Label"],
     ["device_manufacturer", "Device Manufacturer"],
     ["device_model", "Device Model"],
     ["attributes", "Attribute"],

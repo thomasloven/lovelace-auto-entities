@@ -56,6 +56,7 @@ Filters have the following options, and will match any entity fulfilling **ALL**
 - `group:` Match entities in given group (e.g. `group.living_room_lights`)
 - `area:` Match entities in given area (e.g. `Kitchen`)
 - `device:` Match entities belonging to given device (e.g. `Thomas iPhone`)
+- `label:` Match entities that has a certain label (e.g. `Important entities`)
 - `device_manufacturer` Match entities belonging to a device by a given manufacturer (e.g. `IKEA`)
 - `device_model` Match entities belonging to a device of a given model (e.g. `Hue white ambiance E26/E27 (8718696548738)`)
 - `integration:` Match entities by integration identifier (e.g. `plex`, `input_boolean`, `xiaomi_miio`, `mobile_app` - Many integrations cannot be matched due to Home Assistant limitations)
