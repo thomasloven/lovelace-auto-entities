@@ -1,5 +1,6 @@
 import { LitElement, html } from "lit";
 import { property, state } from "lit/decorators.js";
+import { fireEvent } from "card-tools/src/event";
 import { hasTemplate } from "card-tools/src/templates";
 import { bind_template, unbind_template } from "./templates";
 import { filter_entity } from "./filter";
@@ -197,12 +198,18 @@ class AutoEntities extends LitElement {
     this.empty =
       entities.length === 0 ||
       entities.every((e) => HIDDEN_TYPES.includes(e.type));
+
     const hide =
       this.empty &&
       this._config.show_empty === false &&
       this._config.else === undefined;
-    this.style.display = hide ? "none" : null;
-    this.style.margin = hide ? "0" : null;
+
+    if (hide !== this.hidden) {
+      this.style.display = hide ? "none" : "block";
+      this.toggleAttribute("hidden", hide);
+      fireEvent(this, "card-visibility-changed", { value: !hide });
+    }
+
     if ((this.card as any).requestUpdate) {
       await this.updateComplete;
       (this.card as any).requestUpdate();
