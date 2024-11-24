@@ -330,6 +330,10 @@ class AutoEntities extends LitElement {
       len = Object.keys(this._config.filter.include).length;
     return len || 5;
   }
+
+  get hidden() {
+    return this.style.display === "none";
+  }
 }
 
 if (!customElements.get("auto-entities")) {
