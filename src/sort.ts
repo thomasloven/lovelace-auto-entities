@@ -137,8 +137,9 @@ const SORTERS: Record<
     if (
       a?.attributes?.last_triggered == null &&
       b?.attributes?.last_triggered == null
-    )
+    ) {
       return 0;
+    }
     if (a?.attributes?.last_triggered == null) return lt;
     if (b?.attributes?.last_triggered == null) return gt;
     method.numeric = true;

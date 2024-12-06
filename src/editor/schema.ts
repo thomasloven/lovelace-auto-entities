@@ -47,12 +47,13 @@ const filterSchema = ([key, value], idx) => {
     attributes: { object: {} },
   };
 
-  if (!GUI_EDITOR_FILTERS.includes(key))
+  if (!GUI_EDITOR_FILTERS.includes(key)) {
     return {
       type: "Constant",
       name: "Some filters are not shown",
       value: "Please switch to the CODE EDITOR to access all options.",
     };
+  }
 
   return {
     type: "grid",
@@ -100,8 +101,9 @@ export const filter2form = (group) => {
 export const form2filter = (config, filter): Object => {
   const data = {};
   for (let i = 0; i <= config.filter.include.length + 1; i++) {
-    if (filter[`key_${i}`] !== undefined)
+    if (filter[`key_${i}`] !== undefined) {
       data[filter[`key_${i}`]] = filter[`value_${i}`] ?? "";
+    }
   }
   if (filter.key_new !== undefined) {
     data[filter.key_new] = "";

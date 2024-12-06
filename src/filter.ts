@@ -1,4 +1,4 @@
-import { HAState, HassObject } from "./types";
+import { HassObject, HAState } from "./types";
 import { getAreas, getDevices, getEntities, getLabels } from "./helpers";
 
 const ago_suffix_regex = /([mhd])\s+ago\s*$/i;
@@ -43,18 +43,24 @@ function match(pattern: any, value: any) {
 
   if (typeof pattern === "string") {
     // Comparisons assume numerical values
-    if (pattern.startsWith("<="))
+    if (pattern.startsWith("<=")) {
       return parseFloat(value) <= parseFloat(pattern.substring(2));
-    if (pattern.startsWith(">="))
+    }
+    if (pattern.startsWith(">=")) {
       return parseFloat(value) >= parseFloat(pattern.substring(2));
-    if (pattern.startsWith("<"))
+    }
+    if (pattern.startsWith("<")) {
       return parseFloat(value) < parseFloat(pattern.substring(1));
-    if (pattern.startsWith(">"))
+    }
+    if (pattern.startsWith(">")) {
       return parseFloat(value) > parseFloat(pattern.substring(1));
-    if (pattern.startsWith("!"))
+    }
+    if (pattern.startsWith("!")) {
       return parseFloat(value) != parseFloat(pattern.substring(1));
-    if (pattern.startsWith("="))
+    }
+    if (pattern.startsWith("=")) {
       return parseFloat(value) == parseFloat(pattern.substring(1));
+    }
   }
 
   return pattern === value;

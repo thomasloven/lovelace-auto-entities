@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { html, LitElement } from "lit";
 import { property, state } from "lit/decorators.js";
 import { hasTemplate } from "card-tools/src/templates";
 import { bind_template, unbind_template } from "./templates";
@@ -21,12 +21,18 @@ window.queueMicrotask =
 const HIDDEN_TYPES = ["section", "divider"];
 
 class AutoEntities extends LitElement {
-  @property() _config: AutoEntitiesConfig;
-  @property() hass: any;
-  @property() card: LovelaceCard;
-  @property() else?: LovelaceCard;
-  @property() _template: string[];
-  @state() empty = false;
+  @property()
+  _config: AutoEntitiesConfig;
+  @property()
+  hass: any;
+  @property()
+  card: LovelaceCard;
+  @property()
+  else?: LovelaceCard;
+  @property()
+  _template: string[];
+  @state()
+  empty = false;
 
   _entities: EntityList;
   _cardConfig;
@@ -132,8 +138,9 @@ class AutoEntities extends LitElement {
       this._entities &&
       compare_deep(entities, this._entities) &&
       compare_deep(this._cardConfig, this._config.card)
-    )
+    ) {
       return;
+    }
     const newType = this._cardConfig?.type !== this._config.card.type;
     this._entities = entities;
     this._cardConfig = JSON.parse(JSON.stringify(this._config.card));
@@ -236,7 +243,7 @@ class AutoEntities extends LitElement {
 
         let add: EntityList = [];
         for (const entity of all_entities) {
-          if (await filter_entity(this.hass, filter, entity.entity))
+          if (await filter_entity(this.hass, filter, entity.entity)) {
             add.push(
               JSON.parse(
                 JSON.stringify({ ...entity, ...filter.options }).replace(
@@ -245,6 +252,7 @@ class AutoEntities extends LitElement {
                 )
               )
             );
+          }
         }
 
         if (filter.sort) {
@@ -269,8 +277,9 @@ class AutoEntities extends LitElement {
           if (
             entity.entity === undefined ||
             !(await filter_entity(this.hass, filter, entity.entity))
-          )
+          ) {
             newEntities.push(entity);
+          }
         }
         entities = newEntities;
       }
@@ -291,8 +300,9 @@ class AutoEntities extends LitElement {
           this._config.unique === "entity" &&
           e.entity &&
           newEntities.some((i) => i.entity === e.entity)
-        )
+        ) {
           continue;
+        }
         if (newEntities.some((i) => compare_deep(i, e))) continue;
         newEntities.push(e);
       }
@@ -326,8 +336,9 @@ class AutoEntities extends LitElement {
     await this._cardBuilt;
     if (this.card && this.card.getCardSize) len = await this.card.getCardSize();
     if (len === 1 && this._entities?.length) len = this._entities.length;
-    if (len === 0 && this._config.filter?.include)
+    if (len === 0 && this._config.filter?.include) {
       len = Object.keys(this._config.filter.include).length;
+    }
     return len || 5;
   }
 }
