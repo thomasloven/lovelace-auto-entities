@@ -1,28 +1,35 @@
-import { LitElement, html, CSSResultArray, css } from "lit";
-import { property, state, query } from "lit/decorators.js";
+import { css, CSSResultArray, html, LitElement } from "lit";
+import { property, query, state } from "lit/decorators.js";
 import { AutoEntitiesConfig } from "../types";
 import { loadHaForm } from "../helpers";
 import {
-  filterGroupSchema,
-  filterGroupOptionsSchema,
-  filter2form,
-  form2filter,
-  specialGroupSchema,
   cardOptionsSchema,
+  filter2form,
+  filterGroupOptionsSchema,
+  filterGroupSchema,
+  form2filter,
   sortSchema,
+  specialGroupSchema,
 } from "./schema";
 
 class AutoEntitiesEditor extends LitElement {
-  @state() _config: AutoEntitiesConfig;
+  @state()
+  _config: AutoEntitiesConfig;
 
-  @property() lovelace;
-  @property() hass;
+  @property()
+  lovelace;
+  @property()
+  hass;
 
-  @state() _selectedTab = 0;
-  @state() _cardGUIMode = true;
-  @state() _cardGUIModeAvailable = true;
+  @state()
+  _selectedTab = 0;
+  @state()
+  _cardGUIMode = true;
+  @state()
+  _cardGUIModeAvailable = true;
 
-  @query("hui-card-element-editor") private _cardEditorEl?;
+  @query("hui-card-element-editor")
+  private _cardEditorEl?;
 
   setConfig(config) {
     this._config = config;
@@ -258,7 +265,7 @@ class AutoEntitiesEditor extends LitElement {
   }
 
   _renderFilterEditor() {
-    if (this._config.filter?.template || this._config.entities)
+    if (this._config.filter?.template || this._config.entities) {
       return html`
         <div class="box">
           <p>
@@ -267,6 +274,7 @@ class AutoEntitiesEditor extends LitElement {
           <p>Please switch to the CODE EDITOR to access all options.</p>
         </div>
       `;
+    }
 
     return html`
       ${this._config.filter.include.map(

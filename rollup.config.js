@@ -15,9 +15,12 @@ export default {
   plugins: [
     nodeResolve(),
     json(),
-    typescript(),
+    typescript({
+      clean: true,
+    }),
     babel({
       exclude: "node_modules/**",
+      babelHelpers: "bundled",
     }),
     !dev && terser({ format: { comments: false } }),
   ],

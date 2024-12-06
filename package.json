@@ -17,6 +17,7 @@
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-terser": "^0.2.1",
+    "prettier": "3.4.2",
     "rollup": "^3.8.1",
     "rollup-plugin-typescript2": "^0.34.1",
     "tslib": "^2.4.1",

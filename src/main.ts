@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { html, LitElement } from "lit";
 import { property, state } from "lit/decorators.js";
 import { hasTemplate } from "card-tools/src/templates";
 import { bind_template, unbind_template } from "./templates";
@@ -13,7 +13,7 @@ import {
 } from "./types";
 import pjson from "../package.json";
 import "./editor/auto-entities-editor";
-import { compare_deep, getAreas, getDevices, getEntities } from "./helpers";
+import { compare_deep } from "./helpers";
 
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
@@ -21,12 +21,18 @@ window.queueMicrotask =
 const HIDDEN_TYPES = ["section", "divider"];
 
 class AutoEntities extends LitElement {
-  @property() _config: AutoEntitiesConfig;
-  @property() hass: any;
-  @property() card: LovelaceCard;
-  @property() else?: LovelaceCard;
-  @property() _template: string[];
-  @state() empty = false;
+  @property()
+  _config: AutoEntitiesConfig;
+  @property()
+  hass: any;
+  @property()
+  card: LovelaceCard;
+  @property()
+  else?: LovelaceCard;
+  @property()
+  _template: string[];
+  @state()
+  empty = false;
 
   _entities: EntityList;
   _cardConfig;
@@ -59,7 +65,7 @@ class AutoEntities extends LitElement {
     if (!config.filter && !config.entities) {
       throw new Error("No filters specified.");
     }
-    config = JSON.parse(JSON.stringify(config));
+    config = structuredClone(config);
     this._config = config;
 
     if (
@@ -132,11 +138,12 @@ class AutoEntities extends LitElement {
       this._entities &&
       compare_deep(entities, this._entities) &&
       compare_deep(this._cardConfig, this._config.card)
-    )
+    ) {
       return;
+    }
     const newType = this._cardConfig?.type !== this._config.card.type;
     this._entities = entities;
-    this._cardConfig = JSON.parse(JSON.stringify(this._config.card));
+    this._cardConfig = structuredClone(this._config.card);
     const cardConfig = {
       [this._config.card_param || "entities"]: entities,
       ...this._config.card,
@@ -215,69 +222,86 @@ class AutoEntities extends LitElement {
       return typeof entity === "string" ? { entity: entity.trim() } : entity;
     };
 
+    let [sort] = await Promise.all([
+      this._config.sort
+        ? get_sorter(this.hass, this._config.sort)
+        : Promise.resolve((x: EntityList) => Promise.resolve(x)),
+    ]);
+
+    const includeFilters = (
+      await Promise.all(
+        (this._config.filter?.include ?? []).map(
+          async (
+            filter
+          ): Promise<(entities: EntityList) => Promise<EntityList>> => {
+            if (filter.type) return async () => [filter as LovelaceRowConfig];
+
+            const filterFn = await filter_entity(this.hass, filter);
+            const sort = filter.sort
+              ? await get_sorter(this.hass, filter.sort)
+              : (x) => x;
+
+            return async (entities) => {
+              let add = entities.filter((entity) => filterFn(entity.entity));
+              add = await sort(add);
+
+              if (filter.sort?.count ?? filter.sort?.first) {
+                const start = filter.sort.first ?? 0;
+                add = add.slice(start, start + (filter.sort.count ?? Infinity));
+              }
+
+              const stringifiedOptions = filter.options
+                ? JSON.stringify(filter.options)
+                : "{}"; // Avoid repeating stringify for each entity
+              add = add.map((entity) =>
+                structuredClone({
+                  ...entity,
+                  ...JSON.parse(
+                    stringifiedOptions.replace(/this.entity_id/g, entity.entity)
+                  ),
+                })
+              );
+
+              return add;
+            };
+          }
+        )
+      )
+    ).flat();
+    const excludeFilters = await Promise.all(
+      (this._config.filter?.exclude ?? []).map(async (filter) => {
+        const filterFn = await filter_entity(this.hass, filter);
+        return (x) => filterFn(x);
+      })
+    );
+    const anyExcludeFilter = (x) => excludeFilters.some((filter) => filter(x));
+
     let entities: EntityList = [...(this._config?.entities?.map(format) || [])];
 
     if (!this.hass) {
       return entities;
     }
 
-    if (this._template) {
-      entities = entities.concat(this._template.map(format));
-    }
+    entities = entities.concat(this._template?.map?.(format) ?? []);
     entities = entities.filter(Boolean);
 
-    if (this._config.filter?.include) {
-      const all_entities = Object.keys(this.hass.states).map(format);
-      for (const filter of this._config.filter.include) {
-        if (filter.type) {
-          entities.push(filter);
-          continue;
-        }
-
-        let add: EntityList = [];
-        for (const entity of all_entities) {
-          if (await filter_entity(this.hass, filter, entity.entity))
-            add.push(
-              JSON.parse(
-                JSON.stringify({ ...entity, ...filter.options }).replace(
-                  /this.entity_id/g,
-                  entity.entity
-                )
-              )
-            );
-        }
-
-        if (filter.sort) {
-          await getEntities(this.hass);
-          await getDevices(this.hass);
-          await getAreas(this.hass);
-          add = add.sort(get_sorter(this.hass, filter.sort));
-          if (filter.sort.count ?? filter.sort.first) {
-            const start = filter.sort.first ?? 0;
-            add = add.slice(start, start + (filter.sort.count ?? Infinity));
-          }
-        }
-        entities = entities.concat(add);
-      }
-    }
+    const all_entities: EntityList = Object.keys(this.hass.states).map(format);
+    entities = entities.concat(
+      (
+        await Promise.all(
+          includeFilters.map((includeFilter) => includeFilter(all_entities))
+        )
+      ).flat()
+    );
 
     // TODO: Add tests for exclusions
-    if (this._config.filter?.exclude) {
-      for (const filter of this._config.filter.exclude) {
-        const newEntities = [];
-        for (const entity of entities) {
-          if (
-            entity.entity === undefined ||
-            !(await filter_entity(this.hass, filter, entity.entity))
-          )
-            newEntities.push(entity);
-        }
-        entities = newEntities;
-      }
-    }
+    entities = entities.filter(
+      (entity) =>
+        entity.entity === undefined || !anyExcludeFilter(entity.entity)
+    );
 
     if (this._config.sort) {
-      entities = entities.sort(get_sorter(this.hass, this._config.sort));
+      entities = await sort(entities);
       if (this._config.sort.count) {
         const start = this._config.sort.first ?? 0;
         entities = entities.slice(start, start + this._config.sort.count);
@@ -291,8 +315,9 @@ class AutoEntities extends LitElement {
           this._config.unique === "entity" &&
           e.entity &&
           newEntities.some((i) => i.entity === e.entity)
-        )
+        ) {
           continue;
+        }
         if (newEntities.some((i) => compare_deep(i, e))) continue;
         newEntities.push(e);
       }
@@ -326,8 +351,9 @@ class AutoEntities extends LitElement {
     await this._cardBuilt;
     if (this.card && this.card.getCardSize) len = await this.card.getCardSize();
     if (len === 1 && this._entities?.length) len = this._entities.length;
-    if (len === 0 && this._config.filter?.include)
+    if (len === 0 && this._config.filter?.include) {
       len = Object.keys(this._config.filter.include).length;
+    }
     return len || 5;
   }
 }
