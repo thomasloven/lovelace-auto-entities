@@ -138,9 +138,13 @@ class AutoEntities extends LitElement {
     this._entities = entities;
     this._cardConfig = JSON.parse(JSON.stringify(this._config.card));
     const cardConfig = {
-      [this._config.card_param || "entities"]: entities,
       ...this._config.card,
     };
+    const cardParamPath = (this._config.card_param || "entities").split(".");
+    const cardParamsTargetObject = cardParamPath
+      .slice(0, -1)
+      .reduce((a, x) => a?.[x], cardConfig);
+    (cardParamsTargetObject ?? {})[cardParamPath.slice(-1)[0]] = entities;
     if (!this.card || newType) {
       const helpers = await (window as any).loadCardHelpers();
 
