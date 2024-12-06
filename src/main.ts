@@ -65,7 +65,7 @@ class AutoEntities extends LitElement {
     if (!config.filter && !config.entities) {
       throw new Error("No filters specified.");
     }
-    config = JSON.parse(JSON.stringify(config));
+    config = structuredClone(config);
     this._config = config;
 
     if (
@@ -143,7 +143,7 @@ class AutoEntities extends LitElement {
     }
     const newType = this._cardConfig?.type !== this._config.card.type;
     this._entities = entities;
-    this._cardConfig = JSON.parse(JSON.stringify(this._config.card));
+    this._cardConfig = structuredClone(this._config.card);
     const cardConfig = {
       [this._config.card_param || "entities"]: entities,
       ...this._config.card,
