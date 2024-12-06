@@ -37,131 +37,159 @@ function compare(_a: any, _b: any, method: SortConfig) {
   );
 }
 
-const SORTERS: Record<
-  string,
-  (a: HAState, b: HAState, method: SortConfig) => number
-> = {
-  none: () => {
-    return 0;
-  },
-  domain: (a, b, method) => {
-    return compare(
-      a?.entity_id?.split(".")[0],
-      b?.entity_id?.split(".")[0],
-      method
-    );
-  },
-  entity_id: (a, b, method) => {
-    return compare(a?.entity_id, b?.entity_id, method);
-  },
-  friendly_name: (a, b, method) => {
-    return compare(
-      a?.attributes?.friendly_name || a?.entity_id?.split(".")[1],
-      b?.attributes?.friendly_name || b?.entity_id?.split(".")[1],
-      method
-    );
-  },
-  name: (a, b, method) => {
-    return compare(
-      a?.attributes?.friendly_name || a?.entity_id?.split(".")[1],
-      b?.attributes?.friendly_name || b?.entity_id?.split(".")[1],
-      method
-    );
-  },
-  device: (a, b, method) => {
-    const entity_a = cached_entities().find((e) => e.entity_id === a.entity_id);
-    const entity_b = cached_entities().find((e) => e.entity_id === b.entity_id);
-    if (!entity_a || !entity_b) return 0;
-    const device_a = cached_devices().find((d) => d.id === entity_a.device_id);
-    const device_b = cached_devices().find((d) => d.id === entity_b.device_id);
-    if (!device_a || !device_b) return 0;
-    return compare(
-      device_a.name_by_user ?? device_a.name,
-      device_b.name_by_user ?? device_b.name,
-      method
-    );
-  },
-  area: (a, b, method) => {
-    const entity_a = cached_entities().find((e) => e.entity_id === a.entity_id);
-    const entity_b = cached_entities().find((e) => e.entity_id === b.entity_id);
-    if (!entity_a || !entity_b) return 0;
-    const device_a = cached_devices().find((d) => d.id === entity_a.device_id);
-    const device_b = cached_devices().find((d) => d.id === entity_b.device_id);
-    if (!device_a || !device_b) return 0;
-    const area_a = cached_areas().find((a) => a.area_id === device_a.area_id);
-    const area_b = cached_areas().find((a) => a.area_id === device_b.area_id);
-    if (!area_a || !area_b) return 0;
-    return compare(area_a.name, area_b.name, method);
-  },
-  state: (a, b, method) => {
-    return compare(a?.state, b?.state, method);
-  },
-  attribute: (a, b, method) => {
-    const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
-    let _a = a?.attributes;
-    let _b = b?.attributes;
-    for (const step of method?.attribute?.split(":")) {
-      if (_a === undefined && _b === undefined) return 0;
-      if (_a === undefined) return lt;
-      if (_b === undefined) return gt;
-      [_a, _b] = [_a[step], _b[step]];
-    }
-    return compare(_a, _b, method);
-  },
-  last_changed: (a, b, method) => {
-    const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
-    if (a?.last_changed == null && b?.last_changed == null) return 0;
-    if (a?.last_changed == null) return lt;
-    if (b?.last_changed == null) return gt;
-    method.numeric = true;
-    return compare(
-      new Date(a?.last_changed).getTime(),
-      new Date(b?.last_changed).getTime(),
-      method
-    );
-  },
-  last_updated: (a, b, method) => {
-    const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
-    if (a?.last_updated == null && b?.last_updated == null) return 0;
-    if (a?.last_updated == null) return lt;
-    if (b?.last_updated == null) return gt;
-    method.numeric = true;
-    return compare(
-      new Date(a?.last_updated).getTime(),
-      new Date(b?.last_updated).getTime(),
-      method
-    );
-  },
-  last_triggered: (a, b, method) => {
-    const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
-    if (
-      a?.attributes?.last_triggered == null &&
-      b?.attributes?.last_triggered == null
-    ) {
-      return 0;
-    }
-    if (a?.attributes?.last_triggered == null) return lt;
-    if (b?.attributes?.last_triggered == null) return gt;
-    method.numeric = true;
-    return compare(
-      new Date(a?.attributes?.last_triggered).getTime(),
-      new Date(b?.attributes?.last_triggered).getTime(),
-      method
-    );
-  },
+type MapperSorter<T> = {
+  mapper: (e: HAState) => Promise<T>;
+  sorter: (a: T, b: T) => number;
 };
 
-export function get_sorter(
+const SORTERS = {
+  none: async (_method: SortConfig) => ({
+    mapper: async (_e: HAState) => undefined,
+    sorter: (_a, _b): number => 0,
+  }),
+  domain: async (method: SortConfig) => ({
+    mapper: async (e: HAState) => e?.entity_id?.split(".")[0],
+    sorter: (a, b): number => compare(a, b, method),
+  }),
+  entity_id: async (method: SortConfig) => ({
+    mapper: async (e: HAState) => e?.entity_id,
+    sorter: (a, b): number => compare(a, b, method),
+  }),
+  friendly_name: async (method: SortConfig) => ({
+    mapper: async (e: HAState) =>
+      e?.attributes?.friendly_name || e?.entity_id?.split(".")[1],
+    sorter: (a, b): number => compare(a, b, method),
+  }),
+  name: async (method: SortConfig) => ({
+    mapper: async (e: HAState) =>
+      e?.attributes?.friendly_name || e?.entity_id?.split(".")[1],
+    sorter: (a, b): number => compare(a, b, method),
+  }),
+  device: async (method: SortConfig) => {
+    const [entities, devices] = [cached_entities(), cached_devices()];
+    return {
+      mapper: async (e: HAState) => {
+        const entity = (await entities).get(e.entity_id);
+        const device = entity
+          ? (await devices).get(entity.device_id)
+          : undefined;
+        return device?.name_by_user ?? device?.name;
+      },
+      sorter: (a, b): number =>
+        (a === b) === undefined ? 0 : compare(a, b, method),
+    };
+  },
+  area: async (method: SortConfig) => {
+    const [entities, devices, areas] = [
+      cached_entities(),
+      cached_devices(),
+      cached_areas(),
+    ];
+    return {
+      mapper: async (e: HAState) => {
+        const entity = (await entities).get(e.entity_id);
+        const device = entity
+          ? (await devices).get(entity.device_id)
+          : undefined;
+        const area = device ? (await areas).get(device.area_id) : undefined;
+        return area?.name;
+      },
+      sorter: (a, b): number =>
+        (a === b) === undefined ? 0 : compare(a, b, method),
+    };
+  },
+  state: async (method: SortConfig) => ({
+    mapper: async (e: HAState) => e?.state,
+    sorter: (a, b): number => compare(a, b, method),
+  }),
+  attribute: async (method: SortConfig) => ({
+    mapper: async (e: HAState) => e,
+    sorter: (a: HAState, b: HAState): number => {
+      const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
+      let _a = a?.attributes;
+      let _b = b?.attributes;
+      for (const step of method?.attribute?.split(":")) {
+        if (_a === undefined && _b === undefined) return 0;
+        if (_a === undefined) return lt;
+        if (_b === undefined) return gt;
+        [_a, _b] = [_a[step], _b[step]];
+      }
+      return compare(_a, _b, method);
+    },
+  }),
+  last_changed: async (method: SortConfig) => ({
+    mapper: async (e: HAState) => e,
+    sorter: (a: HAState, b: HAState): number => {
+      const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
+      if (a?.last_changed == null && b?.last_changed == null) return 0;
+      if (a?.last_changed == null) return lt;
+      if (b?.last_changed == null) return gt;
+      method.numeric = true;
+      return compare(
+        new Date(a?.last_changed).getTime(),
+        new Date(b?.last_changed).getTime(),
+        method
+      );
+    },
+  }),
+  last_updated: async (method: SortConfig) => ({
+    mapper: async (e: HAState) => e,
+    sorter: (a: HAState, b: HAState): number => {
+      const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
+      if (a?.last_updated == null && b?.last_updated == null) return 0;
+      if (a?.last_updated == null) return lt;
+      if (b?.last_updated == null) return gt;
+      method.numeric = true;
+      return compare(
+        new Date(a?.last_updated).getTime(),
+        new Date(b?.last_updated).getTime(),
+        method
+      );
+    },
+  }),
+  last_triggered: async (method: SortConfig) => ({
+    mapper: async (e: HAState) => e,
+    sorter: (a: HAState, b: HAState): number => {
+      const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
+      if (
+        a?.attributes?.last_triggered == null &&
+        b?.attributes?.last_triggered == null
+      ) {
+        return 0;
+      }
+      if (a?.attributes?.last_triggered == null) return lt;
+      if (b?.attributes?.last_triggered == null) return gt;
+      method.numeric = true;
+      return compare(
+        new Date(a?.attributes?.last_triggered).getTime(),
+        new Date(b?.attributes?.last_triggered).getTime(),
+        method
+      );
+    },
+  }),
+} as const satisfies Record<
+  string,
+  (method: SortConfig) => Promise<MapperSorter<unknown>>
+>;
+
+export async function get_sorter(
   hass: HassObject,
   method: SortConfig
-): (a: LovelaceRowConfig, b: LovelaceRowConfig) => number {
-  return function (a, b) {
-    return (
-      SORTERS[method.method]?.(
-        hass.states[a.entity],
-        hass.states[b.entity],
-        method
-      ) ?? 0
+): Promise<
+  (array: Array<LovelaceRowConfig>) => Promise<Array<LovelaceRowConfig>>
+> {
+  const { mapper, sorter } = await (SORTERS[method.method] ?? SORTERS["none"])(
+    method
+  );
+  const sort = async (data) => {
+    const mapped = await Promise.all(
+      data.map(async (x, i) => ({
+        i,
+        value: await mapper(x),
+      }))
     );
+    mapped.sort((a, b) => sorter(a.value, b.value));
+    return mapped.map((v) => data[v.i]);
   };
+  return sort;
 }
