@@ -88,7 +88,7 @@ class AutoEntitiesEditor extends LitElement {
   async _changeSpecialEntry(group, ev) {
     if (!this._config) return;
 
-    const data = { ...ev.detail.value?.data } ?? { type: "" };
+    const data = { ...ev.detail.value?.data };
     data.type = data.type ?? "";
 
     const include = [...this._config.filter?.include];
@@ -121,7 +121,7 @@ class AutoEntitiesEditor extends LitElement {
     const data = form2filter(this._config, ev.detail.value);
     const include = [...this._config.filter?.include];
     include[group] = { ...data, options: include[group].options };
-    this._config.filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter: { ...this._config.filter, include } };
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
