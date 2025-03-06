@@ -277,6 +277,9 @@ class AutoEntities extends LitElement {
     }
 
     if (this._config.sort) {
+      await getEntities(this.hass);
+      await getDevices(this.hass);
+      await getAreas(this.hass);
       entities = entities.sort(get_sorter(this.hass, this._config.sort));
       if (this._config.sort.count) {
         const start = this._config.sort.first ?? 0;
