@@ -1,7 +1,10 @@
 import { LitElement, html } from "lit";
 import { property, state } from "lit/decorators.js";
-import { hasTemplate } from "card-tools/src/templates";
-import { bind_template, unbind_template } from "./templates";
+import {
+  hasTemplate,
+  bind_template,
+  unbind_template,
+} from "./helpers/templates";
 import { filter_entity } from "./filter";
 import { get_sorter } from "./sort";
 import {

@@ -1,5 +1,5 @@
-import { hass } from "card-tools/src/hass";
-import { deviceID } from "card-tools/src/deviceID";
+import { hass } from "./hass";
+import { BrowserID } from "./browser_id";
 
 interface CachedTemplate {
   template: string;
@@ -32,12 +32,18 @@ function template_updated(
   cache.callbacks.forEach((f) => f(result.result));
 }
 
+export function hasTemplate(str) {
+  if (!str) return false;
+  return String(str).includes("{%") || String(str).includes("{{");
+}
+
 export async function bind_template(
   callback: (string) => void,
   template: string,
   variables: object
 ): Promise<void> {
-  const connection = hass().connection;
+  const hs = await hass();
+  const connection = hs.connection;
 
   const cacheKey = JSON.stringify([template, variables]);
   let cache = cachedTemplates[cacheKey];
@@ -46,8 +52,8 @@ export async function bind_template(
     callback("");
 
     variables = {
-      user: hass().user.name,
-      browser: deviceID,
+      user: hs.user.name,
+      browser: BrowserID(),
       hash: location.hash.substr(1) || "",
       ...variables,
     };

@@ -3,7 +3,8 @@
   "image": "thomasloven/hass-custom-devcontainer",
   "postCreateCommand": "sudo -E container setup-dev && npm add",
   "containerEnv": {
-    "DEVCONTAINER": "1"
+    "DEVCONTAINER": "1",
+    "ENV_FILE": "/config/test/.env"
   },
   "forwardPorts": [8123],
   "mounts": [
@@ -12,23 +13,27 @@
     "source=${localWorkspaceFolder}/test/configuration.yaml,target=/config/configuration.yaml,type=bind"
   ],
   "runArgs": ["--env-file", "${localWorkspaceFolder}/test/.env"],
-  "extensions": [
-    "github.vscode-pull-request-github",
-    "esbenp.prettier-vscode",
-    "spmeesseman.vscode-taskexplorer"
-  ],
-  "settings": {
-    "files.eol": "\n",
-    "editor.tabSize": 2,
-    "editor.formatOnPaste": false,
-    "editor.formatOnSave": true,
-    "editor.formatOnType": true,
-    "[javascript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[typescript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "files.trimTrailingWhitespace": true
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "github.vscode-pull-request-github",
+        "esbenp.prettier-vscode",
+        "spmeesseman.vscode-taskexplorer"
+      ],
+      "settings": {
+        "files.eol": "\n",
+        "editor.tabSize": 2,
+        "editor.formatOnPaste": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "files.trimTrailingWhitespace": true
+      }
+    }
   }
 }

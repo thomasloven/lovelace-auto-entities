@@ -88,7 +88,7 @@ class AutoEntitiesEditor extends LitElement {
   async _changeSpecialEntry(group, ev) {
     if (!this._config) return;
 
-    const data = { ...ev.detail.value?.data } ?? { type: "" };
+    const data = ev.detail.value ? { ...ev.detail.value.data } : { type: "" };
     data.type = data.type ?? "";
 
     const include = [...this._config.filter?.include];
