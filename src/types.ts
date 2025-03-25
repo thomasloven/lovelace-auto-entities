@@ -39,6 +39,45 @@ interface FilterConfig {
   type?: string;
 }
 
+export interface EntityNameConfig {
+  text?: string;
+  group?: string;
+  area?: boolean;
+  device_manufacturer?: boolean;
+  device_model?: boolean;
+}
+
+interface NamesTransformSetConfig {
+  type: "set";
+  value: EntityNameConfig;
+  trim?: boolean;
+}
+
+interface NamesTransformPrefixConfig {
+  type: "prefix";
+  value: EntityNameConfig;
+  trim?: boolean;
+}
+
+interface NamesTransformSuffixConfig {
+  type: "suffix";
+  value: EntityNameConfig;
+  trim?: boolean;
+}
+
+interface NamesTransformReplaceConfig {
+  type: "replace";
+  match: EntityNameConfig;
+  replacement?: EntityNameConfig;
+  trim?: boolean;
+}
+
+export type NamesTransformConfig = NamesTransformSetConfig | NamesTransformPrefixConfig | NamesTransformSuffixConfig | NamesTransformReplaceConfig;
+
+export interface NamesConfig {
+  transforms: NamesTransformConfig[];
+}
+
 export interface AutoEntitiesConfig {
   card: any;
   entities: Array<LovelaceRowConfig | string>;
@@ -47,6 +86,7 @@ export interface AutoEntitiesConfig {
     include?: FilterConfig[];
     exclude?: FilterConfig[];
   };
+  names?: NamesConfig;
 
   card_param?: string;
 
@@ -61,6 +101,7 @@ export interface AutoEntitiesConfig {
 export interface LovelaceRowConfig {
   entity?: string;
   type?: string;
+  name?: string;
 }
 export interface LovelaceCard extends HTMLElement {
   hass: any;

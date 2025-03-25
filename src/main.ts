@@ -8,6 +8,7 @@ import {
 import { filter_entity } from "./filter";
 import { get_sorter } from "./sort";
 import {
+  EntityNameConfig,
   AutoEntitiesConfig,
   EntityList,
   HuiErrorCard,
@@ -61,6 +62,9 @@ class AutoEntities extends LitElement {
     }
     if (!config.filter && !config.entities) {
       throw new Error("No filters specified.");
+    }
+    if (config.names && !config.names.transforms) {
+      throw new Error("No names transforms specified.");
     }
     config = JSON.parse(JSON.stringify(config));
     this._config = config;
@@ -268,6 +272,163 @@ class AutoEntities extends LitElement {
             !(await filter_entity(this.hass, filter, entity.entity))
           )
             newEntities.push(entity);
+        }
+        entities = newEntities;
+      }
+    }
+
+    if (this._config.names) {
+      const { transforms } = this._config.names;
+      if (transforms && transforms.length > 0) {
+        const ents = await getEntities(this.hass);
+        const devs = await getDevices(this.hass);
+        const areas = await getAreas(this.hass);
+
+        const findEnt = entity => ents.find((e) => e.entity_id === entity.entity);
+        const findDev = ent => devs.find((e) => e.id === ent.device_id);
+        const findArea = ent => areas.find((a) => a.area_id === ent.area_id);
+
+        const getEntName = (entity: LovelaceRowConfig, ent: any) => {
+          let name = "";
+          if (entity.name) {
+            name = entity.name;
+          } else if (ent.friendly_name) {
+            name = ent.friendly_name;
+          } else if (ent.name) {
+            name = ent.name;
+          } else if (ent.device_id) {
+            const device = findDev(ent);
+            if (device && device.name) {
+              if (ent.original_name) {
+                if (ent.original_name !== device.name) {
+                  if (ent.original_name.startsWith(device.name)) {
+                    name = ent.original_name;
+                  } else {
+                    name = device.name + " " + ent.original_name;
+                  }
+                } else {
+                  name = device.name;
+                }
+              } else {
+                name = device.name;
+              }
+            } else if (ent.original_name) {
+              name = ent.original_name;
+            }
+          } else if (ent.original_name) {
+            name = ent.original_name;
+          }
+          return name;
+        };
+
+        const getEntAreaName = ent => {
+          let area;
+          if (ent.area_id) {
+            area = findArea(ent);
+          }
+          if (!area && ent.device_id !== undefined) {
+            const device = findDev(ent);
+            if (device) {
+              area = findArea(device);
+            }
+          }
+          if (area && area.name) {
+            return area.name;
+          }
+          return "";
+        };
+
+        const getEntGroupName = group => {
+          const groupEnt = this.hass.states[group];
+          if (groupEnt && groupEnt.attributes.friendly_name) {
+            return groupEnt.attributes.friendly_name;
+          }
+          return "";
+        };
+
+        const getEntDeviceManufacturerName = ent => {
+          if (ent.device_id !== undefined) {
+            const device = findDev(ent);
+            if (device && device.manufacturer) {
+              return device.manufacturer;
+            }
+          }
+          return "";
+        };
+
+        const getEntDeviceModelName = ent => {
+          if (ent.device_id !== undefined) {
+            const device = findDev(ent);
+            if (device && device.model) {
+              return device.model;
+            }
+          }
+          return "";
+        };
+
+        const getEntNameForConfig = (ent: any, config: EntityNameConfig) => {
+          const { text, area, group, device_manufacturer, device_model } = config;
+          if (text) {
+            return text;
+          } else if (area) {
+            return getEntAreaName(ent);
+          } else if (group) {
+            return getEntGroupName(group);
+          } else if (device_manufacturer) {
+            return getEntDeviceManufacturerName(ent);
+          } else if (device_model) {
+            return getEntDeviceModelName(ent);
+          }
+        };
+
+        const newEntities = entities.map(e => ({...e}));
+
+        for (let transform of transforms) {
+          const { type, trim } = transform;
+          if (type === "set" || type === "prefix" || type === "suffix") {
+            const { value } = transform;
+            if (value) {
+              let getEntityName = (oldName, newName) => oldName;
+              if (type === "set") {
+                getEntityName = (oldName, newName) => newName;
+              } else if (type === "prefix") {
+                getEntityName = (oldName, newName) => newName + oldName;
+              } else if (type === "suffix") {
+                getEntityName = (oldName, newName) => oldName + newName;
+              }
+              for (let entity of newEntities) {
+                const ent = findEnt(entity);
+                if (ent) {
+                  const oldName = getEntName(entity, ent);
+                  const newName = getEntNameForConfig(ent, value);
+                  if (oldName && newName) {
+                    entity.name = getEntityName(oldName, newName);
+                    if (trim) {
+                      entity.name = entity.name.trim();
+                    }
+                  }
+                }
+              }
+            }
+          } else if (type === "replace") {
+            const { match, replacement } = transform;
+            if (match) {
+              for (let entity of newEntities) {
+                const ent = findEnt(entity);
+                if (ent) {
+                  const oldName = getEntName(entity, ent);
+                  const matchName = getEntNameForConfig(ent, match);
+                  if (oldName && matchName) {
+                    const replaceName = replacement ? getEntNameForConfig(ent, replacement) : "";
+                    entity.name = oldName.replace(matchName, replaceName);
+                    if (trim) {
+                      entity.name = entity.name.trim();
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
         entities = newEntities;
       }
