@@ -200,12 +200,6 @@ class AutoEntities extends LitElement {
     this.empty =
       entities.length === 0 ||
       entities.every((e) => HIDDEN_TYPES.includes(e.type));
-    const hide =
-      this.empty &&
-      this._config.show_empty === false &&
-      this._config.else === undefined;
-    this.style.display = hide ? "none" : null;
-    this.style.margin = hide ? "0" : null;
     if ((this.card as any).requestUpdate) {
       await this.updateComplete;
       (this.card as any).requestUpdate();
@@ -332,6 +326,14 @@ class AutoEntities extends LitElement {
     if (len === 0 && this._config.filter?.include)
       len = Object.keys(this._config.filter.include).length;
     return len || 5;
+  }
+
+  get hidden() {
+    const hide =
+      this.empty &&
+      this._config.show_empty === false &&
+      this._config.else === undefined;
+    return hide;
   }
 }
 
