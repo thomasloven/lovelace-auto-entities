@@ -5,7 +5,7 @@ import {
   bind_template,
   unbind_template,
 } from "./helpers/templates";
-import { filter_entity } from "./filter";
+import { get_filter } from "./filter";
 import { get_sorter } from "./sort";
 import {
   AutoEntitiesConfig,
@@ -232,8 +232,9 @@ class AutoEntities extends LitElement {
         }
 
         let add: EntityList = [];
+        const filters = await get_filter(this.hass, filter);
         for (const entity of all_entities) {
-          if (await filter_entity(this.hass, filter, entity.entity))
+          if (await filters(entity.entity))
             add.push(
               JSON.parse(
                 JSON.stringify({ ...entity, ...filter.options }).replace(
@@ -261,12 +262,10 @@ class AutoEntities extends LitElement {
     // TODO: Add tests for exclusions
     if (this._config.filter?.exclude) {
       for (const filter of this._config.filter.exclude) {
+        const filters = await get_filter(this.hass, filter);
         const newEntities = [];
         for (const entity of entities) {
-          if (
-            entity.entity === undefined ||
-            !(await filter_entity(this.hass, filter, entity.entity))
-          )
+          if (entity.entity === undefined || !(await filters(entity.entity)))
             newEntities.push(entity);
         }
         entities = newEntities;

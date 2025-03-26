@@ -144,3 +144,21 @@ cards:
                 hs_color:0 1: "> 195"
                 hs_color:0 2: "< 255"
                 hs_color:1: "> 50"
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 5: Time
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: light
+                last_changed: "< 2 m ago"
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: light
+              last_changed: "< 2 m ago"
