@@ -16,7 +16,7 @@ import {
 } from "./types";
 import pjson from "../package.json";
 import "./editor/auto-entities-editor";
-import { compare_deep, getAreas, getDevices, getEntities } from "./helpers";
+import { compare_deep } from "./helpers";
 
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
@@ -223,20 +223,14 @@ class AutoEntities extends LitElement {
     }
     entities = entities.filter(Boolean);
 
-    // TODO: These are required for sorting.
-    // Remove after making get_sorter async and including them in there as needed
-    await getEntities(this.hass);
-    await getDevices(this.hass);
-    await getAreas(this.hass);
-
     const include_filters = await Promise.all(
       (this._config.filter?.include ?? []).map(async (filter) => {
         if (filter.type) return async () => [filter as LovelaceRowConfig];
 
         const filters = await get_filter(this.hass, filter);
-        const sorter = filter.sort
-          ? get_sorter(this.hass, filter.sort)
-          : (x) => 0;
+        const sorter = filter.sort?.method
+          ? await get_sorter(this.hass, filter.sort)
+          : (x) => x;
 
         const post_process = (entity) =>
           JSON.parse(JSON.stringify({ ...entity, ...filter.options }));
@@ -244,7 +238,7 @@ class AutoEntities extends LitElement {
         return async (entities: EntityList) => {
           let add = entities.filter(filters);
           // Filter-local sort
-          add = add.sort(sorter);
+          add = await sorter(add);
           // Filter-local pagination
           if (filter.sort?.count || filter.sort?.first) {
             const start = filter.sort?.first ?? 0;
@@ -273,10 +267,10 @@ class AutoEntities extends LitElement {
     entities = entities.filter((e) => !exclude_filters.some((f) => f(e)));
 
     // Global sort
-    const sorter = this._config.sort
-      ? get_sorter(this.hass, this._config.sort)
-      : (x) => 0;
-    entities = entities.sort(sorter);
+    const sorter = this._config.sort?.method
+      ? await get_sorter(this.hass, this._config.sort)
+      : (x) => x;
+    entities = await sorter(entities);
 
     // Unique
     if (this._config.unique) {

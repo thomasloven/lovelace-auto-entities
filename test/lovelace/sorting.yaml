@@ -95,7 +95,13 @@ cards:
     cards:
       - <<: *desc
         content: |
-          ## 3: Sort by device
+          ## 4: Sort by device
+      - <<: *card
+        filter:
+          include:
+            - domain: light
+              device: "*"
+
       - <<: *card
         filter:
           include:
