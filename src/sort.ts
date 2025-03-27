@@ -1,4 +1,4 @@
-import { cached_areas, cached_devices, cached_entities } from "./helpers";
+import { getAreas, getDevices, getEntities } from "./helpers";
 import { HassObject, HAState, LovelaceRowConfig, SortConfig } from "./types";
 
 function compare(_a: any, _b: any, method: SortConfig) {
@@ -37,130 +37,76 @@ function compare(_a: any, _b: any, method: SortConfig) {
   );
 }
 
-const SORTERS: Record<
+const COMPARISONS: Record<
   string,
-  (a: HAState, b: HAState, method: SortConfig) => number
+  (x: HAState, method: SortConfig, hass: HassObject) => any | Promise<any>
 > = {
-  none: () => {
-    return 0;
+  none: (x) => 0,
+  domain: (x) => x?.entity_id?.split(".")[0],
+  entity_id: (x) => x?.entity_id,
+  friendly_name: (x) =>
+    x?.attributes?.friendly_name || x?.entity_id?.split(".")[1],
+  name: (x) => x?.attributes?.friendly_name || x?.entity_id?.split(".")[1],
+  device: async (x, m, hass) => {
+    const [entities, devices] = await Promise.all([
+      getEntities(hass),
+      getDevices(hass),
+    ]);
+    const ent = entities.find((e) => e.entity_id === x.entity_id);
+    if (!ent) return undefined;
+    const dev = devices.find((d) => d.id === ent.device_id);
+    if (!dev) return undefined;
+    return dev.name_by_user ?? dev.name;
   },
-  domain: (a, b, method) => {
-    return compare(
-      a?.entity_id?.split(".")[0],
-      b?.entity_id?.split(".")[0],
-      method
-    );
+  area: async (x, m, hass) => {
+    const [entities, devices, areas] = await Promise.all([
+      getEntities(hass),
+      getDevices(hass),
+      getAreas(hass),
+    ]);
+    const ent = entities.find((e) => e.entity_id === x.entity_id);
+    if (!ent) return undefined;
+    let area = areas.find((a) => a.area_id === ent.area_id);
+    if (area) return area.name;
+    const dev = devices.find((d) => d.id === ent.device_id);
+    if (!dev) return undefined;
+    area = areas.find((a) => a.area_id === dev.area_id);
+    if (!area) return undefined;
+    return area.name;
   },
-  entity_id: (a, b, method) => {
-    return compare(a?.entity_id, b?.entity_id, method);
-  },
-  friendly_name: (a, b, method) => {
-    return compare(
-      a?.attributes?.friendly_name || a?.entity_id?.split(".")[1],
-      b?.attributes?.friendly_name || b?.entity_id?.split(".")[1],
-      method
-    );
-  },
-  name: (a, b, method) => {
-    return compare(
-      a?.attributes?.friendly_name || a?.entity_id?.split(".")[1],
-      b?.attributes?.friendly_name || b?.entity_id?.split(".")[1],
-      method
-    );
-  },
-  device: (a, b, method) => {
-    const entity_a = cached_entities().find((e) => e.entity_id === a.entity_id);
-    const entity_b = cached_entities().find((e) => e.entity_id === b.entity_id);
-    if (!entity_a || !entity_b) return 0;
-    const device_a = cached_devices().find((d) => d.id === entity_a.device_id);
-    const device_b = cached_devices().find((d) => d.id === entity_b.device_id);
-    if (!device_a || !device_b) return 0;
-    return compare(
-      device_a.name_by_user ?? device_a.name,
-      device_b.name_by_user ?? device_b.name,
-      method
-    );
-  },
-  area: (a, b, method) => {
-    const entity_a = cached_entities().find((e) => e.entity_id === a.entity_id);
-    const entity_b = cached_entities().find((e) => e.entity_id === b.entity_id);
-    if (!entity_a || !entity_b) return 0;
-    const device_a = cached_devices().find((d) => d.id === entity_a.device_id);
-    const device_b = cached_devices().find((d) => d.id === entity_b.device_id);
-    if (!device_a || !device_b) return 0;
-    const area_a = cached_areas().find((a) => a.area_id === device_a.area_id);
-    const area_b = cached_areas().find((a) => a.area_id === device_b.area_id);
-    if (!area_a || !area_b) return 0;
-    return compare(area_a.name, area_b.name, method);
-  },
-  state: (a, b, method) => {
-    return compare(a?.state, b?.state, method);
-  },
-  attribute: (a, b, method) => {
-    const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
-    let _a = a?.attributes;
-    let _b = b?.attributes;
-    for (const step of method?.attribute?.split(":")) {
-      if (_a === undefined && _b === undefined) return 0;
-      if (_a === undefined) return lt;
-      if (_b === undefined) return gt;
-      [_a, _b] = [_a[step], _b[step]];
-    }
-    return compare(_a, _b, method);
-  },
-  last_changed: (a, b, method) => {
-    const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
-    if (a?.last_changed == null && b?.last_changed == null) return 0;
-    if (a?.last_changed == null) return lt;
-    if (b?.last_changed == null) return gt;
-    method.numeric = true;
-    return compare(
-      new Date(a?.last_changed).getTime(),
-      new Date(b?.last_changed).getTime(),
-      method
-    );
-  },
-  last_updated: (a, b, method) => {
-    const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
-    if (a?.last_updated == null && b?.last_updated == null) return 0;
-    if (a?.last_updated == null) return lt;
-    if (b?.last_updated == null) return gt;
-    method.numeric = true;
-    return compare(
-      new Date(a?.last_updated).getTime(),
-      new Date(b?.last_updated).getTime(),
-      method
-    );
-  },
-  last_triggered: (a, b, method) => {
-    const [lt, gt] = method?.reverse ? [-1, 1] : [1, -1];
-    if (
-      a?.attributes?.last_triggered == null &&
-      b?.attributes?.last_triggered == null
-    )
-      return 0;
-    if (a?.attributes?.last_triggered == null) return lt;
-    if (b?.attributes?.last_triggered == null) return gt;
-    method.numeric = true;
-    return compare(
-      new Date(a?.attributes?.last_triggered).getTime(),
-      new Date(b?.attributes?.last_triggered).getTime(),
-      method
-    );
-  },
+  state: (x) => x?.state,
+  attribute: (x, m) =>
+    m?.attribute?.split(":").reduce((_x, key) => _x?.[key], x?.attributes),
+  last_changed: (x) =>
+    x?.last_changed ? new Date(x.last_changed).getTime() : undefined,
+  last_updated: (x) =>
+    x?.last_updated ? new Date(x.last_updated).getTime() : undefined,
+  last_triggered: (x) =>
+    x?.attributes?.last_triggered
+      ? new Date(x.attributes.last_triggered).getTime()
+      : undefined,
 };
 
-export function get_sorter(
-  hass: HassObject,
-  method: SortConfig
-): (a: LovelaceRowConfig, b: LovelaceRowConfig) => number {
-  return function (a, b) {
-    return (
-      SORTERS[method.method]?.(
-        hass.states[a.entity],
-        hass.states[b.entity],
-        method
-      ) ?? 0
+export async function get_sorter(hass: HassObject, method: SortConfig) {
+  const prepare = COMPARISONS[method.method];
+  if (!prepare) return (x) => x;
+
+  if (
+    ["last_changed", "last_updated", "last_triggered"].includes(method.method)
+  )
+    method.numeric = true;
+
+  const sort = async (
+    values: LovelaceRowConfig[]
+  ): Promise<LovelaceRowConfig[]> => {
+    const map = await Promise.all(
+      values.map(async (x) => [
+        x,
+        await prepare(hass.states[x.entity], method, hass),
+      ])
     );
+    map.sort((a, b) => compare(a[1], b[1], method));
+    return map.map((x) => x[0]);
   };
+  return sort;
 }
