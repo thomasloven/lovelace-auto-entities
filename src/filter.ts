@@ -1,4 +1,4 @@
-import { HAState, HassObject } from "./types";
+import { HAState, HassObject, LovelaceRowConfig } from "./types";
 import { getAreas, getDevices, getEntities, getLabels } from "./helpers";
 import { matcher } from "./match";
 
@@ -204,7 +204,7 @@ const RULES: Record<
 export async function get_filter(
   hass: HassObject,
   filter: Record<string, any>
-): Promise<(entity_id: string) => boolean> {
+): Promise<(entity: string | LovelaceRowConfig) => boolean> {
   const rules = (
     await Promise.all(
       Object.entries(filter).map(([rule, value]) => {
@@ -214,9 +214,11 @@ export async function get_filter(
     )
   ).filter(Boolean);
 
-  return (entity_id: string) => {
-    const entity = hass?.states?.[entity_id];
+  return (entity: string | LovelaceRowConfig) => {
+    if (typeof entity !== "string") entity = entity.entity;
     if (!entity) return false;
-    return rules.every((x) => x(entity));
+    const hass_entity = hass?.states?.[entity];
+    if (!entity) return false;
+    return rules.every((x) => x(hass_entity));
   };
 }

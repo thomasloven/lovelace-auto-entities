@@ -223,76 +223,85 @@ class AutoEntities extends LitElement {
     }
     entities = entities.filter(Boolean);
 
-    if (this._config.filter?.include) {
-      const all_entities = Object.keys(this.hass.states).map(format);
-      for (const filter of this._config.filter.include) {
-        if (filter.type) {
-          entities.push(filter);
-          continue;
-        }
+    // TODO: These are required for sorting.
+    // Remove after making get_sorter async and including them in there as needed
+    await getEntities(this.hass);
+    await getDevices(this.hass);
+    await getAreas(this.hass);
 
-        let add: EntityList = [];
+    const include_filters = await Promise.all(
+      (this._config.filter?.include ?? []).map(async (filter) => {
+        if (filter.type) return async () => [filter as LovelaceRowConfig];
+
         const filters = await get_filter(this.hass, filter);
-        for (const entity of all_entities) {
-          if (await filters(entity.entity))
-            add.push(
-              JSON.parse(
-                JSON.stringify({ ...entity, ...filter.options }).replace(
-                  /this.entity_id/g,
-                  entity.entity
-                )
-              )
-            );
-        }
+        const sorter = filter.sort
+          ? get_sorter(this.hass, filter.sort)
+          : (x) => 0;
 
-        if (filter.sort) {
-          await getEntities(this.hass);
-          await getDevices(this.hass);
-          await getAreas(this.hass);
-          add = add.sort(get_sorter(this.hass, filter.sort));
-          if (filter.sort.count ?? filter.sort.first) {
-            const start = filter.sort.first ?? 0;
-            add = add.slice(start, start + (filter.sort.count ?? Infinity));
+        const post_process = (entity) =>
+          JSON.parse(JSON.stringify({ ...entity, ...filter.options }));
+
+        return async (entities: EntityList) => {
+          let add = entities.filter(filters);
+          // Filter-local sort
+          add = add.sort(sorter);
+          // Filter-local pagination
+          if (filter.sort?.count || filter.sort?.first) {
+            const start = filter.sort?.first ?? 0;
+            const count = filter.sort?.count ?? Infinity;
+            add = add.slice(start, start + count);
           }
-        }
-        entities = entities.concat(add);
-      }
-    }
+          add = add.map(post_process);
+          return add;
+        };
+      })
+    );
 
-    // TODO: Add tests for exclusions
-    if (this._config.filter?.exclude) {
-      for (const filter of this._config.filter.exclude) {
+    const exclude_filters = await Promise.all(
+      (this._config.filter?.exclude ?? []).map(async (filter) => {
         const filters = await get_filter(this.hass, filter);
-        const newEntities = [];
-        for (const entity of entities) {
-          if (entity.entity === undefined || !(await filters(entity.entity)))
-            newEntities.push(entity);
-        }
-        entities = newEntities;
-      }
-    }
+        return filters;
+      })
+    );
 
-    if (this._config.sort) {
-      entities = entities.sort(get_sorter(this.hass, this._config.sort));
-      if (this._config.sort.count) {
-        const start = this._config.sort.first ?? 0;
-        entities = entities.slice(start, start + this._config.sort.count);
-      }
-    }
+    const all_entities: EntityList = Object.keys(this.hass.states).map(format);
+    // Include
+    entities = entities.concat(
+      ...(await Promise.all(include_filters.map((f) => f(all_entities))))
+    );
+    // Exclude
+    entities = entities.filter((e) => !exclude_filters.some((f) => f(e)));
 
+    // Global sort
+    const sorter = this._config.sort
+      ? get_sorter(this.hass, this._config.sort)
+      : (x) => 0;
+    entities = entities.sort(sorter);
+
+    // Unique
     if (this._config.unique) {
-      let newEntities: EntityList = [];
-      for (const e of entities) {
-        if (
-          this._config.unique === "entity" &&
-          e.entity &&
-          newEntities.some((i) => i.entity === e.entity)
-        )
-          continue;
-        if (newEntities.some((i) => compare_deep(i, e))) continue;
-        newEntities.push(e);
+      let sorter = (
+        entity: LovelaceRowConfig,
+        index: number,
+        self: LovelaceRowConfig[]
+      ) => index === self.findIndex((e) => compare_deep(e, entity));
+
+      if (this._config.unique === "entity") {
+        sorter = (
+          entity: LovelaceRowConfig,
+          index: number,
+          self: LovelaceRowConfig[]
+        ) => index === self.findIndex((e) => e.entity === entity.entity);
       }
-      entities = newEntities;
+
+      entities = entities.filter(sorter);
+    }
+
+    // Pagination
+    if (this._config.sort?.count || this._config.sort?.first) {
+      const start = this._config.sort?.first ?? 0;
+      const count = this._config.sort?.count ?? Infinity;
+      entities = entities.slice(start, start + count);
     }
 
     return entities;

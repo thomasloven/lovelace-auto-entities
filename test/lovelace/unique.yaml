@@ -1,0 +1,107 @@
+x-anchors:
+  desc: &desc
+    type: markdown
+    style:
+      ha-markdown:
+        $: |
+          code {
+            font-size: 8pt !important;
+            line-height: normal;
+            white-space: pre-wrap;
+            }
+  card: &card
+    type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+
+title: Unique
+cards:
+  - <<: *desc
+    content: |
+      ## 0: Base card
+
+      ```
+      type: custom:auto-entities
+      card:
+        type: entities
+        show_header_toggle: false
+      ```
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 1: No unique
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - entity_id: light.bed_light
+              - entity_id: light.bed_light
+                options:
+                  secondary_info: last_changed
+              - entity_id: light.bed_light
+          ```
+      - <<: *card
+        filter:
+          include:
+            - entity_id: light.bed_light
+            - entity_id: light.bed_light
+              options:
+                secondary_info: entity-id
+            - entity_id: light.bed_light
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 2: Unique
+
+          ```
+          <<: *card
+          unique: true
+          filter:
+            include:
+              - entity_id: light.bed_light
+              - entity_id: light.bed_light
+                options:
+                  secondary_info: last_changed
+              - entity_id: light.bed_light
+          ```
+      - <<: *card
+        unique: true
+        filter:
+          include:
+            - entity_id: light.bed_light
+            - entity_id: light.bed_light
+              options:
+                secondary_info: entity-id
+            - entity_id: light.bed_light
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 3: Unique Entity
+
+          ```
+          <<: *card
+          unique: entity
+          filter:
+            include:
+              - entity_id: light.bed_light
+              - entity_id: light.bed_light
+                options:
+                  secondary_info: last_changed
+              - entity_id: light.bed_light
+          ```
+      - <<: *card
+        unique: entity
+        filter:
+          include:
+            - entity_id: light.bed_light
+            - entity_id: light.bed_light
+              options:
+                secondary_info: entity-id
+            - entity_id: light.bed_light
