@@ -25,59 +25,68 @@ filter:
     - <filter>
 
 show_empty: <show_empty>
+else: <else>
 unique: <unique>
 sort: <sort_method>
 ```
 
-## Options
 
-- `card:` **Required.** The card to display. Specify this as you would specify any normal lovelace card, but ommit the `entities:` parameter.
-- `entities:` Any entities added here will be added to the card before any filters are applied.
-- `filter:`
-  - `template:` A jinja2 template evaluating to a list of entries to include
-  - `include:` A list of filters specifying which entities to add to the card
-  - `exclude:` A list of filters specifying which entities to remove from the card
-- `show_empty:` Whether to display the card if it has no entities. Default: `true`. Note that any filter with a `type` option will be ignored.
-- `else:` Card to display if main card has no entities. Overrides `show_empty`.
-- `unique:` Whether to remove duplicate values after filtering and sorting. Set to `true` to remove exact duplicate entries. Set to `entity` to remove entries with the same entity id. Default: `false`.
-- `sort:` How to sort the entities of the card. Default: `none`. See [Sorting entities for details](#sorting-entities)
-- `card_param:` The parameter of the card to populate. Default: `entities`.
+| Option                 | Type | Description | Default |
+|------------------------|------|-------------|---------|
+| `card`                 | Dashboard card\* | The card to display. Specify this as you would specify any normal dashboard card, but ommit the `entities` parameter. | `entities`-card |
+| `entities`             | List of Entities\*\* | Any entities added here will be added to the card before any filters are applied
+| `filter`               |
+| &nbsp;&nbsp;`template` | string | A jinja template evaluating to a list of entities to include
+| &nbsp;&nbsp;`include`  | List of [Filters](#filters) | A list of filters specifying which entities to add to the card
+| &nbsp;&nbsp;`exclude`  | List of [Filters](#filters) | A list of filters specifying which entities to remove from the card
+| `show_empty`           | `true`/`false` | Whether to display the card if there are no entities | `false`
+| `else`                 | Dashboard card\* | Card to display if the main card has no entities. Overrides `show_empty`
+| `sort`                 | [Sort config](#sorting-entities) | How to sort the entities of the card | `none`
+| `card_param`           | string | The parameter of the card to populate with entities | `entities`
+
+\* [Dashboard card](https://www.home-assistant.io/dashboards/cards/) \
+\*\* [Entities](https://www.home-assistant.io/dashboards/entities/#options-for-entities)
+
 
 ### Filters
 
 The two main filter sections `include` and `exclude` each takes a list of filters.
 
-Filters have the following options, and will match any entity fulfilling **ALL** options:
+Each filter has a set of rules and will match entities which match **ALL** rules:
 
-- `domain:` Match entity domain (e.g. `light`, `binary_sensor`, `media_player`)
-- `state:` Match entity state (e.g. `"on"`, `home`, `"3.14"`)
-- `entity_id:` Match entity id (e.g. `light.bed_light`, `input_binary.weekdays_only`)
-- `name:` Match friendly name attribute (e.g. `Kitchen lights`, `Front door`)
-- `group:` Match entities in given group (e.g. `group.living_room_lights`)
-- `area:` Match entities in given area (e.g. `Kitchen`)
-- `device:` Match entities belonging to given device (e.g. `Thomas iPhone`)
-- `label:` Match entities that has a certain label (e.g. `Important entities`)
-- `device_manufacturer` Match entities belonging to a device by a given manufacturer (e.g. `IKEA`)
-- `device_model` Match entities belonging to a device of a given model (e.g. `Hue white ambiance E26/E27 (8718696548738)`)
-- `integration:` Match entities by integration identifier (e.g. `plex`, `input_boolean`, `xiaomi_miio`, `mobile_app` - Many integrations cannot be matched due to Home Assistant limitations)
-- `hidden_by:` Match who has hidden an entity (e.g. `user`, `integration`)
-- `attributes:` Map of `attribute: value` pairs to match.
-- `last_changed:` Match minutes since last state change (most useful as a comparison, e.g. `last_changed: < 15`)
-- `last_updated:` Match minutes since last update
-- `entity_category:` Match [entity category](https://developers.home-assistant.io/docs/core/entity#generic-properties) (Currently `config` or `diagnostic`)
+| Rule                  | Matches | Example |
+|-----------------------|---------|---------|
+| `domain`              | Entity domain | `light`, `binary_sensor`, `media_player` |
+| `state`               | Current state of entity | `"on"`, `home`, `"3.14"` |
+| `entity_id`           | Full entity id | `light.bed_light`, `input_binary.weekdays_only` |
+| `name`                | Friendly name attribute | `Kitchen lights`, `Front door` |
+| `group`               | Entities in the group | `group.living_room_lights` |
+| `area`                | Entities in a given area. Also matches all entities belonging to a Device in the area. | `Kitchen` |
+| `device`              | Entities belonging to a Device | `Thomas iPhone` |
+| `label`               | Entities that are tagged with a certain label | `Show on dashboard`, `Holiday light` |
+| `device_manufacturer` | Entities belonging to a device by a given manufacturer | `IKEA` |
+| `device_model`        | Entities belonging to a device of a given model | `Hue white ambiance E26/E27 (8718696548738)` |
+| `integration`         | Entities included by a given integration. This is not possible for *all*  integrations. | `plex`, `input_boolean`, `xiaomi_miio`, `mobile_app` |
+| `hidden_by`           | Who has hidden an entity | `user`, `integration`
+| `attributes`          | Map of `attribute: value` pairs to match |
+| `last_changed`        | Time since last state change (defaults to minutes) | `< 15`, `> 2 d ago` |
+| `last_updated`        | Time since last update (defaults to minutes) | `< 15`, `> 2 d ago` |
+| `entity_category`     | [Entity category](https://developers.home-assistant.io/docs/core/entity#generic-properties) | `config`, `diagnostic` |
+|                       |   |   |
+| `not`                 | Matche entities that do *not* match a filter |
+| `or`                  | Matches any in a list of filters |
+| `and`                 | Matches all in a list of filters |
 
 Special options:
-
-- `options:` Map of options to apply to entity when passed to card.
-- `type:` Type of special entries to include in entity list. Entries with a `type:` will not be filtered.
-- `not:` Specifies a filter that entities must _not_ match.
-- `sort:` Specifies a method to sort entities matched by _this filter only_.
-- `or:` Match any in a list of filters.
-- `and:` Match all in a list of filters (not necessary since `and` is implicit).
+| Option    | Description |
+|-----------|-------------|
+| `options` | Map of configuration options to apply to the entity when passed to the card
+| `type`    | If a `type` is given, the filter is handled as a complete entity description and passed along directly to the card
+| `sort`    | [Sort config](#sorting-entities) applied to entities in *this filter only*
 
 ### Template filter
 
-The filter section `template` takes a jinja2 template which evaluates to a list of entities or entity objects.
+The filter section `template` takes a jinja template which evaluates to a list of entities or entity objects.
 
 ## How it works
 
@@ -122,12 +131,12 @@ Any filter option dealing with numerical quantities can use comparison operators
 filter:
   include:
     - attributes:
-        battery: "<= 50" # Attribute battery_level is 50 or less
+        battery_level: "<= 50" # Attribute battery_level is 50 or less
     - state: "> 25" # State is greater than 25
     - attributes:
         count: "! 2" # Attribute count is not equal to 2
     - state: "= 12" # State is exactly 12 (also matches "12", "12.0" etc.)
-    - state: 12 # State is exactly 12 but not "12"
+    - state: "12" # State is exactly "12" but not e.g. "12.0"
 ```
 
 ### Time since an event
@@ -390,6 +399,20 @@ Or:
 
 ```yaml
 template: "{{states.light | selectattr('state', '==', 'on') | map(attribute='entity_id') | list}}"
+```
+
+Templates also give great opportunity for customization:
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+filter:
+  template: |
+    [{% for e in area_entities("bedroom") %}
+      {'entity': '{{e}}',
+       'name': 'Lamp at {{device_attr(e, "name").removesuffix("Light").removesuffix("Lights")}}',
+      },
+    {% endfor %}]
 ```
 
 ---
