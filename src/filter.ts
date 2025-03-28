@@ -215,6 +215,7 @@ export async function get_filter(
   ).filter(Boolean);
 
   return (entity: string | LovelaceRowConfig) => {
+    if (!rules.length) return false;
     if (typeof entity !== "string") entity = entity.entity;
     if (!entity) return false;
     const hass_entity = hass?.states?.[entity];
