@@ -79,7 +79,9 @@ export async function matcher(pattern: any): Promise<(value: any) => boolean> {
       matchers.push((value) => parseFloat(value) == parameter);
     }
 
-    matchers.push((value) => pattern === value);
+    matchers.push((value) => value === pattern);
+  } else if (typeof pattern === "number") {
+    matchers.push((value) => value === pattern);
   }
 
   return (value: any) => {
