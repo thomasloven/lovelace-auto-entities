@@ -3,11 +3,11 @@ import { property, state, query } from "lit/decorators.js";
 import { AutoEntitiesConfig } from "../types";
 import { loadHaForm } from "../helpers";
 import {
-  filterGroupSchema,
-  filterGroupOptionsSchema,
-  filter2form,
-  form2filter,
-  specialGroupSchema,
+  filterSchema,
+  filterOptionsSchema,
+  rule_to_form,
+  form_to_rule,
+  nonFilterSchema,
   cardOptionsSchema,
   sortSchema,
 } from "./schema";
@@ -37,7 +37,7 @@ class AutoEntitiesEditor extends LitElement {
     this._selectedTab = parseInt(ev.detail.index, 10);
   }
 
-  _addFilterGroup() {
+  _addFilter() {
     if (!this._config) return;
 
     const include = [...this._config.filter?.include];
@@ -49,7 +49,7 @@ class AutoEntitiesEditor extends LitElement {
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
-  _deleteFilterGroup(idx) {
+  _deleteFilter(idx) {
     if (!this._config) return;
 
     const include = [...this._config.filter?.include];
@@ -61,11 +61,24 @@ class AutoEntitiesEditor extends LitElement {
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
-  _moveFilterGroup(idx, pos) {
+  _moveFilter(idx, pos) {
     if (!this._config) return;
 
     const include = [...this._config.filter?.include];
     [include[idx], include[idx + pos]] = [include[idx + pos], include[idx]];
+    const filter = { ...this._config.filter, include };
+    this._config = { ...this._config, filter };
+
+    this.dispatchEvent(
+      new CustomEvent("config-changed", { detail: { config: this._config } })
+    );
+  }
+  _filterMoved(ev: CustomEvent): void {
+    ev.stopPropagation();
+    const { oldIndex, newIndex } = ev.detail;
+
+    const include = this._config.filter?.include?.concat();
+    include.splice(newIndex, 0, include.splice(oldIndex, 1)[0]);
     const filter = { ...this._config.filter, include };
     this._config = { ...this._config, filter };
 
@@ -100,7 +113,7 @@ class AutoEntitiesEditor extends LitElement {
       new CustomEvent("config-changed", { detail: { config: this._config } })
     );
   }
-  async _changeGroupOptions(group, ev) {
+  async _changeFilterOptions(group, ev) {
     if (!this._config) return;
 
     const data = ev.detail.value;
@@ -118,7 +131,7 @@ class AutoEntitiesEditor extends LitElement {
   _changeFilter(group, ev) {
     if (!this._config) return;
 
-    const data = form2filter(this._config, ev.detail.value);
+    const data = form_to_rule(this._config, ev.detail.value);
     const include = [...this._config.filter?.include];
     include[group] = { ...data, options: include[group].options };
     const filter = { ...this._config.filter, include };
@@ -270,61 +283,52 @@ class AutoEntitiesEditor extends LitElement {
       `;
 
     return html`
-      ${this._config.filter.include.map(
-        (group, group_idx) => html`
-          <div class="box">
-            <div class="toolbar">
-              <mwc-icon-button
-                .disabled=${group_idx === 0}
-                @click=${() => this._moveFilterGroup(group_idx, -1)}
-              >
-                <ha-icon .icon=${"mdi:arrow-up"}></ha-icon>
-              </mwc-icon-button>
-              <mwc-icon-button
-                .disabled=${group_idx ===
-                this._config.filter.include.length - 1}
-                @click=${() => this._moveFilterGroup(group_idx, 1)}
-              >
-                <ha-icon .icon=${"mdi:arrow-down"}></ha-icon>
-              </mwc-icon-button>
-              <mwc-icon-button
-                @click=${() => this._deleteFilterGroup(group_idx)}
-              >
-                <ha-icon .icon=${"mdi:close"}></ha-icon>
-              </mwc-icon-button>
-            </div>
-            ${group.type === undefined
-              ? html`
-                  <ha-form
-                    .hass=${this.hass}
-                    .schema=${filterGroupSchema(group)}
-                    .data=${filter2form(group)}
-                    .computeLabel=${(s) => s.label ?? s.name}
-                    @value-changed=${(ev) => this._changeFilter(group_idx, ev)}
-                  ></ha-form>
-                  <p>Options:</p>
-                  <ha-form
-                    .hass=${this.hass}
-                    .schema=${filterGroupOptionsSchema}
-                    .data=${group}
-                    @value-changed=${(ev) =>
-                      this._changeGroupOptions(group_idx, ev)}
-                  ></ha-form>
-                `
-              : html`
-                  <ha-form
-                    .hass=${this.hass}
-                    .schema=${specialGroupSchema}
-                    .data=${{ data: group }}
-                    @value-changed=${(ev) =>
-                      this._changeSpecialEntry(group_idx, ev)}
-                  ></ha-form>
-                `}
-          </div>
-        `
-      )}
-      <mwc-button @click=${this._addFilterGroup}>
-        <ha-icon .icon=${"mdi:plus"}></ha-icon>Add filter group
+      <ha-sortable handle-selector=".handle" @item-moved=${this._filterMoved}>
+        <div>
+          ${this._config.filter.include.map(
+            (filter, idx) => html`
+              <div class="box filter">
+                <div class="handle">
+                  <ha-icon .icon=${"mdi:drag"}></ha-icon>
+                </div>
+                <mwc-icon-button @click=${() => this._deleteFilter(idx)}>
+                  <ha-icon .icon=${"mdi:close"}></ha-icon>
+                </mwc-icon-button>
+                <div class="rules">
+                  ${filter.type === undefined
+                    ? html`
+                        <ha-form
+                          .hass=${this.hass}
+                           .schema=${filterSchema(filter)}
+                          .data=${rule_to_form(filter)}
+                          .computeLabel=${(s) => s.label ?? s.name}
+                          @value-changed=${(ev) => this._changeFilter(idx, ev)}
+                        ></ha-form>
+                        <ha-form
+                          .hass=${this.hass}
+                          .schema=${filterOptionsSchema}
+                          .data=${filter}
+                          @value-changed=${(ev) =>
+                            this._changeFilterOptions(idx, ev)}
+                        ></ha-form>
+                      `
+                    : html`
+                        <ha-form
+                          .hass=${this.hass}
+                          .schema=${nonFilterSchema}
+                          .data=${{ data: filter }}
+                          @value-changed=${(ev) =>
+                            this._changeSpecialEntry(idx, ev)}
+                        ></ha-form>
+                      `}
+                </div>
+              </div>
+            `
+          )}
+        </div>
+      </ha-sortable>
+      <mwc-button @click=${this._addFilter}>
+        <ha-icon .icon=${"mdi:plus"}></ha-icon>Add filter
       </mwc-button>
       <mwc-button @click=${this._addSpecialEntry}>
         <ha-icon .icon=${"mdi:plus"}></ha-icon>Add non-filter entry
@@ -410,6 +414,17 @@ class AutoEntitiesEditor extends LitElement {
           border: 1px solid var(--divider-color);
           padding: 12px;
         }
+        .filter {
+          display: grid;
+          grid-template: "a b" "c c";
+        }
+        .rules {
+          grid-column: 1 / span 2;
+        }
+        .horiz {
+          display: flex;
+          align-items: center;
+        }
         .option {
           display: flex;
           align-items: center;
@@ -427,6 +442,16 @@ class AutoEntitiesEditor extends LitElement {
         }
         a {
           color: var(--primary-color);
+        }
+        .handle {
+          padding-right: 8px;
+          cursor: move;
+          cursor: grab;
+          padding-inline-end: 8px;
+          padding-inline-start: initial;
+        }
+        .handle > * {
+          pointer-events: none;
         }
       `,
     ];

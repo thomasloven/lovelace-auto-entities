@@ -1,4 +1,4 @@
-const GUI_EDITOR_FILTERS = [
+const GUI_EDITOR_RULES = [
   "none",
   "domain",
   "entity_id",
@@ -19,38 +19,38 @@ const GUI_EDITOR_FILTERS = [
   "label",
 ];
 
-const filterKeySelector = {
+const ruleKeySelector = {
   type: "select",
   options: [
-    ["domain", "Entity Domain"],
-    ["entity_id", "Entity ID"],
-    ["state", "Entity State"],
-    ["name", "Friendly Name"],
-    ["group", "Member of Group"],
-    ["area", "In area"],
-    ["device", "Device"],
-    ["label", "Label"],
-    ["device_manufacturer", "Device Manufacturer"],
-    ["device_model", "Device Model"],
+    ["area", "Area"],
     ["attributes", "Attribute"],
-    ["last_changed", "Last Change"],
-    ["last_updated", "Last Update"],
-    ["last_triggered", "Last Trigger"],
+    ["device", "Device"],
+    ["domain", "Domain"],
     ["entity_category", "Entity Category"],
-    ["integration", "Governing integration"],
+    ["entity_id", "Entity ID"],
+    ["group", "Group"],
     ["hidden_by", "Hidden by"],
+    ["integration", "Integration"],
+    ["label", "Label"],
+    ["last_changed", "Last Changed"],
+    ["last_triggered", "Last Triggered"],
+    ["last_updated", "Last Updated"],
+    ["device_manufacturer", "Manufacturer"],
+    ["device_model", "Model"],
+    ["name", "Name"],
+    ["state", "State"],
   ],
 };
 
-const filterSchema = ([key, value], idx) => {
+const ruleSchema = ([key, value], idx) => {
   const filterValueSelector = {
     attributes: { object: {} },
   };
 
-  if (!GUI_EDITOR_FILTERS.includes(key))
+  if (!GUI_EDITOR_RULES.includes(key))
     return {
       type: "Constant",
-      name: "Some filters are not shown",
+      name: "Some rules are not shown",
       value: "Please switch to the CODE EDITOR to access all options.",
     };
 
@@ -59,9 +59,9 @@ const filterSchema = ([key, value], idx) => {
     name: "",
     schema: [
       {
-        ...filterKeySelector,
+        ...ruleKeySelector,
         name: `key_${idx}`,
-        label: "Property",
+        label: "Rule",
       },
       {
         name: `value_${idx}`,
@@ -72,20 +72,20 @@ const filterSchema = ([key, value], idx) => {
   };
 };
 
-export const filterGroupSchema = (group) => {
+export const filterSchema = (group) => {
   const filters = { ...group };
   delete filters.options;
   return [
-    ...Object.entries(filters).map(filterSchema),
+    ...Object.entries(filters).map(ruleSchema),
     {
-      ...filterKeySelector,
+      ...ruleKeySelector,
       name: `key_new`,
-      label: "Select property",
+      label: "Rule ...",
     },
   ];
 };
 
-export const filter2form = (group) => {
+export const rule_to_form = (group) => {
   const filters = { ...group };
   delete filters.options;
   return Object.assign(
@@ -97,7 +97,7 @@ export const filter2form = (group) => {
   );
 };
 
-export const form2filter = (config, filter): Object => {
+export const form_to_rule = (config, filter): Object => {
   const data = {};
   for (let i = 0; i <= config.filter.include.length + 1; i++) {
     if (filter[`key_${i}`] !== undefined)
@@ -109,14 +109,15 @@ export const form2filter = (config, filter): Object => {
   return data;
 };
 
-export const filterGroupOptionsSchema = [
+export const filterOptionsSchema = [
   {
     name: "options",
+    label: "Options:",
     selector: { object: {} },
   },
 ];
 
-export const specialGroupSchema = [
+export const nonFilterSchema = [
   {
     name: "data",
     selector: { object: {} },
