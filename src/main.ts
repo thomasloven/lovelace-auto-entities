@@ -86,6 +86,7 @@ class AutoEntities extends LitElement {
     } else {
       this._template = tpl;
     }
+    queueMicrotask(() => this.update_all());
   };
 
   connectedCallback() {
