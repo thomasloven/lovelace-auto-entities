@@ -235,8 +235,11 @@ class AutoEntities extends LitElement {
           ? await get_sorter(this.hass, filter.sort)
           : (x) => x;
 
-        const post_process = (entity) =>
-          JSON.parse(JSON.stringify({ ...entity, ...filter.options }));
+        const post_process = (entity) => {
+          let str = JSON.stringify({ ...entity, ...filter.options });
+          str = str.replace(/this.entity_id/g, entity.entity);
+          return JSON.parse(str);
+        };
 
         return async (entities: EntityList) => {
           let add = entities.filter(filters);
