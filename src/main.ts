@@ -24,6 +24,7 @@ window.queueMicrotask =
 const HIDDEN_TYPES = ["section", "divider"];
 
 class AutoEntities extends LitElement {
+  connectedWhileHidden = true;
   @property() _config: AutoEntitiesConfig;
   @property() hass: any;
   @property() card: LovelaceCard;
