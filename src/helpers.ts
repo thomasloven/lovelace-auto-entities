@@ -30,7 +30,7 @@ export const compare_deep = (a: any, b: any) => {
 const cache = (window as any).autoEntities_cache;
 export async function getAreas(hass) {
   cache.areas =
-    cache.areas ?? (await hass.callWS({ type: "config/area_registry/list" }));
+    cache.areas ?? hass.callWS({ type: "config/area_registry/list" });
   return cache.areas;
 }
 export function cached_areas() {
@@ -38,8 +38,7 @@ export function cached_areas() {
 }
 export async function getDevices(hass) {
   cache.devices =
-    cache.devices ??
-    (await hass.callWS({ type: "config/device_registry/list" }));
+    cache.devices ?? hass.callWS({ type: "config/device_registry/list" });
   return cache.devices;
 }
 export function cached_devices() {
@@ -47,8 +46,7 @@ export function cached_devices() {
 }
 export async function getEntities(hass) {
   cache.entities =
-    cache.entities ??
-    (await hass.callWS({ type: "config/entity_registry/list" }));
+    cache.entities ?? hass.callWS({ type: "config/entity_registry/list" });
   return cache.entities;
 }
 export function cached_entities() {
@@ -56,7 +54,7 @@ export function cached_entities() {
 }
 export async function getLabels(hass) {
   cache.labels =
-    cache.labels ?? (await hass.callWS({ type: "config/label_registry/list" }));
+    cache.labels ?? hass.callWS({ type: "config/label_registry/list" });
   return cache.labels;
 }
 
