@@ -58,9 +58,9 @@ class AutoEntities extends LitElement {
     if (!config) {
       throw new Error("No configuration.");
     }
-    if (!config.card?.type) {
-      throw new Error("No card type specified.");
-    }
+    // if (!config.card?.type) {
+    //   throw new Error("No card type specified.");
+    // }
     if (!config.filter && !config.entities) {
       throw new Error("No filters specified.");
     }
@@ -142,10 +142,11 @@ class AutoEntities extends LitElement {
       compare_deep(this._cardConfig, this._config.card)
     )
       return;
-    const newType = this._cardConfig?.type !== this._config.card.type;
+    const newType = this._cardConfig?.type !== this._config.card?.type;
     this._entities = entities;
-    this._cardConfig = JSON.parse(JSON.stringify(this._config.card));
+    this._cardConfig = JSON.parse(JSON.stringify(this._config.card ?? {}));
     const cardConfig = {
+      type: "entities",
       [this._config.card_param || "entities"]: entities,
       ...this._config.card,
     };
