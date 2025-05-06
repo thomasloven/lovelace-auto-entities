@@ -291,26 +291,34 @@ class AutoEntitiesEditor extends LitElement {
                 <div class="handle">
                   <ha-icon .icon=${"mdi:drag"}></ha-icon>
                 </div>
-                <mwc-icon-button @click=${() => this._deleteFilter(idx)}>
-                  <ha-icon .icon=${"mdi:close"}></ha-icon>
-                </mwc-icon-button>
+
                 <div class="rules">
+                  <div class="close-button">
+                    <mwc-icon-button @click=${() => this._deleteFilter(idx)}>
+                      <ha-icon .icon=${"mdi:close"}></ha-icon>
+                    </mwc-icon-button>
+                  </div>
                   ${filter.type === undefined
                     ? html`
-                        <ha-form
-                          .hass=${this.hass}
-                           .schema=${filterSchema(filter)}
-                          .data=${rule_to_form(filter)}
-                          .computeLabel=${(s) => s.label ?? s.name}
-                          @value-changed=${(ev) => this._changeFilter(idx, ev)}
-                        ></ha-form>
-                        <ha-form
-                          .hass=${this.hass}
-                          .schema=${filterOptionsSchema}
-                          .data=${filter}
-                          @value-changed=${(ev) =>
-                            this._changeFilterOptions(idx, ev)}
-                        ></ha-form>
+                        <div>
+                          <ha-form
+                            .hass=${this.hass}
+                            .schema=${filterSchema(filter)}
+                            .data=${rule_to_form(filter)}
+                            .computeLabel=${(s) => s.label ?? s.name}
+                            @value-changed=${(ev) =>
+                              this._changeFilter(idx, ev)}
+                          ></ha-form>
+                        </div>
+                        <div>
+                          <ha-form
+                            .hass=${this.hass}
+                            .schema=${filterOptionsSchema}
+                            .data=${filter}
+                            @value-changed=${(ev) =>
+                              this._changeFilterOptions(idx, ev)}
+                          ></ha-form>
+                        </div>
                       `
                     : html`
                         <ha-form
@@ -415,20 +423,17 @@ class AutoEntitiesEditor extends LitElement {
           padding: 12px;
         }
         .filter {
-          display: grid;
-          grid-template: "a b" "c c";
+          display: flex;
+          align-items: center;
         }
         .rules {
-          grid-column: 1 / span 2;
+          flex-grow: 1;
         }
-        .horiz {
-          display: flex;
-          align-items: center;
+        .rule {
         }
-        .option {
+        .close-button {
           display: flex;
-          align-items: center;
-          gap: 8px;
+          flex-direction: row-reverse;
         }
 
         .box .toolbar {

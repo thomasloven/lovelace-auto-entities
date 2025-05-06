@@ -72,7 +72,7 @@ export const RULES: Record<
       if (!ent) return false;
       const dev = devices.find((d) => d.id === ent.device_id);
       if (!dev) return false;
-      return match(dev.name_by_user) || match(dev.name);
+      return match(dev.id) || match(dev.name_by_user) || match(dev.name);
     };
   },
   device_manufacturer: async (hass, value) => {

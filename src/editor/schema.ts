@@ -43,8 +43,19 @@ const ruleKeySelector = {
 };
 
 const ruleSchema = ([key, value], idx) => {
+  const isID = (value) => {
+    if (value === "") return true;
+    if (/^[0-9A-F]{32}/i.test(value)) return true;
+    return false;
+  };
   const filterValueSelector = {
     attributes: { object: {} },
+    area: { area: {} },
+    device: isID(value) ? { device: {} } : { text: {} },
+    entity: { entity: {} },
+    group: isID(value)
+      ? { entity: { filter: { domain: "group" } } }
+      : { text: {} },
   };
 
   if (!GUI_EDITOR_RULES.includes(key))
