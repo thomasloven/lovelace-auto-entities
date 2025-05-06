@@ -17,6 +17,7 @@ import {
 import pjson from "../package.json";
 import "./editor/auto-entities-editor";
 import { compare_deep } from "./helpers";
+import { process_entity } from "./process_entity";
 
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
@@ -239,11 +240,8 @@ class AutoEntities extends LitElement {
           ? await get_sorter(this.hass, filter.sort)
           : (x) => x;
 
-        const post_process = (entity) => {
-          let str = JSON.stringify({ ...entity, ...filter.options });
-          str = str.replace(/this.entity_id/g, entity.entity);
-          return JSON.parse(str);
-        };
+        const post_process = async (entity) =>
+          await process_entity(this.hass, { ...entity, ...filter.options });
 
         return async (entities: EntityList) => {
           let add = entities.filter(filters);
@@ -255,7 +253,7 @@ class AutoEntities extends LitElement {
             const count = filter.sort?.count ?? Infinity;
             add = add.slice(start, start + count);
           }
-          add = add.map(post_process);
+          add = await Promise.all(add.map(post_process));
           return add;
         };
       })
