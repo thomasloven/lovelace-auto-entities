@@ -2,7 +2,9 @@ import { getAreas, getDevices, getEntities } from "./helpers";
 import { HassObject, HAState, LovelaceRowConfig, SortConfig } from "./types";
 
 function compare(_a: any, _b: any, method: SortConfig) {
-  const [lt, gt] = method.reverse ? [-1, 1] : [1, -1];
+  // lt = a before b (a < b)
+  // gt = a after b (a > b)
+  const [lt, gt] = method.reverse ? [1, -1] : [-1, 1];
 
   if (method.ignore_case) {
     _a = _a?.toLowerCase?.() ?? _a;
@@ -17,8 +19,8 @@ function compare(_a: any, _b: any, method: SortConfig) {
   }
 
   if (_a === undefined && _b === undefined) return 0;
-  if (_a === undefined) return lt;
-  if (_b === undefined) return gt;
+  if (_a === undefined) return gt;
+  if (_b === undefined) return lt;
 
   if (method.numeric) {
     if (_a === _b) return 0;
