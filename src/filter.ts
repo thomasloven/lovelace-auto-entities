@@ -219,7 +219,7 @@ export async function get_filter(
     if (typeof entity !== "string") entity = entity.entity;
     if (!entity) return false;
     const hass_entity = hass?.states?.[entity];
-    if (!entity) return false;
+    if (!hass_entity) return false;
     return rules.every((x) => x(hass_entity));
   };
 }
