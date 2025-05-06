@@ -3,23 +3,28 @@ import { HassObject, HAState, LovelaceRowConfig, SortConfig } from "./types";
 
 function compare(_a: any, _b: any, method: SortConfig) {
   const [lt, gt] = method.reverse ? [-1, 1] : [1, -1];
+
   if (method.ignore_case) {
     _a = _a?.toLowerCase?.() ?? _a;
     _b = _b?.toLowerCase?.() ?? _b;
   }
+
   if (method.numeric) {
     if (!(isNaN(parseFloat(_a)) && isNaN(parseFloat(_b)))) {
       _a = isNaN(parseFloat(_a)) ? undefined : parseFloat(_a);
       _b = isNaN(parseFloat(_b)) ? undefined : parseFloat(_b);
     }
   }
+
   if (_a === undefined && _b === undefined) return 0;
   if (_a === undefined) return lt;
   if (_b === undefined) return gt;
+
   if (method.numeric) {
     if (_a === _b) return 0;
-    return (method.reverse ? -1 : 1) * (_a < _b ? -1 : 1);
+    return _a < _b ? lt : gt;
   }
+
   if (method.ip) {
     _a = _a.split(".");
     _b = _b.split(".");
@@ -31,6 +36,7 @@ function compare(_a: any, _b: any, method: SortConfig) {
         compare(_a[3], _b[3], { method: "", numeric: true }))
     );
   }
+
   return (
     (method.reverse ? -1 : 1) *
     String(_a).localeCompare(String(_b), undefined, method)

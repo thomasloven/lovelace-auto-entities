@@ -1,14 +1,13 @@
 import { getAreas, getDevices, getEntities, getLabels } from "./helpers";
 import { HassObject } from "./types";
 
-export const process_entity = async (hass: HassObject, entity) => {
+export const process_entity = async (hass: HassObject, entity, entity_id) => {
   const [entities, devices, areas] = await Promise.all([
     getEntities(hass),
     getDevices(hass),
     getAreas(hass),
   ]);
 
-  const entity_id = entity.entity;
   const state = hass?.states?.[entity_id];
 
   const ent = entities.find((e) => e.entity_id === entity_id);

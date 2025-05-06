@@ -241,7 +241,11 @@ class AutoEntities extends LitElement {
           : (x) => x;
 
         const post_process = async (entity) =>
-          await process_entity(this.hass, { ...entity, ...filter.options });
+          await process_entity(
+            this.hass,
+            { ...entity, ...filter.options },
+            entity.entity
+          );
 
         return async (entities: EntityList) => {
           let add = entities.filter(filters);
