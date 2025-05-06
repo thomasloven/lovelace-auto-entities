@@ -80,7 +80,7 @@ export async function matcher(pattern: any): Promise<(value: any) => boolean> {
     }
 
     matchers.push((value) => value === pattern);
-  } else if (typeof pattern === "number") {
+  } else {
     matchers.push((value) => value === pattern);
   }
 
