@@ -121,6 +121,8 @@ class AutoEntities extends LitElement {
       }, 500);
     }
 
+    if (!this.hass) return;
+
     const entities = await this.update_entities();
     this.update_card(entities);
   }
