@@ -19,7 +19,7 @@ class AutoEntitiesEditor extends LitElement {
   @property() lovelace;
   @property() hass;
 
-  @state() _selectedTab = 0;
+  @state() _selectedTab = "Filters";
   @state() _cardGUIMode = true;
   @state() _cardGUIModeAvailable = true;
 
@@ -35,7 +35,7 @@ class AutoEntitiesEditor extends LitElement {
   }
 
   _handleSwitchTab(ev: CustomEvent) {
-    this._selectedTab = parseInt(ev.detail.index, 10);
+    this._selectedTab = ev.detail.name;
   }
 
   _addFilter() {
@@ -235,27 +235,30 @@ class AutoEntitiesEditor extends LitElement {
       return html``;
     }
 
+    const tabs = {
+      Filters: this._renderFilterEditor,
+      Sorting: this._renderSortEditor,
+      Card: this._renderCardEditor,
+      Help: this._renderHelp,
+    };
+
     return html`
-      <div class="card-config">
-        <div class="toolbar">
-          <mwc-tab-bar
-            .activeIndex=${this._selectedTab}
-            @MDCTabBar:activated=${this._handleSwitchTab}
-          >
-            <mwc-tab .label=${"Filters"}></mwc-tab>
-            <mwc-tab .label=${"Sorting"}></mwc-tab>
-            <mwc-tab .label=${"Card"}></mwc-tab>
-            <mwc-tab .label=${"?"} style="flex: 0 1 min-content;"></mwc-tab>
-          </mwc-tab-bar>
-        </div>
-        <div id="editor">
-          ${[
-            this._renderFilterEditor,
-            this._renderSortEditor,
-            this._renderCardEditor,
-            this._renderHelp,
-          ][this._selectedTab].bind(this)()}
-        </div>
+      <div>
+        <sl-tab-group @sl-tab-show=${this._handleSwitchTab}>
+          ${Object.keys(tabs).map(
+            (tab) => html`
+              <sl-tab
+                slot="nav"
+                .active=${this._selectedTab == tab}
+                panel=${tab}
+              >
+                ${tab}
+              </sl-tab>
+            `
+          )}
+        </sl-tab-group>
+
+        <div>${tabs[this._selectedTab].bind(this)()}</div>
       </div>
     `;
   }
@@ -339,10 +342,6 @@ class AutoEntitiesEditor extends LitElement {
                             this._changeSpecialEntry(idx, ev)}
                         ></ha-form>
                       `}
-                  <span class="info">
-                    If entering a custom Value (e.g. "*light" or "/^[Bb]ed/") in
-                    a box with options, you need to finish with the Enter key.
-                  </span>
                 </div>
               </div>
             `
@@ -355,6 +354,10 @@ class AutoEntitiesEditor extends LitElement {
       <mwc-button @click=${this._addSpecialEntry}>
         <ha-icon .icon=${"mdi:plus"}></ha-icon>Add non-filter entry
       </mwc-button>
+      <p class="info">
+        If entering a custom Value (e.g. "*light" or "/^[Bb]ed/") in a box with
+        options, you need to finish with the Enter key.
+      </p>
     `;
   }
 
@@ -427,8 +430,15 @@ class AutoEntitiesEditor extends LitElement {
   static get styles(): CSSResultArray {
     return [
       css`
-        mwc-tab-bar {
-          border-bottom: 1px solid var(--divider-color);
+        sl-tab-group {
+          margin-bottom: 16px;
+        }
+        sl-tab {
+          flex: 1;
+        }
+        sl-tab::part(base) {
+          width: 100%;
+          justify-content: center;
         }
 
         .box {
@@ -443,23 +453,16 @@ class AutoEntitiesEditor extends LitElement {
         .rules {
           flex-grow: 1;
         }
-        .rule {
-        }
+
         .close-button {
           display: flex;
           flex-direction: row-reverse;
         }
-        span.info {
+        p.info {
           font-size: 0.875rem;
           color: var(--secondary-text-color);
         }
 
-        .box .toolbar {
-          display: flex;
-          justify-content: flex-end;
-          width: 100%;
-          gap: 8px;
-        }
         .gui-mode-button {
           margin-right: auto;
         }

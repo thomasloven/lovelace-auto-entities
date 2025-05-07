@@ -36,9 +36,9 @@ export const process_entity = async (hass: HassObject, entity, entity_id) => {
       "area",
       "state",
       `
-    "use strict";
-    return (String.raw\`${str}\`);
-    `
+        "use strict";
+        return (String.raw\`${str}\`);
+      `
     );
     try {
       str = evl(

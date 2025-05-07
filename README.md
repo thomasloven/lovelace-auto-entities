@@ -97,6 +97,12 @@ The filter section `template` takes a jinja template which evaluates to a list o
 
 It then creates a card based on the configuration given in `card:`, and fills in `entities:` of that card with the entities from above.
 
+The list of entities added to the card will be on the form:
+```
+- entity: <entity_id>
+  <options>
+```
+
 ## Matching rules
 
 ### Wildcards

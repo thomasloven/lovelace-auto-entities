@@ -87,7 +87,7 @@ const ruleSchema = ([key, value], idx) => {
       {
         name: `value_${idx}`,
         selector: filterValueSelector[key] ?? { text: {} },
-        label: "Value",
+        label: "",
       },
     ],
   };
