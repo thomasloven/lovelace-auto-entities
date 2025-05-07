@@ -1,3 +1,4 @@
+import { await_element, selectTree } from "../helpers/selecttree";
 const GUI_EDITOR_RULES = [
   "none",
   "domain",
@@ -42,6 +43,15 @@ const ruleKeySelector = {
   ],
 };
 
+const customValueRules = [
+  "area",
+  "device",
+  "entity_id",
+  "group",
+  "integration",
+  "label",
+];
+
 const ruleSchema = ([key, value], idx) => {
   const isID = (value) => {
     if (value === "") return true;
@@ -51,11 +61,11 @@ const ruleSchema = ([key, value], idx) => {
   const filterValueSelector = {
     attributes: { object: {} },
     area: { area: {} },
-    device: isID(value) ? { device: {} } : { text: {} },
-    entity: { entity: {} },
-    group: isID(value)
-      ? { entity: { filter: { domain: "group" } } }
-      : { text: {} },
+    device: { device: {} },
+    entity_id: { entity: {} },
+    group: { entity: { filter: { domain: "group" } } },
+    integration: { config_entry: {} },
+    label: { label: {} },
   };
 
   if (!GUI_EDITOR_RULES.includes(key))
@@ -81,6 +91,46 @@ const ruleSchema = ([key, value], idx) => {
       },
     ],
   };
+};
+
+export const postProcess = async (form: Element) => {
+  for (const grid of await selectTree(form, "$ ha-form-grid", true)) {
+    await await_element(grid);
+    const selector = await selectTree(
+      grid,
+      "$ ha-form:nth-child(2) $ ha-selector"
+    );
+    if (!selector) continue;
+    await await_element(selector);
+
+    let cb =
+      (await selectTree(
+        selector,
+        "$ ha-selector-area $ ha-area-picker $ ha-combo-box"
+      )) ??
+      (await selectTree(
+        selector,
+        "$ ha-selector-device $ ha-device-picker $ ha-combo-box"
+      )) ??
+      (await selectTree(
+        selector,
+        "$ ha-selector-entity $ ha-entity-picker $ ha-combo-box"
+      )) ??
+      (await selectTree(
+        selector,
+        "$ ha-selector-label $ ha-label-picker $ ha-combo-box"
+      )) ??
+      (await selectTree(
+        selector,
+        "$ ha-selector-config_entry $ ha-config-entry-picker $ ha-combo-box"
+      ));
+
+    if (cb) {
+      await await_element(cb);
+      cb.allowCustomValue = true;
+      continue;
+    }
+  }
 };
 
 export const filterSchema = (group) => {

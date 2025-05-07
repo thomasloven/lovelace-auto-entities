@@ -10,6 +10,7 @@ import {
   nonFilterSchema,
   cardOptionsSchema,
   sortSchema,
+  postProcess,
 } from "./schema";
 
 class AutoEntitiesEditor extends LitElement {
@@ -221,6 +222,14 @@ class AutoEntitiesEditor extends LitElement {
     this._cardGUIModeAvailable = ev.detail.guiModeAvailable;
   }
 
+  updated(changedProperties) {
+    this.updateComplete.then(() =>
+      this.shadowRoot
+        .querySelectorAll(".filter-rule-form")
+        .forEach((form) => postProcess(form))
+    );
+  }
+
   render() {
     if (!this.hass || !this._config) {
       return html``;
@@ -302,6 +311,7 @@ class AutoEntitiesEditor extends LitElement {
                     ? html`
                         <div>
                           <ha-form
+                            class="filter-rule-form"
                             .hass=${this.hass}
                             .schema=${filterSchema(filter)}
                             .data=${rule_to_form(filter)}
@@ -329,6 +339,10 @@ class AutoEntitiesEditor extends LitElement {
                             this._changeSpecialEntry(idx, ev)}
                         ></ha-form>
                       `}
+                  <span class="info">
+                    If entering a custom Value (e.g. "*light" or "/^[Bb]ed/") in
+                    a box with options, you need to finish with the Enter key.
+                  </span>
                 </div>
               </div>
             `
@@ -434,6 +448,10 @@ class AutoEntitiesEditor extends LitElement {
         .close-button {
           display: flex;
           flex-direction: row-reverse;
+        }
+        span.info {
+          font-size: 0.875rem;
+          color: var(--secondary-text-color);
         }
 
         .box .toolbar {

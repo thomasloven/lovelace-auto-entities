@@ -160,7 +160,7 @@ export const RULES: Record<
     return (entity) => {
       const ent = entities.find((e) => e.entity_id === entity.entity_id);
       if (!ent) return false;
-      return match(ent.platform);
+      return match(ent.platform) || match(ent.config_entry_id);
     };
   },
   hidden_by: async (hass, value) => {
