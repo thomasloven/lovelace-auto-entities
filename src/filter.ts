@@ -5,12 +5,14 @@ import { matcher } from "./match";
 const ago_suffix_regex = /([mhd])\s+ago\s*$/i;
 const default_ago_suffix = "m ago";
 
-const RULES: Record<
+export const RULES: Record<
   string,
   (hass: HassObject, value: any) => Promise<(entity: HAState) => boolean>
 > = {
+  type: async (hass, value) => (entity) => true,
   options: async (hass, value) => (entity) => true,
   sort: async (hass, value) => (entity) => true,
+
   domain: async (hass, value) => {
     const match = await matcher(value);
     return (entity) => match(entity.entity_id.split(".")[0]);
@@ -209,7 +211,7 @@ export async function get_filter(
     await Promise.all(
       Object.entries(filter).map(([rule, value]) => {
         rule = rule.trim().split(" ")[0].trim();
-        return RULES[rule]?.(hass, value);
+        return RULES[rule]?.(hass, value) ?? (() => false);
       })
     )
   ).filter(Boolean);

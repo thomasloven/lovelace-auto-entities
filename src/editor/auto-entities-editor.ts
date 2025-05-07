@@ -442,6 +442,3 @@ customElements.define("auto-entities-editor", AutoEntitiesEditor);
   description:
     "Entity Filter on Steroids. Auto Entities allows you to fill other cards with entities automatically, based on a number of attributes.",
 });
-function interalProperty() {
-  throw new Error("Function not implemented.");
-}

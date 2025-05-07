@@ -5,7 +5,7 @@ import {
   bind_template,
   unbind_template,
 } from "./helpers/templates";
-import { get_filter } from "./filter";
+import { get_filter, RULES } from "./filter";
 import { get_sorter } from "./sort";
 import {
   AutoEntitiesConfig,
@@ -58,12 +58,29 @@ class AutoEntities extends LitElement {
     if (!config) {
       throw new Error("No configuration.");
     }
-    // if (!config.card?.type) {
-    //   throw new Error("No card type specified.");
-    // }
+
     if (!config.filter && !config.entities) {
       throw new Error("No filters specified.");
     }
+
+    if (config.filter.include) {
+      for (const [index, filter] of config.filter.include.entries()) {
+        for (const k in filter) {
+          if (!(k.trim().split(" ")[0].trim() in RULES))
+            throw new Error(`Unknown rule "${k}" in include filter ${index}`);
+        }
+      }
+    }
+
+    if (config.filter.exclude) {
+      for (const [index, filter] of config.filter.exclude.entries()) {
+        for (const k in filter) {
+          if (!(k.trim().split(" ")[0].trim() in RULES))
+            throw new Error(`Unknown rule "${k}" in exclude filter ${index}`);
+        }
+      }
+    }
+
     config = JSON.parse(JSON.stringify(config));
     this._config = config;
 
