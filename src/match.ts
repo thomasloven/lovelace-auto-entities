@@ -87,7 +87,7 @@ export async function matcher(pattern: any): Promise<(value: any) => boolean> {
   return (value: any) => {
     const transformed = transforms.reduce((a, x) => x(a), value);
     if (transformed === undefined) return false;
-    if (transformed === null) return false;
+    // if (transformed === null) return false;
     return matchers.some((x) => x(transformed));
   };
 }
