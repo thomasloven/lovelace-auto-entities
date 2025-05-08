@@ -38,7 +38,7 @@ sort: <sort_method>
 | &nbsp;&nbsp;`template` | string                           | A jinja template evaluating to a list of entities to include                                                          |
 | &nbsp;&nbsp;`include`  | List of [Filters](#filters)      | A list of filters specifying which entities to add to the card                                                        |
 | &nbsp;&nbsp;`exclude`  | List of [Filters](#filters)      | A list of filters specifying which entities to remove from the card                                                   |
-| `show_empty`           | `true`/`false`                   | Whether to display the card if there are no entities                                                                  | `false`         |
+| `show_empty`           | `true`/`false`                   | Whether to display the card if there are no entities                                                                  | `true`          |
 | `else`                 | Dashboard card\*                 | Card to display if the main card has no entities. Overrides `show_empty`                                              |
 | `sort`                 | [Sort config](#sorting-entities) | How to sort the entities of the card                                                                                  | `none`          |
 | `card_param`           | string                           | The parameter of the card to populate with entities                                                                   | `entities`      |
@@ -98,6 +98,7 @@ The filter section `template` takes a jinja template which evaluates to a list o
 It then creates a card based on the configuration given in `card:`, and fills in `entities:` of that card with the entities from above.
 
 The list of entities added to the card will be on the form:
+
 ```
 - entity: <entity_id>
   <options>
