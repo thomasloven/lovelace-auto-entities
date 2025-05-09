@@ -1,4 +1,4 @@
-var _Symbol$metadata, _a$1$litPropertyMetad, _a$1$reactiveElementV, _t$litHtmlVersions, _globalThis$litElemen, _globalThis$litElemen2, _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15;
+var _Symbol$metadata, _a$1$litPropertyMetad, _a$1$reactiveElementV, _t$litHtmlVersions, _globalThis$litElemen, _globalThis$litElemen2, _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21, _templateObject22;
 function _taggedTemplateLiteral(e, t) { return t || (t = e.slice(0)), Object.freeze(Object.defineProperties(e, { raw: { value: Object.freeze(t) } })); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -1245,34 +1245,34 @@ function hass_base_el() {
   return _hass_base_el.apply(this, arguments);
 }
 function _hass_base_el() {
-  _hass_base_el = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee44() {
+  _hass_base_el = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee42() {
     var element;
-    return _regeneratorRuntime().wrap(function _callee44$(_context44) {
-      while (1) switch (_context44.prev = _context44.next) {
+    return _regeneratorRuntime().wrap(function _callee42$(_context42) {
+      while (1) switch (_context42.prev = _context42.next) {
         case 0:
-          _context44.next = 2;
+          _context42.next = 2;
           return Promise.race([customElements.whenDefined("home-assistant"), customElements.whenDefined("hc-main")]);
         case 2:
           element = customElements.get("home-assistant") ? "home-assistant" : "hc-main";
         case 3:
           if (document.querySelector(element)) {
-            _context44.next = 8;
+            _context42.next = 8;
             break;
           }
-          _context44.next = 6;
+          _context42.next = 6;
           return new Promise(function (r) {
             return window.setTimeout(r, 100);
           });
         case 6:
-          _context44.next = 3;
+          _context42.next = 3;
           break;
         case 8:
-          return _context44.abrupt("return", document.querySelector(element));
+          return _context42.abrupt("return", document.querySelector(element));
         case 9:
         case "end":
-          return _context44.stop();
+          return _context42.stop();
       }
-    }, _callee44);
+    }, _callee42);
   }));
   return _hass_base_el.apply(this, arguments);
 }
@@ -1280,34 +1280,34 @@ function hass() {
   return _hass.apply(this, arguments);
 }
 function _hass() {
-  _hass = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee45() {
+  _hass = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee43() {
     var base;
-    return _regeneratorRuntime().wrap(function _callee45$(_context45) {
-      while (1) switch (_context45.prev = _context45.next) {
+    return _regeneratorRuntime().wrap(function _callee43$(_context43) {
+      while (1) switch (_context43.prev = _context43.next) {
         case 0:
-          _context45.next = 2;
+          _context43.next = 2;
           return hass_base_el();
         case 2:
-          base = _context45.sent;
+          base = _context43.sent;
         case 3:
           if (base.hass) {
-            _context45.next = 8;
+            _context43.next = 8;
             break;
           }
-          _context45.next = 6;
+          _context43.next = 6;
           return new Promise(function (r) {
             return window.setTimeout(r, 100);
           });
         case 6:
-          _context45.next = 3;
+          _context43.next = 3;
           break;
         case 8:
-          return _context45.abrupt("return", base.hass);
+          return _context43.abrupt("return", base.hass);
         case 9:
         case "end":
-          return _context45.stop();
+          return _context43.stop();
       }
-    }, _callee45);
+    }, _callee43);
   }));
   return _hass.apply(this, arguments);
 }
@@ -1337,15 +1337,15 @@ function bind_template(_x3, _x4, _x5) {
   return _bind_template.apply(this, arguments);
 }
 function _bind_template() {
-  _bind_template = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee46(callback, template, variables) {
+  _bind_template = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee44(callback, template, variables) {
     var hs, connection, cacheKey, cache;
-    return _regeneratorRuntime().wrap(function _callee46$(_context46) {
-      while (1) switch (_context46.prev = _context46.next) {
+    return _regeneratorRuntime().wrap(function _callee44$(_context44) {
+      while (1) switch (_context44.prev = _context44.next) {
         case 0:
-          _context46.next = 2;
+          _context44.next = 2;
           return hass();
         case 2:
-          hs = _context46.sent;
+          hs = _context44.sent;
           connection = hs.connection;
           cacheKey = JSON.stringify([template, variables]);
           cache = cachedTemplates[cacheKey];
@@ -1377,9 +1377,9 @@ function _bind_template() {
           }
         case 7:
         case "end":
-          return _context46.stop();
+          return _context44.stop();
       }
-    }, _callee46);
+    }, _callee44);
   }));
   return _bind_template.apply(this, arguments);
 }
@@ -1387,20 +1387,20 @@ function unbind_template(_x6) {
   return _unbind_template.apply(this, arguments);
 }
 function _unbind_template() {
-  _unbind_template = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee47(callback) {
+  _unbind_template = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee45(callback) {
     var unsubscriber, _i13, _Object$entries, _Object$entries$_i, key, _cache;
-    return _regeneratorRuntime().wrap(function _callee47$(_context47) {
-      while (1) switch (_context47.prev = _context47.next) {
+    return _regeneratorRuntime().wrap(function _callee45$(_context45) {
+      while (1) switch (_context45.prev = _context45.next) {
         case 0:
           _i13 = 0, _Object$entries = Object.entries(cachedTemplates);
         case 1:
           if (!(_i13 < _Object$entries.length)) {
-            _context47.next = 10;
+            _context45.next = 10;
             break;
           }
           _Object$entries$_i = _slicedToArray(_Object$entries[_i13], 2), key = _Object$entries$_i[0], _cache = _Object$entries$_i[1];
           if (!_cache.callbacks.has(callback)) {
-            _context47.next = 7;
+            _context45.next = 7;
             break;
           }
           _cache.callbacks["delete"](callback);
@@ -1408,27 +1408,27 @@ function _unbind_template() {
             unsubscriber = _cache.unsubscribe;
             delete cachedTemplates[key];
           }
-          return _context47.abrupt("break", 10);
+          return _context45.abrupt("break", 10);
         case 7:
           _i13++;
-          _context47.next = 1;
+          _context45.next = 1;
           break;
         case 10:
           if (!unsubscriber) {
-            _context47.next = 16;
+            _context45.next = 16;
             break;
           }
-          _context47.next = 13;
+          _context45.next = 13;
           return unsubscriber;
         case 13:
-          _context47.t0 = _context47.sent;
-          _context47.next = 16;
-          return (0, _context47.t0)();
+          _context45.t0 = _context45.sent;
+          _context45.next = 16;
+          return (0, _context45.t0)();
         case 16:
         case "end":
-          return _context47.stop();
+          return _context45.stop();
       }
-    }, _callee47);
+    }, _callee45);
   }));
   return _unbind_template.apply(this, arguments);
 }
@@ -1538,10 +1538,10 @@ function matcher(_x9) {
   return _matcher.apply(this, arguments);
 }
 function _matcher() {
-  _matcher = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee48(pattern) {
+  _matcher = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee46(pattern) {
     var matchers, transforms, regex, time_match, now, parameter, _parameter, _parameter2, _parameter3, _parameter4, _parameter5, _parameter6, _parameter7;
-    return _regeneratorRuntime().wrap(function _callee48$(_context48) {
-      while (1) switch (_context48.prev = _context48.next) {
+    return _regeneratorRuntime().wrap(function _callee46$(_context46) {
+      while (1) switch (_context46.prev = _context46.next) {
         case 0:
           matchers = [];
           transforms = [];
@@ -1635,7 +1635,7 @@ function _matcher() {
               return value === pattern;
             });
           }
-          return _context48.abrupt("return", function (value) {
+          return _context46.abrupt("return", function (value) {
             var transformed = transforms.reduce(function (a, x) {
               return x(a);
             }, value);
@@ -1647,9 +1647,9 @@ function _matcher() {
           });
         case 4:
         case "end":
-          return _context48.stop();
+          return _context46.stop();
       }
-    }, _callee48);
+    }, _callee46);
   }));
   return _matcher.apply(this, arguments);
 }
@@ -1661,9 +1661,7 @@ var RULES = {
       return _regeneratorRuntime().wrap(function _callee3$(_context3) {
         while (1) switch (_context3.prev = _context3.next) {
           case 0:
-            return _context3.abrupt("return", function (entity) {
-              return true;
-            });
+            return _context3.abrupt("return", undefined);
           case 1:
           case "end":
             return _context3.stop();
@@ -1680,9 +1678,7 @@ var RULES = {
       return _regeneratorRuntime().wrap(function _callee4$(_context4) {
         while (1) switch (_context4.prev = _context4.next) {
           case 0:
-            return _context4.abrupt("return", function (entity) {
-              return true;
-            });
+            return _context4.abrupt("return", undefined);
           case 1:
           case "end":
             return _context4.stop();
@@ -1699,9 +1695,7 @@ var RULES = {
       return _regeneratorRuntime().wrap(function _callee5$(_context5) {
         while (1) switch (_context5.prev = _context5.next) {
           case 0:
-            return _context5.abrupt("return", function (entity) {
-              return true;
-            });
+            return _context5.abrupt("return", undefined);
           case 1:
           case "end":
             return _context5.stop();
@@ -2340,16 +2334,16 @@ function get_filter(_x57, _x58) {
   return _get_filter.apply(this, arguments);
 }
 function _get_filter() {
-  _get_filter = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee49(hass, filter) {
+  _get_filter = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee47(hass, filter) {
     var rules;
-    return _regeneratorRuntime().wrap(function _callee49$(_context49) {
-      while (1) switch (_context49.prev = _context49.next) {
+    return _regeneratorRuntime().wrap(function _callee47$(_context47) {
+      while (1) switch (_context47.prev = _context47.next) {
         case 0:
-          _context49.next = 2;
-          return Promise.all(Object.entries(filter).map(function (_ref23) {
-            var _ref24 = _slicedToArray(_ref23, 2),
-              rule = _ref24[0],
-              value = _ref24[1];
+          _context47.next = 2;
+          return Promise.all(Object.entries(filter).map(function (_ref22) {
+            var _ref23 = _slicedToArray(_ref22, 2),
+              rule = _ref23[0],
+              value = _ref23[1];
             var _a, _b;
             rule = rule.trim().split(" ")[0].trim();
             return (_b = (_a = RULES[rule]) === null || _a === void 0 ? void 0 : _a.call(RULES, hass, value)) !== null && _b !== void 0 ? _b : function () {
@@ -2357,8 +2351,10 @@ function _get_filter() {
             };
           }));
         case 2:
-          rules = _context49.sent.filter(Boolean);
-          return _context49.abrupt("return", function (entity) {
+          rules = _context47.sent.filter(function (r) {
+            return r !== undefined;
+          }).filter(Boolean);
+          return _context47.abrupt("return", function (entity) {
             var _a;
             if (!rules.length) return false;
             if (typeof entity !== "string") entity = entity.entity;
@@ -2371,9 +2367,9 @@ function _get_filter() {
           });
         case 4:
         case "end":
-          return _context49.stop();
+          return _context47.stop();
       }
-    }, _callee49);
+    }, _callee47);
   }));
   return _get_filter.apply(this, arguments);
 }
@@ -2569,73 +2565,73 @@ function get_sorter(_x65, _x66) {
   return _get_sorter.apply(this, arguments);
 }
 function _get_sorter() {
-  _get_sorter = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee52(hass, method) {
+  _get_sorter = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee50(hass, method) {
     var prepare, sort;
-    return _regeneratorRuntime().wrap(function _callee52$(_context52) {
-      while (1) switch (_context52.prev = _context52.next) {
+    return _regeneratorRuntime().wrap(function _callee50$(_context50) {
+      while (1) switch (_context50.prev = _context50.next) {
         case 0:
           prepare = COMPARISONS[method.method];
           if (prepare) {
-            _context52.next = 3;
+            _context50.next = 3;
             break;
           }
-          return _context52.abrupt("return", function (x) {
+          return _context50.abrupt("return", function (x) {
             return x;
           });
         case 3:
           if (["last_changed", "last_updated", "last_triggered"].includes(method.method)) method.numeric = true;
           sort = /*#__PURE__*/function () {
-            var _ref25 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee51(values) {
+            var _ref24 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee49(values) {
               var map;
-              return _regeneratorRuntime().wrap(function _callee51$(_context51) {
-                while (1) switch (_context51.prev = _context51.next) {
+              return _regeneratorRuntime().wrap(function _callee49$(_context49) {
+                while (1) switch (_context49.prev = _context49.next) {
                   case 0:
-                    _context51.next = 2;
+                    _context49.next = 2;
                     return Promise.all(values.map(/*#__PURE__*/function () {
-                      var _ref26 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee50(x) {
-                        return _regeneratorRuntime().wrap(function _callee50$(_context50) {
-                          while (1) switch (_context50.prev = _context50.next) {
+                      var _ref25 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee48(x) {
+                        return _regeneratorRuntime().wrap(function _callee48$(_context48) {
+                          while (1) switch (_context48.prev = _context48.next) {
                             case 0:
-                              _context50.t0 = x;
-                              _context50.next = 3;
+                              _context48.t0 = x;
+                              _context48.next = 3;
                               return prepare(hass.states[x.entity], method, hass);
                             case 3:
-                              _context50.t1 = _context50.sent;
-                              return _context50.abrupt("return", [_context50.t0, _context50.t1]);
+                              _context48.t1 = _context48.sent;
+                              return _context48.abrupt("return", [_context48.t0, _context48.t1]);
                             case 5:
                             case "end":
-                              return _context50.stop();
+                              return _context48.stop();
                           }
-                        }, _callee50);
+                        }, _callee48);
                       }));
-                      return function (_x87) {
-                        return _ref26.apply(this, arguments);
+                      return function (_x83) {
+                        return _ref25.apply(this, arguments);
                       };
                     }()));
                   case 2:
-                    map = _context51.sent;
+                    map = _context49.sent;
                     map.sort(function (a, b) {
                       return compare(a[1], b[1], method);
                     });
-                    return _context51.abrupt("return", map.map(function (x) {
+                    return _context49.abrupt("return", map.map(function (x) {
                       return x[0];
                     }));
                   case 5:
                   case "end":
-                    return _context51.stop();
+                    return _context49.stop();
                 }
-              }, _callee51);
+              }, _callee49);
             }));
-            return function sort(_x86) {
-              return _ref25.apply(this, arguments);
+            return function sort(_x82) {
+              return _ref24.apply(this, arguments);
             };
           }();
-          return _context52.abrupt("return", sort);
+          return _context50.abrupt("return", sort);
         case 6:
         case "end":
-          return _context52.stop();
+          return _context50.stop();
       }
-    }, _callee52);
+    }, _callee50);
   }));
   return _get_sorter.apply(this, arguments);
 }
@@ -2648,62 +2644,62 @@ function await_element(_x67) {
   return _await_element.apply(this, arguments);
 }
 function _await_element() {
-  _await_element = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee53(el) {
+  _await_element = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee51(el) {
     var hard,
       _a,
       rounds,
-      _args53 = arguments;
-    return _regeneratorRuntime().wrap(function _callee53$(_context53) {
-      while (1) switch (_context53.prev = _context53.next) {
+      _args51 = arguments;
+    return _regeneratorRuntime().wrap(function _callee51$(_context51) {
+      while (1) switch (_context51.prev = _context51.next) {
         case 0:
-          hard = _args53.length > 1 && _args53[1] !== undefined ? _args53[1] : false;
+          hard = _args51.length > 1 && _args51[1] !== undefined ? _args51[1] : false;
           if (!((_a = el.localName) === null || _a === void 0 ? void 0 : _a.includes("-"))) {
-            _context53.next = 4;
+            _context51.next = 4;
             break;
           }
-          _context53.next = 4;
+          _context51.next = 4;
           return customElements.whenDefined(el.localName);
         case 4:
           if (!el.updateComplete) {
-            _context53.next = 7;
+            _context51.next = 7;
             break;
           }
-          _context53.next = 7;
+          _context51.next = 7;
           return el.updateComplete;
         case 7:
           if (!hard) {
-            _context53.next = 18;
+            _context51.next = 18;
             break;
           }
           if (!el.pageRendered) {
-            _context53.next = 11;
+            _context51.next = 11;
             break;
           }
-          _context53.next = 11;
+          _context51.next = 11;
           return el.pageRendered;
         case 11:
           if (!el._panelState) {
-            _context53.next = 18;
+            _context51.next = 18;
             break;
           }
           rounds = 0;
         case 13:
           if (!(el._panelState !== "loaded" && rounds++ < 5)) {
-            _context53.next = 18;
+            _context51.next = 18;
             break;
           }
-          _context53.next = 16;
+          _context51.next = 16;
           return new Promise(function (r) {
             return setTimeout(r, 100);
           });
         case 16:
-          _context53.next = 13;
+          _context51.next = 13;
           break;
         case 18:
         case "end":
-          return _context53.stop();
+          return _context51.stop();
       }
-    }, _callee53);
+    }, _callee51);
   }));
   return _await_element.apply(this, arguments);
 }
@@ -2711,7 +2707,7 @@ function _selectTree(_x68, _x69) {
   return _selectTree2.apply(this, arguments);
 }
 function _selectTree2() {
-  _selectTree2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee54(root, path) {
+  _selectTree2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee52(root, path) {
     var all,
       el,
       _iterator16,
@@ -2720,11 +2716,11 @@ function _selectTree2() {
       _i14,
       _p2,
       _e7,
-      _args54 = arguments;
-    return _regeneratorRuntime().wrap(function _callee54$(_context54) {
-      while (1) switch (_context54.prev = _context54.next) {
+      _args52 = arguments;
+    return _regeneratorRuntime().wrap(function _callee52$(_context52) {
+      while (1) switch (_context52.prev = _context52.next) {
         case 0:
-          all = _args54.length > 2 && _args54[2] !== undefined ? _args54[2] : false;
+          all = _args52.length > 2 && _args52[2] !== undefined ? _args52[2] : false;
           el = [root]; // Split and clean path
           if (typeof path === "string") {
             path = path.split(/(\$| )/);
@@ -2732,60 +2728,67 @@ function _selectTree2() {
           while (path[path.length - 1] === "") path.pop();
           // For each element in the path
           _iterator16 = _createForOfIteratorHelper(path.entries());
-          _context54.prev = 5;
+          _context52.prev = 5;
           _iterator16.s();
         case 7:
           if ((_step16 = _iterator16.n()).done) {
-            _context54.next = 21;
+            _context52.next = 24;
             break;
           }
           _step16$value = _slicedToArray(_step16.value, 2), _i14 = _step16$value[0], _p2 = _step16$value[1];
           if (!(_p2 === "$")) {
-            _context54.next = 12;
+            _context52.next = 14;
             break;
           }
+          _context52.next = 12;
+          return Promise.all(_toConsumableArray(el).map(function (e) {
+            return await_element(e);
+          }));
+        case 12:
           el = _toConsumableArray(el).map(function (e) {
             return e.shadowRoot;
           });
-          return _context54.abrupt("continue", 19);
-        case 12:
+          return _context52.abrupt("continue", 22);
+        case 14:
           // Only pick the first one for the next step
           _e7 = el[0];
           if (_e7) {
-            _context54.next = 15;
+            _context52.next = 17;
             break;
           }
-          return _context54.abrupt("return", null);
-        case 15:
-          if (_p2.trim().length) {
-            _context54.next = 17;
-            break;
-          }
-          return _context54.abrupt("continue", 19);
+          return _context52.abrupt("return", null);
         case 17:
-          await_element(_e7);
-          el = _e7.querySelectorAll(_p2);
+          if (_p2.trim().length) {
+            _context52.next = 19;
+            break;
+          }
+          return _context52.abrupt("continue", 22);
         case 19:
-          _context54.next = 7;
-          break;
+          _context52.next = 21;
+          return await_element(_e7);
         case 21:
-          _context54.next = 26;
+          el = _e7.querySelectorAll(_p2);
+        case 22:
+          _context52.next = 7;
           break;
-        case 23:
-          _context54.prev = 23;
-          _context54.t0 = _context54["catch"](5);
-          _iterator16.e(_context54.t0);
+        case 24:
+          _context52.next = 29;
+          break;
         case 26:
-          _context54.prev = 26;
-          _iterator16.f();
-          return _context54.finish(26);
+          _context52.prev = 26;
+          _context52.t0 = _context52["catch"](5);
+          _iterator16.e(_context52.t0);
         case 29:
-          return _context54.abrupt("return", all ? el : el[0]);
-        case 30:
+          _context52.prev = 29;
+          _iterator16.f();
+          return _context52.finish(29);
+        case 32:
+          return _context52.abrupt("return", all ? el : el[0]);
+        case 33:
         case "end":
-          return _context54.stop();
+          return _context52.stop();
       }
-    }, _callee54, null, [[5, 23, 26, 29]]);
+    }, _callee52, null, [[5, 26, 29, 32]]);
   }));
   return _selectTree2.apply(this, arguments);
 }
@@ -2793,16 +2796,16 @@ function selectTree(_x70, _x71) {
   return _selectTree3.apply(this, arguments);
 }
 function _selectTree3() {
-  _selectTree3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee55(root, path) {
+  _selectTree3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee53(root, path) {
     var all,
       timeout,
-      _args55 = arguments;
-    return _regeneratorRuntime().wrap(function _callee55$(_context55) {
-      while (1) switch (_context55.prev = _context55.next) {
+      _args53 = arguments;
+    return _regeneratorRuntime().wrap(function _callee53$(_context53) {
+      while (1) switch (_context53.prev = _context53.next) {
         case 0:
-          all = _args55.length > 2 && _args55[2] !== undefined ? _args55[2] : false;
-          timeout = _args55.length > 3 && _args55[3] !== undefined ? _args55[3] : 10000;
-          return _context55.abrupt("return", Promise.race([_selectTree(root, path, all), new Promise(function (_, reject) {
+          all = _args53.length > 2 && _args53[2] !== undefined ? _args53[2] : false;
+          timeout = _args53.length > 3 && _args53[3] !== undefined ? _args53[3] : 10000;
+          return _context53.abrupt("return", Promise.race([_selectTree(root, path, all), new Promise(function (_, reject) {
             return setTimeout(function () {
               return reject(new Error(TIMEOUT_ERROR));
             }, timeout);
@@ -2812,50 +2815,49 @@ function _selectTree3() {
           }));
         case 3:
         case "end":
-          return _context55.stop();
+          return _context53.stop();
       }
-    }, _callee55);
+    }, _callee53);
   }));
   return _selectTree3.apply(this, arguments);
 }
-var GUI_EDITOR_RULES = ["none", "domain", "entity_id", "state", "name", "group", "area", "device", "device_manufacturer", "device_model", "attributes", "last_changed", "last_updated", "last_triggered", "entity_category", "integration", "hidden_by", "label"];
 var ruleKeySelector = {
   type: "select",
   options: [["area", "Area"], ["attributes", "Attribute"], ["device", "Device"], ["domain", "Domain"], ["entity_category", "Entity Category"], ["entity_id", "Entity ID"], ["group", "Group"], ["hidden_by", "Hidden by"], ["integration", "Integration"], ["label", "Label"], ["last_changed", "Last Changed"], ["last_triggered", "Last Triggered"], ["last_updated", "Last Updated"], ["device_manufacturer", "Manufacturer"], ["device_model", "Model"], ["name", "Name"], ["state", "State"]]
+};
+var filterValueSelector = {
+  attributes: {
+    object: {}
+  },
+  area: {
+    area: {}
+  },
+  device: {
+    device: {}
+  },
+  entity_id: {
+    entity: {}
+  },
+  group: {
+    entity: {
+      filter: {
+        domain: "group"
+      }
+    }
+  },
+  integration: {
+    config_entry: {}
+  },
+  label: {
+    label: {}
+  }
 };
 var ruleSchema = function ruleSchema(_ref10, idx) {
   var _ref11 = _slicedToArray(_ref10, 2),
     key = _ref11[0],
     value = _ref11[1];
   var _a;
-  var filterValueSelector = {
-    attributes: {
-      object: {}
-    },
-    area: {
-      area: {}
-    },
-    device: {
-      device: {}
-    },
-    entity_id: {
-      entity: {}
-    },
-    group: {
-      entity: {
-        filter: {
-          domain: "group"
-        }
-      }
-    },
-    integration: {
-      config_entry: {}
-    },
-    label: {
-      label: {}
-    }
-  };
-  if (!GUI_EDITOR_RULES.includes(key)) return {
+  if (!(key in ruleKeySelector.options)) return {
     type: "Constant",
     name: "Some rules are not shown",
     value: "Please switch to the CODE EDITOR to access all options."
@@ -2881,152 +2883,155 @@ var postProcess = /*#__PURE__*/function () {
     return _regeneratorRuntime().wrap(function _callee29$(_context29) {
       while (1) switch (_context29.prev = _context29.next) {
         case 0:
+          _context29.next = 2;
+          return await_element(form);
+        case 2:
           _context29.t0 = _createForOfIteratorHelper;
-          _context29.next = 3;
+          _context29.next = 5;
           return selectTree(form, "$ ha-form-grid", true);
-        case 3:
+        case 5:
           _context29.t1 = _context29.sent;
           _iterator13 = (0, _context29.t0)(_context29.t1);
-          _context29.prev = 5;
+          _context29.prev = 7;
           _iterator13.s();
-        case 7:
+        case 9:
           if ((_step13 = _iterator13.n()).done) {
-            _context29.next = 72;
+            _context29.next = 74;
             break;
           }
           grid = _step13.value;
-          _context29.next = 11;
-          return await_element(grid);
-        case 11:
           _context29.next = 13;
-          return selectTree(grid, "$ ha-form:nth-child(2) $ ha-selector");
+          return await_element(grid);
         case 13:
+          _context29.next = 15;
+          return selectTree(grid, "$ ha-form:nth-child(2) $ ha-selector");
+        case 15:
           selector = _context29.sent;
           if (selector) {
-            _context29.next = 16;
+            _context29.next = 18;
             break;
           }
-          return _context29.abrupt("continue", 70);
-        case 16:
-          _context29.next = 18;
-          return await_element(selector);
+          return _context29.abrupt("continue", 72);
         case 18:
           _context29.next = 20;
-          return selectTree(selector, "$ ha-selector-area $ ha-area-picker $ ha-combo-box");
+          return await_element(selector);
         case 20:
+          _context29.next = 22;
+          return selectTree(selector, "$ ha-selector-area $ ha-area-picker $ ha-combo-box");
+        case 22:
           _context29.t6 = _a = _context29.sent;
           _context29.t5 = _context29.t6 !== null;
           if (!_context29.t5) {
-            _context29.next = 24;
+            _context29.next = 26;
             break;
           }
           _context29.t5 = _a !== void 0;
-        case 24:
+        case 26:
           if (!_context29.t5) {
-            _context29.next = 28;
+            _context29.next = 30;
             break;
           }
           _context29.t7 = _a;
-          _context29.next = 31;
+          _context29.next = 33;
           break;
-        case 28:
-          _context29.next = 30;
-          return selectTree(selector, "$ ha-selector-device $ ha-device-picker $ ha-combo-box");
         case 30:
+          _context29.next = 32;
+          return selectTree(selector, "$ ha-selector-device $ ha-device-picker $ ha-combo-box");
+        case 32:
           _context29.t7 = _context29.sent;
-        case 31:
+        case 33:
           _context29.t8 = _b = _context29.t7;
           _context29.t4 = _context29.t8 !== null;
           if (!_context29.t4) {
-            _context29.next = 35;
+            _context29.next = 37;
             break;
           }
           _context29.t4 = _b !== void 0;
-        case 35:
+        case 37:
           if (!_context29.t4) {
-            _context29.next = 39;
+            _context29.next = 41;
             break;
           }
           _context29.t9 = _b;
-          _context29.next = 42;
+          _context29.next = 44;
           break;
-        case 39:
-          _context29.next = 41;
-          return selectTree(selector, "$ ha-selector-entity $ ha-entity-picker $ ha-combo-box");
         case 41:
+          _context29.next = 43;
+          return selectTree(selector, "$ ha-selector-entity $ ha-entity-picker $ ha-combo-box");
+        case 43:
           _context29.t9 = _context29.sent;
-        case 42:
+        case 44:
           _context29.t10 = _c = _context29.t9;
           _context29.t3 = _context29.t10 !== null;
           if (!_context29.t3) {
-            _context29.next = 46;
+            _context29.next = 48;
             break;
           }
           _context29.t3 = _c !== void 0;
-        case 46:
+        case 48:
           if (!_context29.t3) {
-            _context29.next = 50;
+            _context29.next = 52;
             break;
           }
           _context29.t11 = _c;
-          _context29.next = 53;
+          _context29.next = 55;
           break;
-        case 50:
-          _context29.next = 52;
-          return selectTree(selector, "$ ha-selector-label $ ha-label-picker $ ha-combo-box");
         case 52:
+          _context29.next = 54;
+          return selectTree(selector, "$ ha-selector-label $ ha-label-picker $ ha-combo-box");
+        case 54:
           _context29.t11 = _context29.sent;
-        case 53:
+        case 55:
           _context29.t12 = _d = _context29.t11;
           _context29.t2 = _context29.t12 !== null;
           if (!_context29.t2) {
-            _context29.next = 57;
+            _context29.next = 59;
             break;
           }
           _context29.t2 = _d !== void 0;
-        case 57:
+        case 59:
           if (!_context29.t2) {
-            _context29.next = 61;
+            _context29.next = 63;
             break;
           }
           _context29.t13 = _d;
-          _context29.next = 64;
+          _context29.next = 66;
           break;
-        case 61:
-          _context29.next = 63;
-          return selectTree(selector, "$ ha-selector-config_entry $ ha-config-entry-picker $ ha-combo-box");
         case 63:
+          _context29.next = 65;
+          return selectTree(selector, "$ ha-selector-config_entry $ ha-config-entry-picker $ ha-combo-box");
+        case 65:
           _context29.t13 = _context29.sent;
-        case 64:
+        case 66:
           cb = _context29.t13;
           if (!cb) {
-            _context29.next = 70;
+            _context29.next = 72;
             break;
           }
-          _context29.next = 68;
+          _context29.next = 70;
           return await_element(cb);
-        case 68:
-          cb.allowCustomValue = true;
-          return _context29.abrupt("continue", 70);
         case 70:
-          _context29.next = 7;
-          break;
+          cb.allowCustomValue = true;
+          return _context29.abrupt("continue", 72);
         case 72:
-          _context29.next = 77;
+          _context29.next = 9;
           break;
         case 74:
-          _context29.prev = 74;
-          _context29.t14 = _context29["catch"](5);
+          _context29.next = 79;
+          break;
+        case 76:
+          _context29.prev = 76;
+          _context29.t14 = _context29["catch"](7);
           _iterator13.e(_context29.t14);
-        case 77:
-          _context29.prev = 77;
+        case 79:
+          _context29.prev = 79;
           _iterator13.f();
-          return _context29.finish(77);
-        case 80:
+          return _context29.finish(79);
+        case 82:
         case "end":
           return _context29.stop();
       }
-    }, _callee29, null, [[5, 74, 77, 80]]);
+    }, _callee29, null, [[7, 76, 79, 82]]);
   }));
   return function postProcess(_x72) {
     return _ref12.apply(this, arguments);
@@ -3037,22 +3042,32 @@ var filterSchema = function filterSchema(group) {
   delete filters.options;
   return [].concat(_toConsumableArray(Object.entries(filters).map(ruleSchema)), [Object.assign(Object.assign({}, ruleKeySelector), {
     name: "key_new",
-    label: "Rule ..."
-  })]);
+    label: "New Rule ..."
+  }), {
+    name: "options",
+    label: "Options:",
+    selector: {
+      object: {}
+    }
+  }]);
 };
 var rule_to_form = function rule_to_form(group) {
   var filters = Object.assign({}, group);
+  var options = Object.assign({}, group.options);
   delete filters.options;
   return Object.assign.apply(Object, [{}].concat(_toConsumableArray(Object.entries(filters).map(function (_ref13, idx) {
     var _ref14 = _slicedToArray(_ref13, 2),
       key = _ref14[0],
       value = _ref14[1];
     return _defineProperty(_defineProperty({}, "key_".concat(idx), key), "value_".concat(idx), value);
-  }))));
+  })), [{
+    options: options
+  }]));
 };
 var form_to_rule = function form_to_rule(config, filter) {
   var _a;
   var data = {};
+  data["options"] = filter.options;
   for (var _i12 = 0; _i12 <= config.filter.include.length + 1; _i12++) {
     if (filter["key_".concat(_i12)] !== undefined) data[filter["key_".concat(_i12)]] = (_a = filter["value_".concat(_i12)]) !== null && _a !== void 0 ? _a : "";
   }
@@ -3061,15 +3076,9 @@ var form_to_rule = function form_to_rule(config, filter) {
   }
   return data;
 };
-var filterOptionsSchema = [{
-  name: "options",
-  label: "Options:",
-  selector: {
-    object: {}
-  }
-}];
 var nonFilterSchema = [{
   name: "data",
+  label: " ",
   selector: {
     object: {}
   }
@@ -3117,43 +3126,30 @@ var cardOptionsSchema = [{
     label: "Parameter to populate"
   }]
 }];
-var AutoEntitiesEditor = /*#__PURE__*/function (_r$2) {
-  function AutoEntitiesEditor() {
-    var _this8;
-    _classCallCheck(this, AutoEntitiesEditor);
-    _this8 = _callSuper(this, AutoEntitiesEditor, arguments);
-    _this8._selectedTab = "Filters";
-    _this8._cardGUIMode = true;
-    _this8._cardGUIModeAvailable = true;
-    return _this8;
+var AutoEntitiesFilterEditor = /*#__PURE__*/function (_r$2) {
+  function AutoEntitiesFilterEditor() {
+    _classCallCheck(this, AutoEntitiesFilterEditor);
+    return _callSuper(this, AutoEntitiesFilterEditor, arguments);
   }
-  _inherits(AutoEntitiesEditor, _r$2);
-  return _createClass(AutoEntitiesEditor, [{
-    key: "setConfig",
-    value: function setConfig(config) {
-      this._config = config;
+  _inherits(AutoEntitiesFilterEditor, _r$2);
+  return _createClass(AutoEntitiesFilterEditor, [{
+    key: "_describe_filter",
+    value: function _describe_filter(filter) {
+      if ("type" in filter) {
+        return "".concat(filter.type, " ").concat(filter.label ? "\"".concat(filter.label, "\"") : "");
+      }
+      return "".concat(Object.keys(filter).length, " rules");
     }
   }, {
-    key: "connectedCallback",
-    value: function connectedCallback() {
-      _superPropGet(AutoEntitiesEditor, "connectedCallback", this, 3)([]);
-      loadHaForm();
+    key: "_getFilters",
+    value: function _getFilters(type) {
+      var _a, _b, _c;
+      return (_c = (_b = (_a = this._config.filter) === null || _a === void 0 ? void 0 : _a[type]) === null || _b === void 0 ? void 0 : _b.concat()) !== null && _c !== void 0 ? _c : [];
     }
   }, {
-    key: "_handleSwitchTab",
-    value: function _handleSwitchTab(ev) {
-      this._selectedTab = ev.detail.name;
-    }
-  }, {
-    key: "_addFilter",
-    value: function _addFilter() {
-      var _a;
-      if (!this._config) return;
-      var include = _toConsumableArray((_a = this._config.filter) === null || _a === void 0 ? void 0 : _a.include);
-      include.push({});
-      var filter = Object.assign(Object.assign({}, this._config.filter), {
-        include: include
-      });
+    key: "_setFilters",
+    value: function _setFilters(type, filters) {
+      var filter = Object.assign(Object.assign({}, this._config.filter), _defineProperty({}, type, filters));
       this._config = Object.assign(Object.assign({}, this._config), {
         filter: filter
       });
@@ -3164,192 +3160,144 @@ var AutoEntitiesEditor = /*#__PURE__*/function (_r$2) {
       }));
     }
   }, {
-    key: "_deleteFilter",
-    value: function _deleteFilter(idx) {
-      var _a;
-      if (!this._config) return;
-      var include = _toConsumableArray((_a = this._config.filter) === null || _a === void 0 ? void 0 : _a.include);
-      include.splice(idx, 1);
-      var filter = Object.assign(Object.assign({}, this._config.filter), {
-        include: include
+    key: "_closeAll",
+    value: function _closeAll(type) {
+      this.shadowRoot.querySelectorAll("ha-expansion-panel .".concat(type)).forEach(function (panel) {
+        panel.expanded = false;
       });
-      this._config = Object.assign(Object.assign({}, this._config), {
-        filter: filter
-      });
-      this.dispatchEvent(new CustomEvent("config-changed", {
-        detail: {
-          config: this._config
-        }
-      }));
     }
   }, {
-    key: "_moveFilter",
-    value: function _moveFilter(idx, pos) {
-      var _a;
-      if (!this._config) return;
-      var include = _toConsumableArray((_a = this._config.filter) === null || _a === void 0 ? void 0 : _a.include);
-      var _ref16 = [include[idx + pos], include[idx]];
-      include[idx] = _ref16[0];
-      include[idx + pos] = _ref16[1];
-      var filter = Object.assign(Object.assign({}, this._config.filter), {
-        include: include
-      });
-      this._config = Object.assign(Object.assign({}, this._config), {
-        filter: filter
-      });
-      this.dispatchEvent(new CustomEvent("config-changed", {
-        detail: {
-          config: this._config
-        }
-      }));
-    }
-  }, {
-    key: "_filterMoved",
-    value: function _filterMoved(ev) {
-      var _a, _b;
+    key: "_filterAdd",
+    value: function _filterAdd(ev, type) {
+      var _this8 = this;
+      var special = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       ev.stopPropagation();
+      this._closeAll(type);
+      var filters = this._getFilters(type);
+      if (special) {
+        filters.push({
+          type: "section"
+        });
+      } else {
+        filters.push({});
+      }
+      this._setFilters(type, filters);
+      this.requestUpdate();
+      this.updateComplete.then(function () {
+        var fold = _this8.shadowRoot.querySelector("ha-expansion-panel .".concat(type, ":last-child"));
+        fold.expanded = true;
+      });
+    }
+  }, {
+    key: "_filterMove",
+    value: function _filterMove(ev, type) {
+      ev.stopPropagation();
+      this._closeAll(type);
       var _ev$detail = ev.detail,
         oldIndex = _ev$detail.oldIndex,
         newIndex = _ev$detail.newIndex;
-      var include = (_b = (_a = this._config.filter) === null || _a === void 0 ? void 0 : _a.include) === null || _b === void 0 ? void 0 : _b.concat();
-      include.splice(newIndex, 0, include.splice(oldIndex, 1)[0]);
-      var filter = Object.assign(Object.assign({}, this._config.filter), {
-        include: include
-      });
-      this._config = Object.assign(Object.assign({}, this._config), {
-        filter: filter
-      });
-      this.dispatchEvent(new CustomEvent("config-changed", {
-        detail: {
-          config: this._config
-        }
-      }));
+      var filters = this._getFilters(type);
+      filters.splice(newIndex, 0, filters.splice(oldIndex, 1)[0]);
+      this._setFilters(type, filters);
     }
   }, {
-    key: "_addSpecialEntry",
-    value: function _addSpecialEntry() {
-      var _a;
-      if (!this._config) return;
-      var include = _toConsumableArray((_a = this._config.filter) === null || _a === void 0 ? void 0 : _a.include);
-      include.push({
-        type: ""
-      });
-      var filter = Object.assign(Object.assign({}, this._config.filter), {
-        include: include
-      });
-      this._config = Object.assign(Object.assign({}, this._config), {
-        filter: filter
-      });
-      this.dispatchEvent(new CustomEvent("config-changed", {
-        detail: {
-          config: this._config
-        }
-      }));
+    key: "_filterDelete",
+    value: function _filterDelete(ev, idx, type) {
+      ev.stopPropagation();
+      this._closeAll(type);
+      var filters = this._getFilters(type);
+      filters.splice(idx, 1);
+      this._setFilters(type, filters);
     }
   }, {
-    key: "_changeSpecialEntry",
-    value: function () {
-      var _changeSpecialEntry2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee30(group, ev) {
-        var _a, _b, data, include, filter;
-        return _regeneratorRuntime().wrap(function _callee30$(_context30) {
-          while (1) switch (_context30.prev = _context30.next) {
-            case 0:
-              if (this._config) {
-                _context30.next = 2;
-                break;
-              }
-              return _context30.abrupt("return");
-            case 2:
-              data = ev.detail.value ? Object.assign({}, ev.detail.value.data) : {
-                type: ""
-              };
-              data.type = (_a = data.type) !== null && _a !== void 0 ? _a : "";
-              include = _toConsumableArray((_b = this._config.filter) === null || _b === void 0 ? void 0 : _b.include);
-              include[group] = data;
-              filter = Object.assign(Object.assign({}, this._config.filter), {
-                include: include
-              });
-              this._config = Object.assign(Object.assign({}, this._config), {
-                filter: filter
-              });
-              this.dispatchEvent(new CustomEvent("config-changed", {
-                detail: {
-                  config: this._config
-                }
-              }));
-            case 9:
-            case "end":
-              return _context30.stop();
-          }
-        }, _callee30, this);
-      }));
-      function _changeSpecialEntry(_x73, _x74) {
-        return _changeSpecialEntry2.apply(this, arguments);
-      }
-      return _changeSpecialEntry;
-    }()
-  }, {
-    key: "_changeFilterOptions",
-    value: function () {
-      var _changeFilterOptions2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee31(group, ev) {
-        var _a, data, include, filter;
-        return _regeneratorRuntime().wrap(function _callee31$(_context31) {
-          while (1) switch (_context31.prev = _context31.next) {
-            case 0:
-              if (this._config) {
-                _context31.next = 2;
-                break;
-              }
-              return _context31.abrupt("return");
-            case 2:
-              data = ev.detail.value;
-              include = _toConsumableArray((_a = this._config.filter) === null || _a === void 0 ? void 0 : _a.include);
-              include[group] = Object.assign({}, data);
-              filter = Object.assign(Object.assign({}, this._config.filter), {
-                include: include
-              });
-              this._config = Object.assign(Object.assign({}, this._config), {
-                filter: filter
-              });
-              this.dispatchEvent(new CustomEvent("config-changed", {
-                detail: {
-                  config: this._config
-                }
-              }));
-            case 8:
-            case "end":
-              return _context31.stop();
-          }
-        }, _callee31, this);
-      }));
-      function _changeFilterOptions(_x75, _x76) {
-        return _changeFilterOptions2.apply(this, arguments);
-      }
-      return _changeFilterOptions;
-    }()
-  }, {
-    key: "_changeFilter",
-    value: function _changeFilter(group, ev) {
-      var _a;
-      if (!this._config) return;
+    key: "_rulesChanged",
+    value: function _rulesChanged(ev, idx, type) {
+      ev.stopPropagation();
       var data = form_to_rule(this._config, ev.detail.value);
-      var include = _toConsumableArray((_a = this._config.filter) === null || _a === void 0 ? void 0 : _a.include);
-      include[group] = Object.assign(Object.assign({}, data), {
-        options: include[group].options
-      });
-      var filter = Object.assign(Object.assign({}, this._config.filter), {
-        include: include
-      });
-      this._config = Object.assign(Object.assign({}, this._config), {
-        filter: filter
-      });
-      this.dispatchEvent(new CustomEvent("config-changed", {
-        detail: {
-          config: this._config
-        }
-      }));
+      if (typeof data["options"] === "string" || data["options"] === undefined) return;
+      var filters = this._getFilters(type);
+      filters[idx] = Object.assign({}, data);
+      this._setFilters(type, filters);
     }
   }, {
+    key: "_customChanged",
+    value: function _customChanged(ev, idx, type) {
+      ev.stopPropagation();
+      var data = ev.detail.value.data;
+      if (data === undefined) return;
+      var filters = this._getFilters(type);
+      filters[idx] = Object.assign({}, ev.detail.value.data);
+      this._setFilters(type, filters);
+    }
+  }, {
+    key: "firstUpdated",
+    value: function firstUpdated(_changedProperties) {
+      var _this9 = this;
+      this.updateComplete.then(function () {
+        var fold = _this9.shadowRoot.querySelector("ha-expansion-panel:first-child");
+        fold.expanded = true;
+      });
+    }
+  }, {
+    key: "updated",
+    value: function updated(changedProperties) {
+      var _this10 = this;
+      this.updateComplete.then(function () {
+        return _this10.shadowRoot.querySelectorAll(".filter-rule-form").forEach(function (form) {
+          return postProcess(form);
+        });
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this11 = this;
+      var _a;
+      if (((_a = this._config.filter) === null || _a === void 0 ? void 0 : _a.template) || this._config.entities) return x(_templateObject || (_templateObject = _taggedTemplateLiteral(["\n        <div>\n          <p>\n            <b>Your filter method is not handled by the GUI editor.</b>\n          </p>\n          <p>Please switch to the CODE EDITOR to access all options.</p>\n        </div>\n      "])));
+      var render_type = function render_type(type) {
+        return x(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n      <ha-sortable\n        handle-selector=\".handle\"\n        @item-moved=", "\n      >\n        <div>\n          ", "\n        </div>\n      </ha-sortable>\n      <mwc-button @click=", ">\n        <ha-icon .icon=", "></ha-icon>Add filter\n      </mwc-button>\n      <mwc-button @click=", ">\n        <ha-icon .icon=", "></ha-icon>Add special row\n      </mwc-button>\n    "])), function (ev) {
+          return _this11._filterMove(ev, type);
+        }, _this11._config.filter[type].map(function (filter, idx) {
+          return x(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n              <ha-expansion-panel\n                outlined\n                class=\"drag ", "\"\n                ", "\n              >\n                <div class=\"handle\" slot=\"leading-icon\">\n                  <ha-icon .icon=", "></ha-icon>\n                </div>\n                <h3 slot=\"header\">\n                  [", "] - ", "\n                </h3>\n                <div class=\"content\">\n                  ", "\n                  <mwc-button\n                    class=\"warning\"\n                    @click=", "\n                  >\n                    Delete\n                  </mwc-button>\n                  <p class=\"info\">\n                    If entering a custom Value (e.g. \"*light\" or \"/^[Bb]ed/\") in\n                    a box with options, you need to finish with the Enter key.\n                  </p>\n                </div>\n              </ha-expansion-panel>\n            "])), type, type == "include" ? "expanded" : "", "mdi:drag", idx, _this11._describe_filter(filter), filter.type === undefined ? x(_templateObject4 || (_templateObject4 = _taggedTemplateLiteral(["\n                        <ha-form\n                          .hass=", "\n                          .schema=", "\n                          .data=", "\n                          .computeLabel=", "\n                          @value-changed=", "\n                          class=\"filter-rule-form\"\n                        >\n                        </ha-form>\n                      "])), _this11.hass, filterSchema(filter), rule_to_form(filter), function (s) {
+            var _a;
+            return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
+          }, function (ev) {
+            return _this11._rulesChanged(ev, idx, type);
+          }) : x(_templateObject5 || (_templateObject5 = _taggedTemplateLiteral(["\n                        <ha-form\n                          .hass=", "\n                          .schema=", "\n                          .data=", "\n                          .computeLabel=", "\n                          @value-changed=", "\n                        >\n                        </ha-form>\n                      "])), _this11.hass, nonFilterSchema, {
+            data: filter
+          }, function (s) {
+            var _a;
+            return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
+          }, function (ev) {
+            return _this11._customChanged(ev, idx, type);
+          }), function (ev) {
+            return _this11._filterDelete(ev, idx, type);
+          });
+        }), function (ev) {
+          return _this11._filterAdd(ev, type);
+        }, "mdi:plus", function (ev) {
+          return _this11._filterAdd(ev, type, true);
+        }, "mdi:plus");
+      };
+      return x(_templateObject6 || (_templateObject6 = _taggedTemplateLiteral(["\n      <div>\n        <ha-expansion-panel outlined>\n          <ha-icon .icon=", " slot=\"leading-icon\"></ha-icon>\n          <h3 slot=\"header\">Include</h3>\n\n          <div class=\"content\">", "</div>\n        </ha-expansion-panel>\n        <ha-expansion-panel outlined>\n          <ha-icon .icon=", " slot=\"leading-icon\"></ha-icon>\n          <h3 slot=\"header\">Exclude</h3>\n          <div class=\"content\">", "</div>\n        </ha-expansion-panel>\n      </div>\n    "])), "mdi:plus", render_type("include"), "mdi:minus", render_type("exclude"));
+    }
+  }], [{
+    key: "styles",
+    get: function get() {
+      return [i$3(_templateObject7 || (_templateObject7 = _taggedTemplateLiteral(["\n        ha-expansion-panel {\n          margin-bottom: 24px;\n          display: block;\n          --expansion-panel-content-padding: 0;\n          border-radius: 6px;\n          --ha-card-border-radius: 6px;\n        }\n        ha-sortable ha-expansion-panel {\n          margin-bottom: 8px;\n        }\n        ha-expansion-panel .content {\n          padding: 12px;\n        }\n        ha-expansion-panel > *[slot=\"header\"] {\n          margin: 0;\n          font-size: inherit;\n          font-weight: inherit;\n        }\n        ha-expansion-panel ha-svg-icon {\n          color: var(--secondary-text-color);\n        }\n        .handle > ha-icon {\n          pointer-events: none;\n        }\n\n        mwc-button.warning {\n          --mdc-theme-primary: var(--error-color);\n        }\n\n        p.info {\n          font-size: 0.875rem;\n          color: var(--secondary-text-color);\n        }\n      "])))];
+    }
+  }]);
+}(r$2);
+__decorate([r()], AutoEntitiesFilterEditor.prototype, "_config", void 0);
+__decorate([n()], AutoEntitiesFilterEditor.prototype, "hass", void 0);
+customElements.define("auto-entities-filter-editor", AutoEntitiesFilterEditor);
+var AutoEntitiesSortingEditor = /*#__PURE__*/function (_r$3) {
+  function AutoEntitiesSortingEditor() {
+    _classCallCheck(this, AutoEntitiesSortingEditor);
+    return _callSuper(this, AutoEntitiesSortingEditor, arguments);
+  }
+  _inherits(AutoEntitiesSortingEditor, _r$3);
+  return _createClass(AutoEntitiesSortingEditor, [{
     key: "_changeSortOptions",
     value: function _changeSortOptions(ev) {
       if (!this._config) return;
@@ -3364,6 +3312,33 @@ var AutoEntitiesEditor = /*#__PURE__*/function (_r$2) {
       }));
     }
   }, {
+    key: "render",
+    value: function render() {
+      var _a;
+      var data = (_a = this._config.sort) !== null && _a !== void 0 ? _a : {
+        method: "none"
+      };
+      return x(_templateObject8 || (_templateObject8 = _taggedTemplateLiteral(["\n      <div>\n        <ha-form\n          .hass=", "\n          .data=", "\n          .schema=", "\n          .computeLabel=", "\n          @value-changed=", "\n        ></ha-form>\n      </div>\n    "])), this.hass, data, sortSchema, function (s) {
+        var _a;
+        return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
+      }, this._changeSortOptions);
+    }
+  }]);
+}(r$2);
+__decorate([r()], AutoEntitiesSortingEditor.prototype, "_config", void 0);
+__decorate([n()], AutoEntitiesSortingEditor.prototype, "hass", void 0);
+customElements.define("auto-entities-sorting-editor", AutoEntitiesSortingEditor);
+var AutoEntitiesCardEditor = /*#__PURE__*/function (_r$4) {
+  function AutoEntitiesCardEditor() {
+    var _this12;
+    _classCallCheck(this, AutoEntitiesCardEditor);
+    _this12 = _callSuper(this, AutoEntitiesCardEditor, arguments);
+    _this12._cardGUIMode = true;
+    _this12._cardGUIModeAvailable = true;
+    return _this12;
+  }
+  _inherits(AutoEntitiesCardEditor, _r$4);
+  return _createClass(AutoEntitiesCardEditor, [{
     key: "_changeCardOptions",
     value: function _changeCardOptions(ev) {
       if (!this._config) return;
@@ -3376,27 +3351,17 @@ var AutoEntitiesEditor = /*#__PURE__*/function (_r$2) {
       }));
     }
   }, {
-    key: "_showEmptyToggle",
-    value: function _showEmptyToggle() {
-      if (!this._config) return;
-      var show_empty = this._config.show_empty === false;
-      this._config = Object.assign(Object.assign({}, this._config), {
-        show_empty: show_empty
-      });
-      this.dispatchEvent(new CustomEvent("config-changed", {
-        detail: {
-          config: this._config
-        }
-      }));
+    key: "_toggleCardMode",
+    value: function _toggleCardMode(ev) {
+      var _a;
+      (_a = this._cardEditorEl) === null || _a === void 0 ? void 0 : _a.toggleMode();
     }
   }, {
-    key: "_changeCardParam",
-    value: function _changeCardParam(ev) {
+    key: "_deleteCard",
+    value: function _deleteCard(ev) {
       if (!this._config) return;
-      var card_param = ev.target.value === "" || ev.target.value === "entities" ? undefined : ev.target.value;
-      this._config = Object.assign(Object.assign({}, this._config), {
-        card_param: card_param
-      });
+      this._config = Object.assign({}, this._config);
+      delete this._config.card;
       this.dispatchEvent(new CustomEvent("config-changed", {
         detail: {
           config: this._config
@@ -3428,24 +3393,6 @@ var AutoEntitiesEditor = /*#__PURE__*/function (_r$2) {
       }));
     }
   }, {
-    key: "_deleteCard",
-    value: function _deleteCard(ev) {
-      if (!this._config) return;
-      this._config = Object.assign({}, this._config);
-      delete this._config.card;
-      this.dispatchEvent(new CustomEvent("config-changed", {
-        detail: {
-          config: this._config
-        }
-      }));
-    }
-  }, {
-    key: "_toggleCardMode",
-    value: function _toggleCardMode(ev) {
-      var _a;
-      (_a = this._cardEditorEl) === null || _a === void 0 ? void 0 : _a.toggleMode();
-    }
-  }, {
     key: "_cardGUIModeChanged",
     value: function _cardGUIModeChanged(ev) {
       ev.stopPropagation();
@@ -3453,87 +3400,139 @@ var AutoEntitiesEditor = /*#__PURE__*/function (_r$2) {
       this._cardGUIModeAvailable = ev.detail.guiModeAvailable;
     }
   }, {
-    key: "updated",
-    value: function updated(changedProperties) {
-      var _this9 = this;
-      this.updateComplete.then(function () {
-        return _this9.shadowRoot.querySelectorAll(".filter-rule-form").forEach(function (form) {
-          return postProcess(form);
-        });
-      });
-    }
-  }, {
     key: "render",
     value: function render() {
-      var _this10 = this;
-      if (!this.hass || !this._config) {
-        return x(_templateObject || (_templateObject = _taggedTemplateLiteral([""])));
-      }
-      var tabs = {
-        Filters: this._renderFilterEditor,
-        Sorting: this._renderSortEditor,
-        Card: this._renderCardEditor,
-        Help: this._renderHelp
-      };
-      return x(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n      <div>\n        <sl-tab-group @sl-tab-show=", ">\n          ", "\n        </sl-tab-group>\n\n        <div>", "</div>\n      </div>\n    "])), this._handleSwitchTab, Object.keys(tabs).map(function (tab) {
-        return x(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n              <sl-tab\n                slot=\"nav\"\n                .active=", "\n                panel=", "\n              >\n                ", "\n              </sl-tab>\n            "])), _this10._selectedTab == tab, tab, tab);
-      }), tabs[this._selectedTab].bind(this)());
-    }
-  }, {
-    key: "_renderHelp",
-    value: function _renderHelp() {
-      return x(_templateObject4 || (_templateObject4 = _taggedTemplateLiteral(["\n      <div class=\"box\">\n        <p>Auto entities</p>\n        <p>\n          See\n          <a\n            href=\"https://github.com/thomasloven/lovelace-auto-entities\"\n            target=\"_blank\"\n            rel=\"noreferrer\"\n          >\n            auto-entities on github\n          </a>\n          for usage instructions.\n        </p>\n        <p>Not all options are available in the GUI editor.</p>\n      </div>\n    "])));
-    }
-  }, {
-    key: "_renderFilterEditor",
-    value: function _renderFilterEditor() {
-      var _this11 = this;
-      var _a;
-      if (((_a = this._config.filter) === null || _a === void 0 ? void 0 : _a.template) || this._config.entities) return x(_templateObject5 || (_templateObject5 = _taggedTemplateLiteral(["\n        <div class=\"box\">\n          <p>\n            <b>Your filter method is not handled by the GUI editor.</b>\n          </p>\n          <p>Please switch to the CODE EDITOR to access all options.</p>\n        </div>\n      "])));
-      return x(_templateObject6 || (_templateObject6 = _taggedTemplateLiteral(["\n      <ha-sortable handle-selector=\".handle\" @item-moved=", ">\n        <div>\n          ", "\n        </div>\n      </ha-sortable>\n      <mwc-button @click=", ">\n        <ha-icon .icon=", "></ha-icon>Add filter\n      </mwc-button>\n      <mwc-button @click=", ">\n        <ha-icon .icon=", "></ha-icon>Add non-filter entry\n      </mwc-button>\n      <p class=\"info\">\n        If entering a custom Value (e.g. \"*light\" or \"/^[Bb]ed/\") in a box with\n        options, you need to finish with the Enter key.\n      </p>\n    "])), this._filterMoved, this._config.filter.include.map(function (filter, idx) {
-        return x(_templateObject7 || (_templateObject7 = _taggedTemplateLiteral(["\n              <div class=\"box filter\">\n                <div class=\"handle\">\n                  <ha-icon .icon=", "></ha-icon>\n                </div>\n\n                <div class=\"rules\">\n                  <div class=\"close-button\">\n                    <mwc-icon-button @click=", ">\n                      <ha-icon .icon=", "></ha-icon>\n                    </mwc-icon-button>\n                  </div>\n                  ", "\n                </div>\n              </div>\n            "])), "mdi:drag", function () {
-          return _this11._deleteFilter(idx);
-        }, "mdi:close", filter.type === undefined ? x(_templateObject8 || (_templateObject8 = _taggedTemplateLiteral(["\n                        <div>\n                          <ha-form\n                            class=\"filter-rule-form\"\n                            .hass=", "\n                            .schema=", "\n                            .data=", "\n                            .computeLabel=", "\n                            @value-changed=", "\n                          ></ha-form>\n                        </div>\n                        <div>\n                          <ha-form\n                            .hass=", "\n                            .schema=", "\n                            .data=", "\n                            @value-changed=", "\n                          ></ha-form>\n                        </div>\n                      "])), _this11.hass, filterSchema(filter), rule_to_form(filter), function (s) {
-          var _a;
-          return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
-        }, function (ev) {
-          return _this11._changeFilter(idx, ev);
-        }, _this11.hass, filterOptionsSchema, filter, function (ev) {
-          return _this11._changeFilterOptions(idx, ev);
-        }) : x(_templateObject9 || (_templateObject9 = _taggedTemplateLiteral(["\n                        <ha-form\n                          .hass=", "\n                          .schema=", "\n                          .data=", "\n                          @value-changed=", "\n                        ></ha-form>\n                      "])), _this11.hass, nonFilterSchema, {
-          data: filter
-        }, function (ev) {
-          return _this11._changeSpecialEntry(idx, ev);
-        }));
-      }), this._addFilter, "mdi:plus", this._addSpecialEntry, "mdi:plus");
-    }
-  }, {
-    key: "_renderSortEditor",
-    value: function _renderSortEditor() {
-      var _a;
-      var data = (_a = this._config.sort) !== null && _a !== void 0 ? _a : {
-        method: "none"
-      };
-      return x(_templateObject10 || (_templateObject10 = _taggedTemplateLiteral(["\n      <div class=\"box\">\n        <ha-form\n          .hass=", "\n          .data=", "\n          .schema=", "\n          .computeLabel=", "\n          @value-changed=", "\n        ></ha-form>\n      </div>\n    "])), this.hass, data, sortSchema, function (s) {
-        var _a;
-        return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
-      }, this._changeSortOptions);
-    }
-  }, {
-    key: "_renderCardEditor",
-    value: function _renderCardEditor() {
       var _a;
       var data = Object.assign({}, this._config);
       data.show_empty = (_a = data.show_empty) !== null && _a !== void 0 ? _a : true;
-      return x(_templateObject11 || (_templateObject11 = _taggedTemplateLiteral(["\n      <div class=\"box cards\">\n        <ha-form\n          .hass=", "\n          .schema=", "\n          .computeLabel=", "\n          .data=", "\n          @value-changed=", "\n        ></ha-form>\n        ", "\n      </div>\n    "])), this.hass, cardOptionsSchema, function (s) {
+      return x(_templateObject9 || (_templateObject9 = _taggedTemplateLiteral(["\n      <div class=\"box cards\">\n        <ha-form\n          .hass=", "\n          .schema=", "\n          .computeLabel=", "\n          .data=", "\n          @value-changed=", "\n        ></ha-form>\n        ", "\n      </div>\n    "])), this.hass, cardOptionsSchema, function (s) {
         var _a;
         return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
-      }, data, this._changeCardOptions, this._config.card ? x(_templateObject12 || (_templateObject12 = _taggedTemplateLiteral(["\n              <div>\n                <mwc-button\n                  @click=", "\n                  .disabled=", "\n                  class=\"gui-mode-button\"\n                >\n                  ", "\n                </mwc-button>\n                <mwc-button\n                  .title=", "\n                  @click=", "\n                >\n                  Change card type\n                </mwc-button>\n              </div>\n              <hui-card-element-editor\n                .hass=", "\n                .lovelace=", "\n                .value=", "\n                @config-changed=", "\n                @GUImode-changed=", "\n              ></hui-card-element-editor>\n            "])), this._toggleCardMode, !this._cardGUIModeAvailable, !this._cardEditorEl || this._cardGUIMode ? "Show code editor" : "Show Visual Editor", "Change card type", this._deleteCard, this.hass, this.lovelace, this._getCardConfig(), this._handleCardConfigChanged, this._cardGUIModeChanged) : x(_templateObject13 || (_templateObject13 = _taggedTemplateLiteral(["\n              <hui-card-picker\n                .hass=", "\n                .lovelace=", "\n                @config-changed=", "\n              ></hui-card-picker>\n            "])), this.hass, this.lovelace, this._handleCardConfigChanged));
+      }, data, this._changeCardOptions, this._config.card ? x(_templateObject10 || (_templateObject10 = _taggedTemplateLiteral(["\n              <div>\n                <mwc-button\n                  @click=", "\n                  .disabled=", "\n                >\n                  ", "\n                </mwc-button>\n                <mwc-button\n                  .title=", "\n                  @click=", "\n                >\n                  Change card type\n                </mwc-button>\n              </div>\n              <hui-card-element-editor\n                .hass=", "\n                .lovelace=", "\n                .value=", "\n                @config-changed=", "\n                @GUImode-changed=", "\n              ></hui-card-element-editor>\n            "])), this._toggleCardMode, !this._cardGUIModeAvailable, !this._cardEditorEl || this._cardGUIMode ? "Show code editor" : "Show Visual Editor", "Change card type", this._deleteCard, this.hass, this.lovelace, this._getCardConfig(), this._handleCardConfigChanged, this._cardGUIModeChanged) : x(_templateObject11 || (_templateObject11 = _taggedTemplateLiteral(["\n              <hui-card-picker\n                .hass=", "\n                .lovelace=", "\n                @config-changed=", "\n              ></hui-card-picker>\n            "])), this.hass, this.lovelace, this._handleCardConfigChanged));
+    }
+  }]);
+}(r$2);
+__decorate([r()], AutoEntitiesCardEditor.prototype, "_config", void 0);
+__decorate([n()], AutoEntitiesCardEditor.prototype, "lovelace", void 0);
+__decorate([n()], AutoEntitiesCardEditor.prototype, "hass", void 0);
+__decorate([r()], AutoEntitiesCardEditor.prototype, "_cardGUIMode", void 0);
+__decorate([r()], AutoEntitiesCardEditor.prototype, "_cardGUIModeAvailable", void 0);
+__decorate([e("hui-card-element-editor")], AutoEntitiesCardEditor.prototype, "_cardEditorEl", void 0);
+customElements.define("auto-entities-card-editor", AutoEntitiesCardEditor);
+var AutoEntitiesHelp = /*#__PURE__*/function (_r$5) {
+  function AutoEntitiesHelp() {
+    _classCallCheck(this, AutoEntitiesHelp);
+    return _callSuper(this, AutoEntitiesHelp, arguments);
+  }
+  _inherits(AutoEntitiesHelp, _r$5);
+  return _createClass(AutoEntitiesHelp, [{
+    key: "render",
+    value: function render() {
+      return x(_templateObject12 || (_templateObject12 = _taggedTemplateLiteral(["\n      <div>\n        <p>Auto entities</p>\n        <p>\n          See\n          <a\n            href=\"https://github.com/thomasloven/lovelace-auto-entities\"\n            target=\"_blank\"\n            rel=\"noreferrer\"\n          >\n            auto-entities on github\n          </a>\n          for usage instructions.\n        </p>\n        <p>Not all options are available in the GUI editor.</p>\n      </div>\n    "])));
     }
   }], [{
     key: "styles",
     get: function get() {
-      return [i$3(_templateObject14 || (_templateObject14 = _taggedTemplateLiteral(["\n        sl-tab-group {\n          margin-bottom: 16px;\n        }\n        sl-tab {\n          flex: 1;\n        }\n        sl-tab::part(base) {\n          width: 100%;\n          justify-content: center;\n        }\n\n        .box {\n          margin-top: 8px;\n          border: 1px solid var(--divider-color);\n          padding: 12px;\n        }\n        .filter {\n          display: flex;\n          align-items: center;\n        }\n        .rules {\n          flex-grow: 1;\n        }\n\n        .close-button {\n          display: flex;\n          flex-direction: row-reverse;\n        }\n        p.info {\n          font-size: 0.875rem;\n          color: var(--secondary-text-color);\n        }\n\n        .gui-mode-button {\n          margin-right: auto;\n        }\n        a {\n          color: var(--primary-color);\n        }\n        .handle {\n          padding-right: 8px;\n          cursor: move;\n          cursor: grab;\n          padding-inline-end: 8px;\n          padding-inline-start: initial;\n        }\n        .handle > * {\n          pointer-events: none;\n        }\n      "])))];
+      return [i$3(_templateObject13 || (_templateObject13 = _taggedTemplateLiteral(["\n        a {\n          color: var(--primary-color);\n        }\n      "])))];
+    }
+  }]);
+}(r$2);
+customElements.define("auto-entities-help", AutoEntitiesHelp);
+customElements.whenDefined("ha-yaml-editor").then(function () {
+  var HaYamlEditor = customElements.get("ha-yaml-editor").prototype;
+  var orig_setValue = HaYamlEditor.setValue;
+  HaYamlEditor.setValue = function (value) {
+    if (!_compare_deep(value, this.value)) orig_setValue.bind(this)(value);
+  };
+});
+// customElements.whenDefined("ha-selector-object").then(() => {
+//   const HaSelectorObject = customElements.get("ha-selector-object").prototype;
+//   HaSelectorObject._handleChange = function (ev) {
+//     ev.stopPropagation();
+//     this._valueChangedFromChild = true;
+//     const value = ev.target.value;
+//     if (!ev.target.isValid) {
+//       return;
+//     }
+//     if (this.value === value) {
+//       return;
+//     }
+//     this.dispatchEvent(
+//       new CustomEvent("value-changed", {
+//         detail: { value },
+//         bubbles: true,
+//         cancelable: false,
+//         composed: true,
+//       })
+//     );
+//   };
+// });
+var AutoEntitiesEditor = /*#__PURE__*/function (_r$6) {
+  function AutoEntitiesEditor() {
+    var _this13;
+    _classCallCheck(this, AutoEntitiesEditor);
+    _this13 = _callSuper(this, AutoEntitiesEditor, arguments);
+    _this13._selectedTab = "Filters";
+    return _this13;
+  }
+  _inherits(AutoEntitiesEditor, _r$6);
+  return _createClass(AutoEntitiesEditor, [{
+    key: "setConfig",
+    value: function setConfig(config) {
+      this._config = config;
+    }
+  }, {
+    key: "connectedCallback",
+    value: function connectedCallback() {
+      _superPropGet(AutoEntitiesEditor, "connectedCallback", this, 3)([]);
+      loadHaForm();
+    }
+  }, {
+    key: "_config_changed",
+    value: function _config_changed(ev) {
+      ev.stopPropagation();
+      if (!this._config) return;
+      this._config = ev.detail.config;
+      this.dispatchEvent(new CustomEvent("config-changed", {
+        detail: {
+          config: this._config
+        }
+      }));
+    }
+  }, {
+    key: "_handleSwitchTab",
+    value: function _handleSwitchTab(ev) {
+      this._selectedTab = ev.detail.name;
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this14 = this;
+      if (!this.hass || !this._config) {
+        return x(_templateObject14 || (_templateObject14 = _taggedTemplateLiteral([""])));
+      }
+      var tabs = {
+        Filters: function Filters() {
+          return x(_templateObject15 || (_templateObject15 = _taggedTemplateLiteral(["<auto-entities-filter-editor\n        .hass=", "\n        ._config=", "\n        @config-changed=", "\n      ></auto-entities-filter-editor>"])), _this14.hass, _this14._config, _this14._config_changed);
+        },
+        Sorting: function Sorting() {
+          return x(_templateObject16 || (_templateObject16 = _taggedTemplateLiteral(["<auto-entities-sorting-editor\n        .hass=", "\n        ._config=", "\n        @config-changed=", "\n      ></auto-entities-sorting-editor>"])), _this14.hass, _this14._config, _this14._config_changed);
+        },
+        Card: function Card() {
+          return x(_templateObject17 || (_templateObject17 = _taggedTemplateLiteral(["<auto-entities-card-editor\n        .hass=", "\n        .lovelace=", "\n        ._config=", "\n        @config-changed=", "\n      ></auto-entities-card-editor>"])), _this14.hass, _this14.lovelace, _this14._config, _this14._config_changed);
+        },
+        Help: function Help() {
+          return x(_templateObject18 || (_templateObject18 = _taggedTemplateLiteral(["<auto-entities-help></auto-entities-help>"])));
+        }
+      };
+      return x(_templateObject19 || (_templateObject19 = _taggedTemplateLiteral(["\n      <div>\n        <sl-tab-group @sl-tab-show=", ">\n          ", "\n        </sl-tab-group>\n\n        <div>", "</div>\n      </div>\n    "])), this._handleSwitchTab, Object.keys(tabs).map(function (tab) {
+        return x(_templateObject20 || (_templateObject20 = _taggedTemplateLiteral(["\n              <sl-tab\n                slot=\"nav\"\n                .active=", "\n                panel=", "\n              >\n                ", "\n              </sl-tab>\n            "])), _this14._selectedTab == tab, tab, tab);
+      }), tabs[this._selectedTab].bind(this)());
+    }
+  }], [{
+    key: "styles",
+    get: function get() {
+      return [i$3(_templateObject21 || (_templateObject21 = _taggedTemplateLiteral(["\n        sl-tab-group {\n          margin-top: -16px;\n          margin-bottom: 16px;\n        }\n        sl-tab {\n          flex: 1;\n        }\n        sl-tab::part(base) {\n          width: 100%;\n          justify-content: center;\n        }\n      "])))];
     }
   }]);
 }(r$2);
@@ -3541,9 +3540,6 @@ __decorate([r()], AutoEntitiesEditor.prototype, "_config", void 0);
 __decorate([n()], AutoEntitiesEditor.prototype, "lovelace", void 0);
 __decorate([n()], AutoEntitiesEditor.prototype, "hass", void 0);
 __decorate([r()], AutoEntitiesEditor.prototype, "_selectedTab", void 0);
-__decorate([r()], AutoEntitiesEditor.prototype, "_cardGUIMode", void 0);
-__decorate([r()], AutoEntitiesEditor.prototype, "_cardGUIModeAvailable", void 0);
-__decorate([e("hui-card-element-editor")], AutoEntitiesEditor.prototype, "_cardEditorEl", void 0);
 customElements.define("auto-entities-editor", AutoEntitiesEditor);
 window.customCards = window.customCards || [];
 window.customCards.push({
@@ -3553,15 +3549,15 @@ window.customCards.push({
   description: "Entity Filter on Steroids. Auto Entities allows you to fill other cards with entities automatically, based on a number of attributes."
 });
 var process_entity = /*#__PURE__*/function () {
-  var _ref17 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee32(hass, entity, entity_id) {
+  var _ref16 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee30(hass, entity, entity_id) {
     var _a, _b, _c, _d, _yield$Promise$all21, _yield$Promise$all22, entities, devices, areas, state, ent, dev, area, str, evl;
-    return _regeneratorRuntime().wrap(function _callee32$(_context32) {
-      while (1) switch (_context32.prev = _context32.next) {
+    return _regeneratorRuntime().wrap(function _callee30$(_context30) {
+      while (1) switch (_context30.prev = _context30.next) {
         case 0:
-          _context32.next = 2;
+          _context30.next = 2;
           return Promise.all([getEntities(hass), getDevices(hass), getAreas(hass)]);
         case 2:
-          _yield$Promise$all21 = _context32.sent;
+          _yield$Promise$all21 = _context30.sent;
           _yield$Promise$all22 = _slicedToArray(_yield$Promise$all21, 3);
           entities = _yield$Promise$all22[0];
           devices = _yield$Promise$all22[1];
@@ -3591,64 +3587,64 @@ var process_entity = /*#__PURE__*/function () {
           // - area (the name of the Area the entity is in if applicable)
           // - state (the Home Assistant state object of the entity)
           if (!(entity.eval_js === true)) {
-            _context32.next = 23;
+            _context30.next = 23;
             break;
           }
           evl = new Function("entity_id", "entity", "device", "area", "state", "\n        \"use strict\";\n        return (String.raw`".concat(str, "`);\n      "));
-          _context32.prev = 16;
+          _context30.prev = 16;
           str = evl(entity_id, (_b = ent === null || ent === void 0 ? void 0 : ent.name_by_user) !== null && _b !== void 0 ? _b : ent === null || ent === void 0 ? void 0 : ent.name, (_c = dev === null || dev === void 0 ? void 0 : dev.name_by_user) !== null && _c !== void 0 ? _c : dev === null || dev === void 0 ? void 0 : dev.name, (_d = area === null || area === void 0 ? void 0 : area.name_by_user) !== null && _d !== void 0 ? _d : area === null || area === void 0 ? void 0 : area.name, state);
-          _context32.next = 23;
+          _context30.next = 23;
           break;
         case 20:
-          _context32.prev = 20;
-          _context32.t0 = _context32["catch"](16);
-          return _context32.abrupt("return", {
-            error: _context32.t0.message
+          _context30.prev = 20;
+          _context30.t0 = _context30["catch"](16);
+          return _context30.abrupt("return", {
+            error: _context30.t0.message
           });
         case 23:
-          return _context32.abrupt("return", JSON.parse(str));
+          return _context30.abrupt("return", JSON.parse(str));
         case 24:
         case "end":
-          return _context32.stop();
+          return _context30.stop();
       }
-    }, _callee32, null, [[16, 20]]);
+    }, _callee30, null, [[16, 20]]);
   }));
-  return function process_entity(_x77, _x78, _x79) {
-    return _ref17.apply(this, arguments);
+  return function process_entity(_x73, _x74, _x75) {
+    return _ref16.apply(this, arguments);
   };
 }();
 window.queueMicrotask = window.queueMicrotask || function (handler) {
   return window.setTimeout(handler, 1);
 };
 var HIDDEN_TYPES = ["section", "divider"];
-var AutoEntities = /*#__PURE__*/function (_r$3) {
+var AutoEntities = /*#__PURE__*/function (_r$7) {
   function AutoEntities() {
-    var _this12;
+    var _this15;
     _classCallCheck(this, AutoEntities);
-    _this12 = _callSuper(this, AutoEntities, arguments);
-    _this12.connectedWhileHidden = true;
-    _this12.empty = false;
-    _this12._updateCooldown = {
+    _this15 = _callSuper(this, AutoEntities, arguments);
+    _this15.connectedWhileHidden = true;
+    _this15.empty = false;
+    _this15._updateCooldown = {
       timer: undefined,
       rerun: false
     };
-    _this12._renderer = function (tpl) {
+    _this15._renderer = function (tpl) {
       if (typeof tpl === "string") {
-        _this12._template = tpl.split(/[\s,]+/);
+        _this15._template = tpl.split(/[\s,]+/);
       } else {
-        _this12._template = tpl;
+        _this15._template = tpl;
       }
       queueMicrotask(function () {
-        return _this12.update_all();
+        return _this15.update_all();
       });
     };
-    return _this12;
+    return _this15;
   }
-  _inherits(AutoEntities, _r$3);
+  _inherits(AutoEntities, _r$7);
   return _createClass(AutoEntities, [{
     key: "setConfig",
     value: function setConfig(config) {
-      var _this13 = this;
+      var _this16 = this;
       var _a;
       if (!config) {
         throw new Error("No configuration.");
@@ -3664,6 +3660,7 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
             var _step14$value = _slicedToArray(_step14.value, 2),
               index = _step14$value[0],
               filter = _step14$value[1];
+            if (Object.keys(filter).includes("type")) continue;
             for (var _k5 in filter) {
               if (!(_k5.trim().split(" ")[0].trim() in RULES)) throw new Error("Unknown rule \"".concat(_k5, "\" in include filter ").concat(index));
             }
@@ -3682,6 +3679,7 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
             var _step15$value = _slicedToArray(_step15.value, 2),
               _index = _step15$value[0],
               _filter = _step15$value[1];
+            if (Object.keys(_filter).includes("type")) continue;
             for (var _k6 in _filter) {
               if (!(_k6.trim().split(" ")[0].trim() in RULES)) throw new Error("Unknown rule \"".concat(_k6, "\" in exclude filter ").concat(_index));
             }
@@ -3700,13 +3698,13 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
         });
       }
       this._cardBuilt = new Promise(function (resolve) {
-        return _this13._cardBuiltResolve = resolve;
+        return _this16._cardBuiltResolve = resolve;
       });
       queueMicrotask(function () {
-        return _this13.build_else();
+        return _this16.build_else();
       });
       queueMicrotask(function () {
-        return _this13.update_all();
+        return _this16.update_all();
       });
     }
   }, {
@@ -3729,43 +3727,43 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
   }, {
     key: "update_all",
     value: function () {
-      var _update_all = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee33() {
-        var _this14 = this;
+      var _update_all = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee31() {
+        var _this17 = this;
         var entities;
-        return _regeneratorRuntime().wrap(function _callee33$(_context33) {
-          while (1) switch (_context33.prev = _context33.next) {
+        return _regeneratorRuntime().wrap(function _callee31$(_context31) {
+          while (1) switch (_context31.prev = _context31.next) {
             case 0:
               if (this.card) this.card.hass = this.hass;
               if (this["else"]) this["else"].hass = this.hass;
               if (!this._updateCooldown.timer) {
-                _context33.next = 7;
+                _context31.next = 7;
                 break;
               }
               this._updateCooldown.rerun = true;
-              return _context33.abrupt("return");
+              return _context31.abrupt("return");
             case 7:
               this._updateCooldown.rerun = false;
               this._updateCooldown.timer = window.setTimeout(function () {
-                _this14._updateCooldown.timer = undefined;
-                if (_this14._updateCooldown.rerun) _this14.update_all();
+                _this17._updateCooldown.timer = undefined;
+                if (_this17._updateCooldown.rerun) _this17.update_all();
               }, 500);
             case 9:
               if (this.hass) {
-                _context33.next = 11;
+                _context31.next = 11;
                 break;
               }
-              return _context33.abrupt("return");
+              return _context31.abrupt("return");
             case 11:
-              _context33.next = 13;
+              _context31.next = 13;
               return this.update_entities();
             case 13:
-              entities = _context33.sent;
+              entities = _context31.sent;
               this.update_card(entities);
             case 15:
             case "end":
-              return _context33.stop();
+              return _context31.stop();
           }
-        }, _callee33, this);
+        }, _callee31, this);
       }));
       function update_all() {
         return _update_all.apply(this, arguments);
@@ -3775,31 +3773,31 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
   }, {
     key: "build_else",
     value: function () {
-      var _build_else = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee34() {
+      var _build_else = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee32() {
         var helpers;
-        return _regeneratorRuntime().wrap(function _callee34$(_context34) {
-          while (1) switch (_context34.prev = _context34.next) {
+        return _regeneratorRuntime().wrap(function _callee32$(_context32) {
+          while (1) switch (_context32.prev = _context32.next) {
             case 0:
               if (!(this._config["else"] === undefined)) {
-                _context34.next = 2;
+                _context32.next = 2;
                 break;
               }
-              return _context34.abrupt("return");
+              return _context32.abrupt("return");
             case 2:
-              _context34.next = 4;
+              _context32.next = 4;
               return window.loadCardHelpers();
             case 4:
-              helpers = _context34.sent;
-              _context34.next = 7;
+              helpers = _context32.sent;
+              _context32.next = 7;
               return helpers.createCardElement(this._config["else"]);
             case 7:
-              this["else"] = _context34.sent;
+              this["else"] = _context32.sent;
               this["else"].hass = this.hass;
             case 9:
             case "end":
-              return _context34.stop();
+              return _context32.stop();
           }
-        }, _callee34, this);
+        }, _callee32, this);
       }));
       function build_else() {
         return _build_else.apply(this, arguments);
@@ -3809,16 +3807,16 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
   }, {
     key: "update_card",
     value: function () {
-      var _update_card = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee35(entities) {
+      var _update_card = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee33(entities) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, newType, cardConfig, helpers, _consoleError, errorCard, ctr;
-        return _regeneratorRuntime().wrap(function _callee35$(_context35) {
-          while (1) switch (_context35.prev = _context35.next) {
+        return _regeneratorRuntime().wrap(function _callee33$(_context33) {
+          while (1) switch (_context33.prev = _context33.next) {
             case 0:
               if (!(this._entities && _compare_deep(entities, this._entities) && _compare_deep(this._cardConfig, this._config.card))) {
-                _context35.next = 2;
+                _context33.next = 2;
                 break;
               }
-              return _context35.abrupt("return");
+              return _context33.abrupt("return");
             case 2:
               newType = ((_a = this._cardConfig) === null || _a === void 0 ? void 0 : _a.type) !== ((_b = this._config.card) === null || _b === void 0 ? void 0 : _b.type);
               this._entities = entities;
@@ -3827,13 +3825,13 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
                 type: "entities"
               }, this._config.card_param || "entities", entities), this._config.card);
               if (!(!this.card || newType)) {
-                _context35.next = 40;
+                _context33.next = 40;
                 break;
               }
-              _context35.next = 9;
+              _context33.next = 9;
               return window.loadCardHelpers();
             case 9:
-              helpers = _context35.sent;
+              helpers = _context33.sent;
               // Replace console.error in order to catch errors from cards which don't like to be given an empty entities list
               console.oldError = console.oldError || [];
               _consoleError = console.error;
@@ -3855,49 +3853,49 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
                 }
                 _consoleError.apply(void 0, args);
               };
-              _context35.prev = 14;
-              _context35.next = 17;
+              _context33.prev = 14;
+              _context33.next = 17;
               return helpers.createCardElement(cardConfig);
             case 17:
-              this.card = _context35.sent;
+              this.card = _context33.sent;
               if (!(this.card.localName === "hui-error-card")) {
-                _context35.next = 35;
+                _context33.next = 35;
                 break;
               }
               errorCard = this.card;
-              _context35.next = 22;
+              _context33.next = 22;
               return customElements.whenDefined("hui-error-card");
             case 22:
               ctr = 10;
             case 23:
               if (!(!errorCard._config && ctr)) {
-                _context35.next = 29;
+                _context33.next = 29;
                 break;
               }
-              _context35.next = 26;
+              _context33.next = 26;
               return new Promise(function (resolve) {
                 return window.setTimeout(resolve, 100);
               });
             case 26:
               ctr--;
-              _context35.next = 23;
+              _context33.next = 23;
               break;
             case 29:
               if (!(((_f = (_e = (_d = errorCard._config) === null || _d === void 0 ? void 0 : _d.error) === null || _e === void 0 ? void 0 : _e.startsWith) === null || _f === void 0 ? void 0 : _f.call(_e, "Entities")) || ((_j = (_h = (_g = errorCard._config) === null || _g === void 0 ? void 0 : _g.error) === null || _h === void 0 ? void 0 : _h.startsWith) === null || _j === void 0 ? void 0 : _j.call(_h, "Either entities")) || ((_m = (_l = (_k = errorCard._config) === null || _k === void 0 ? void 0 : _k.error) === null || _l === void 0 ? void 0 : _l.endsWith) === null || _m === void 0 ? void 0 : _m.call(_l, "entity")))) {
-                _context35.next = 35;
+                _context33.next = 35;
                 break;
               }
               this.card = undefined;
               this._entities = undefined;
               this._cardConfig = undefined;
               (_o = this._cardBuiltResolve) === null || _o === void 0 ? void 0 : _o.call(this);
-              return _context35.abrupt("return");
+              return _context33.abrupt("return");
             case 35:
-              _context35.prev = 35;
+              _context33.prev = 35;
               console.error = console.oldError.pop();
-              return _context35.finish(35);
+              return _context33.finish(35);
             case 38:
-              _context35.next = 41;
+              _context33.next = 41;
               break;
             case 40:
               this.card.setConfig(cardConfig);
@@ -3912,20 +3910,20 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
                 cancelable: true
               }));
               if (!this.card.requestUpdate) {
-                _context35.next = 49;
+                _context33.next = 49;
                 break;
               }
-              _context35.next = 48;
+              _context33.next = 48;
               return this.updateComplete;
             case 48:
               this.card.requestUpdate();
             case 49:
             case "end":
-              return _context35.stop();
+              return _context33.stop();
           }
-        }, _callee35, this, [[14,, 35, 38]]);
+        }, _callee33, this, [[14,, 35, 38]]);
       }));
-      function update_card(_x80) {
+      function update_card(_x76) {
         return _update_card.apply(this, arguments);
       }
       return update_card;
@@ -3933,12 +3931,12 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
   }, {
     key: "update_entities",
     value: function () {
-      var _update_entities = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee41() {
-        var _this15 = this,
+      var _update_entities = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee39() {
+        var _this18 = this,
           _entities;
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, format, entities, include_filters, exclude_filters, all_entities, sorter, _sorter, start, count;
-        return _regeneratorRuntime().wrap(function _callee41$(_context41) {
-          while (1) switch (_context41.prev = _context41.next) {
+        return _regeneratorRuntime().wrap(function _callee39$(_context39) {
+          while (1) switch (_context39.prev = _context39.next) {
             case 0:
               format = function format(entity) {
                 if (!entity) return null;
@@ -3948,157 +3946,157 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
               };
               entities = _toConsumableArray(((_b = (_a = this._config) === null || _a === void 0 ? void 0 : _a.entities) === null || _b === void 0 ? void 0 : _b.map(format)) || []);
               if (this.hass) {
-                _context41.next = 4;
+                _context39.next = 4;
                 break;
               }
-              return _context41.abrupt("return", entities);
+              return _context39.abrupt("return", entities);
             case 4:
               if (this._template) {
                 entities = entities.concat(this._template.map(format));
               }
               entities = entities.filter(Boolean);
-              _context41.next = 8;
+              _context39.next = 8;
               return Promise.all(((_d = (_c = this._config.filter) === null || _c === void 0 ? void 0 : _c.include) !== null && _d !== void 0 ? _d : []).map(/*#__PURE__*/function () {
-                var _ref18 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee39(filter) {
+                var _ref17 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee37(filter) {
                   var _a, filters, sorter, post_process;
-                  return _regeneratorRuntime().wrap(function _callee39$(_context39) {
-                    while (1) switch (_context39.prev = _context39.next) {
+                  return _regeneratorRuntime().wrap(function _callee37$(_context37) {
+                    while (1) switch (_context37.prev = _context37.next) {
                       case 0:
-                        if (!filter.type) {
-                          _context39.next = 2;
+                        if (!(filter.type !== undefined)) {
+                          _context37.next = 2;
                           break;
                         }
-                        return _context39.abrupt("return", /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee36() {
-                          return _regeneratorRuntime().wrap(function _callee36$(_context36) {
-                            while (1) switch (_context36.prev = _context36.next) {
+                        return _context37.abrupt("return", /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee34() {
+                          return _regeneratorRuntime().wrap(function _callee34$(_context34) {
+                            while (1) switch (_context34.prev = _context34.next) {
                               case 0:
-                                return _context36.abrupt("return", [filter]);
+                                return _context34.abrupt("return", [filter]);
                               case 1:
                               case "end":
-                                return _context36.stop();
+                                return _context34.stop();
                             }
-                          }, _callee36);
+                          }, _callee34);
                         })));
                       case 2:
-                        _context39.next = 4;
-                        return get_filter(_this15.hass, filter);
+                        _context37.next = 4;
+                        return get_filter(_this18.hass, filter);
                       case 4:
-                        filters = _context39.sent;
+                        filters = _context37.sent;
                         if (!((_a = filter.sort) === null || _a === void 0 ? void 0 : _a.method)) {
-                          _context39.next = 11;
+                          _context37.next = 11;
                           break;
                         }
-                        _context39.next = 8;
-                        return get_sorter(_this15.hass, filter.sort);
+                        _context37.next = 8;
+                        return get_sorter(_this18.hass, filter.sort);
                       case 8:
-                        _context39.t0 = _context39.sent;
-                        _context39.next = 12;
+                        _context37.t0 = _context37.sent;
+                        _context37.next = 12;
                         break;
                       case 11:
-                        _context39.t0 = function (x) {
+                        _context37.t0 = function (x) {
                           return x;
                         };
                       case 12:
-                        sorter = _context39.t0;
+                        sorter = _context37.t0;
                         post_process = /*#__PURE__*/function () {
-                          var _ref20 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee37(entity) {
-                            return _regeneratorRuntime().wrap(function _callee37$(_context37) {
-                              while (1) switch (_context37.prev = _context37.next) {
+                          var _ref19 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee35(entity) {
+                            return _regeneratorRuntime().wrap(function _callee35$(_context35) {
+                              while (1) switch (_context35.prev = _context35.next) {
                                 case 0:
-                                  _context37.next = 2;
-                                  return process_entity(_this15.hass, Object.assign(Object.assign({}, entity), filter.options), entity.entity);
+                                  _context35.next = 2;
+                                  return process_entity(_this18.hass, Object.assign(Object.assign({}, entity), filter.options), entity.entity);
                                 case 2:
-                                  return _context37.abrupt("return", _context37.sent);
+                                  return _context35.abrupt("return", _context35.sent);
                                 case 3:
                                 case "end":
-                                  return _context37.stop();
+                                  return _context35.stop();
                               }
-                            }, _callee37);
+                            }, _callee35);
                           }));
-                          return function post_process(_x82) {
-                            return _ref20.apply(this, arguments);
+                          return function post_process(_x78) {
+                            return _ref19.apply(this, arguments);
                           };
                         }();
-                        return _context39.abrupt("return", /*#__PURE__*/function () {
-                          var _ref21 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee38(entities) {
+                        return _context37.abrupt("return", /*#__PURE__*/function () {
+                          var _ref20 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee36(entities) {
                             var _a, _b, _c, _d, _e, _f, add, start, count;
-                            return _regeneratorRuntime().wrap(function _callee38$(_context38) {
-                              while (1) switch (_context38.prev = _context38.next) {
+                            return _regeneratorRuntime().wrap(function _callee36$(_context36) {
+                              while (1) switch (_context36.prev = _context36.next) {
                                 case 0:
                                   add = entities.filter(filters); // Filter-local sort
-                                  _context38.next = 3;
+                                  _context36.next = 3;
                                   return sorter(add);
                                 case 3:
-                                  add = _context38.sent;
+                                  add = _context36.sent;
                                   // Filter-local pagination
                                   if (((_a = filter.sort) === null || _a === void 0 ? void 0 : _a.count) || ((_b = filter.sort) === null || _b === void 0 ? void 0 : _b.first)) {
                                     start = (_d = (_c = filter.sort) === null || _c === void 0 ? void 0 : _c.first) !== null && _d !== void 0 ? _d : 0;
                                     count = (_f = (_e = filter.sort) === null || _e === void 0 ? void 0 : _e.count) !== null && _f !== void 0 ? _f : Infinity;
                                     add = add.slice(start, start + count);
                                   }
-                                  _context38.next = 7;
+                                  _context36.next = 7;
                                   return Promise.all(add.map(post_process));
                                 case 7:
-                                  add = _context38.sent;
-                                  return _context38.abrupt("return", add);
+                                  add = _context36.sent;
+                                  return _context36.abrupt("return", add);
                                 case 9:
                                 case "end":
-                                  return _context38.stop();
+                                  return _context36.stop();
                               }
-                            }, _callee38);
+                            }, _callee36);
                           }));
-                          return function (_x83) {
-                            return _ref21.apply(this, arguments);
+                          return function (_x79) {
+                            return _ref20.apply(this, arguments);
                           };
                         }());
                       case 15:
                       case "end":
-                        return _context39.stop();
+                        return _context37.stop();
                     }
-                  }, _callee39);
+                  }, _callee37);
                 }));
-                return function (_x81) {
-                  return _ref18.apply(this, arguments);
+                return function (_x77) {
+                  return _ref17.apply(this, arguments);
                 };
               }()));
             case 8:
-              include_filters = _context41.sent;
-              _context41.next = 11;
+              include_filters = _context39.sent;
+              _context39.next = 11;
               return Promise.all(((_f = (_e = this._config.filter) === null || _e === void 0 ? void 0 : _e.exclude) !== null && _f !== void 0 ? _f : []).map(/*#__PURE__*/function () {
-                var _ref22 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee40(filter) {
+                var _ref21 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee38(filter) {
                   var filters;
-                  return _regeneratorRuntime().wrap(function _callee40$(_context40) {
-                    while (1) switch (_context40.prev = _context40.next) {
+                  return _regeneratorRuntime().wrap(function _callee38$(_context38) {
+                    while (1) switch (_context38.prev = _context38.next) {
                       case 0:
-                        _context40.next = 2;
-                        return get_filter(_this15.hass, filter);
+                        _context38.next = 2;
+                        return get_filter(_this18.hass, filter);
                       case 2:
-                        filters = _context40.sent;
-                        return _context40.abrupt("return", filters);
+                        filters = _context38.sent;
+                        return _context38.abrupt("return", filters);
                       case 4:
                       case "end":
-                        return _context40.stop();
+                        return _context38.stop();
                     }
-                  }, _callee40);
+                  }, _callee38);
                 }));
-                return function (_x84) {
-                  return _ref22.apply(this, arguments);
+                return function (_x80) {
+                  return _ref21.apply(this, arguments);
                 };
               }()));
             case 11:
-              exclude_filters = _context41.sent;
+              exclude_filters = _context39.sent;
               all_entities = Object.keys(this.hass.states).map(format); // Include
-              _context41.t0 = (_entities = entities).concat;
-              _context41.t1 = _entities;
-              _context41.t2 = _toConsumableArray;
-              _context41.next = 18;
+              _context39.t0 = (_entities = entities).concat;
+              _context39.t1 = _entities;
+              _context39.t2 = _toConsumableArray;
+              _context39.next = 18;
               return Promise.all(include_filters.map(function (f) {
                 return f(all_entities);
               }));
             case 18:
-              _context41.t3 = _context41.sent;
-              _context41.t4 = (0, _context41.t2)(_context41.t3);
-              entities = _context41.t0.apply.call(_context41.t0, _context41.t1, _context41.t4);
+              _context39.t3 = _context39.sent;
+              _context39.t4 = (0, _context39.t2)(_context39.t3);
+              entities = _context39.t0.apply.call(_context39.t0, _context39.t1, _context39.t4);
               // Exclude
               entities = entities.filter(function (e) {
                 return !exclude_filters.some(function (f) {
@@ -4107,25 +4105,25 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
               });
               // Global sort
               if (!((_g = this._config.sort) === null || _g === void 0 ? void 0 : _g.method)) {
-                _context41.next = 28;
+                _context39.next = 28;
                 break;
               }
-              _context41.next = 25;
+              _context39.next = 25;
               return get_sorter(this.hass, this._config.sort);
             case 25:
-              _context41.t5 = _context41.sent;
-              _context41.next = 29;
+              _context39.t5 = _context39.sent;
+              _context39.next = 29;
               break;
             case 28:
-              _context41.t5 = function (x) {
+              _context39.t5 = function (x) {
                 return x;
               };
             case 29:
-              sorter = _context41.t5;
-              _context41.next = 32;
+              sorter = _context39.t5;
+              _context39.next = 32;
               return sorter(entities);
             case 32:
-              entities = _context41.sent;
+              entities = _context39.sent;
               // Unique
               if (this._config.unique) {
                 _sorter = function _sorter(entity, index, self) {
@@ -4148,12 +4146,12 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
                 count = (_o = (_m = this._config.sort) === null || _m === void 0 ? void 0 : _m.count) !== null && _o !== void 0 ? _o : Infinity;
                 entities = entities.slice(start, start + count);
               }
-              return _context41.abrupt("return", entities);
+              return _context39.abrupt("return", entities);
             case 36:
             case "end":
-              return _context41.stop();
+              return _context39.stop();
           }
-        }, _callee41, this);
+        }, _callee39, this);
       }));
       function update_entities() {
         return _update_entities.apply(this, arguments);
@@ -4163,23 +4161,23 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
   }, {
     key: "updated",
     value: function () {
-      var _updated = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee42(changedProperties) {
-        var _this16 = this;
-        return _regeneratorRuntime().wrap(function _callee42$(_context42) {
-          while (1) switch (_context42.prev = _context42.next) {
+      var _updated = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee40(changedProperties) {
+        var _this19 = this;
+        return _regeneratorRuntime().wrap(function _callee40$(_context40) {
+          while (1) switch (_context40.prev = _context40.next) {
             case 0:
               if (changedProperties.has("_template") || changedProperties.has("hass") && this.hass) {
                 queueMicrotask(function () {
-                  return _this16.update_all();
+                  return _this19.update_all();
                 });
               }
             case 1:
             case "end":
-              return _context42.stop();
+              return _context40.stop();
           }
-        }, _callee42, this);
+        }, _callee40, this);
       }));
-      function updated(_x85) {
+      function updated(_x81) {
         return _updated.apply(this, arguments);
       }
       return updated;
@@ -4192,37 +4190,37 @@ var AutoEntities = /*#__PURE__*/function (_r$3) {
   }, {
     key: "render",
     value: function render() {
-      return x(_templateObject15 || (_templateObject15 = _taggedTemplateLiteral(["", ""])), this.empty && (this._config.show_empty === false || this._config["else"]) ? this["else"] : this.card);
+      return x(_templateObject22 || (_templateObject22 = _taggedTemplateLiteral(["", ""])), this.empty && (this._config.show_empty === false || this._config["else"]) ? this["else"] : this.card);
     }
   }, {
     key: "getCardSize",
     value: function () {
-      var _getCardSize = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee43() {
+      var _getCardSize = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee41() {
         var _a, _b, len;
-        return _regeneratorRuntime().wrap(function _callee43$(_context43) {
-          while (1) switch (_context43.prev = _context43.next) {
+        return _regeneratorRuntime().wrap(function _callee41$(_context41) {
+          while (1) switch (_context41.prev = _context41.next) {
             case 0:
               len = 0;
-              _context43.next = 3;
+              _context41.next = 3;
               return this._cardBuilt;
             case 3:
               if (!(this.card && this.card.getCardSize)) {
-                _context43.next = 7;
+                _context41.next = 7;
                 break;
               }
-              _context43.next = 6;
+              _context41.next = 6;
               return this.card.getCardSize();
             case 6:
-              len = _context43.sent;
+              len = _context41.sent;
             case 7:
               if (len === 1 && ((_a = this._entities) === null || _a === void 0 ? void 0 : _a.length)) len = this._entities.length;
               if (len === 0 && ((_b = this._config.filter) === null || _b === void 0 ? void 0 : _b.include)) len = Object.keys(this._config.filter.include).length;
-              return _context43.abrupt("return", len || 5);
+              return _context41.abrupt("return", len || 5);
             case 10:
             case "end":
-              return _context43.stop();
+              return _context41.stop();
           }
-        }, _callee43, this);
+        }, _callee41, this);
       }));
       function getCardSize() {
         return _getCardSize.apply(this, arguments);

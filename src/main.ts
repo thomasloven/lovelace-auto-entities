@@ -65,6 +65,7 @@ class AutoEntities extends LitElement {
 
     if (config.filter.include) {
       for (const [index, filter] of config.filter.include.entries()) {
+        if (Object.keys(filter).includes("type")) continue;
         for (const k in filter) {
           if (!(k.trim().split(" ")[0].trim() in RULES))
             throw new Error(`Unknown rule "${k}" in include filter ${index}`);
@@ -74,6 +75,7 @@ class AutoEntities extends LitElement {
 
     if (config.filter.exclude) {
       for (const [index, filter] of config.filter.exclude.entries()) {
+        if (Object.keys(filter).includes("type")) continue;
         for (const k in filter) {
           if (!(k.trim().split(" ")[0].trim() in RULES))
             throw new Error(`Unknown rule "${k}" in exclude filter ${index}`);
@@ -251,7 +253,8 @@ class AutoEntities extends LitElement {
 
     const include_filters = await Promise.all(
       (this._config.filter?.include ?? []).map(async (filter) => {
-        if (filter.type) return async () => [filter as LovelaceRowConfig];
+        if (filter.type !== undefined)
+          return async () => [filter as LovelaceRowConfig];
 
         const filters = await get_filter(this.hass, filter);
         const sorter = filter.sort?.method

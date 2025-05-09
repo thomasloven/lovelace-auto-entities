@@ -43,32 +43,18 @@ const ruleKeySelector = {
   ],
 };
 
-const customValueRules = [
-  "area",
-  "device",
-  "entity_id",
-  "group",
-  "integration",
-  "label",
-];
+const filterValueSelector = {
+  attributes: { object: {} },
+  area: { area: {} },
+  device: { device: {} },
+  entity_id: { entity: {} },
+  group: { entity: { filter: { domain: "group" } } },
+  integration: { config_entry: {} },
+  label: { label: {} },
+};
 
 const ruleSchema = ([key, value], idx) => {
-  const isID = (value) => {
-    if (value === "") return true;
-    if (/^[0-9A-F]{32}/i.test(value)) return true;
-    return false;
-  };
-  const filterValueSelector = {
-    attributes: { object: {} },
-    area: { area: {} },
-    device: { device: {} },
-    entity_id: { entity: {} },
-    group: { entity: { filter: { domain: "group" } } },
-    integration: { config_entry: {} },
-    label: { label: {} },
-  };
-
-  if (!GUI_EDITOR_RULES.includes(key))
+  if (!(key in ruleKeySelector.options))
     return {
       type: "Constant",
       name: "Some rules are not shown",
@@ -94,6 +80,7 @@ const ruleSchema = ([key, value], idx) => {
 };
 
 export const postProcess = async (form: Element) => {
+  await await_element(form);
   for (const grid of await selectTree(form, "$ ha-form-grid", true)) {
     await await_element(grid);
     const selector = await selectTree(
@@ -141,25 +128,33 @@ export const filterSchema = (group) => {
     {
       ...ruleKeySelector,
       name: `key_new`,
-      label: "Rule ...",
+      label: "New Rule ...",
+    },
+    {
+      name: "options",
+      label: "Options:",
+      selector: { object: {} },
     },
   ];
 };
 
 export const rule_to_form = (group) => {
   const filters = { ...group };
+  const options = { ...group.options };
   delete filters.options;
   return Object.assign(
     {},
     ...Object.entries(filters).map(([key, value], idx) => ({
       [`key_${idx}`]: key,
       [`value_${idx}`]: value,
-    }))
+    })),
+    { options }
   );
 };
 
 export const form_to_rule = (config, filter): Object => {
   const data = {};
+  data["options"] = filter.options;
   for (let i = 0; i <= config.filter.include.length + 1; i++) {
     if (filter[`key_${i}`] !== undefined)
       data[filter[`key_${i}`]] = filter[`value_${i}`] ?? "";
@@ -181,6 +176,7 @@ export const filterOptionsSchema = [
 export const nonFilterSchema = [
   {
     name: "data",
+    label: " ",
     selector: { object: {} },
   },
 ];

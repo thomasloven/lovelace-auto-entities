@@ -9,9 +9,9 @@ export const RULES: Record<
   string,
   (hass: HassObject, value: any) => Promise<(entity: HAState) => boolean>
 > = {
-  type: async (hass, value) => (entity) => true,
-  options: async (hass, value) => (entity) => true,
-  sort: async (hass, value) => (entity) => true,
+  type: async (hass, value) => undefined,
+  options: async (hass, value) => undefined,
+  sort: async (hass, value) => undefined,
 
   domain: async (hass, value) => {
     const match = await matcher(value);
@@ -214,7 +214,9 @@ export async function get_filter(
         return RULES[rule]?.(hass, value) ?? (() => false);
       })
     )
-  ).filter(Boolean);
+  )
+    .filter((r) => r !== undefined)
+    .filter(Boolean);
 
   return (entity: string | LovelaceRowConfig) => {
     if (!rules.length) return false;
