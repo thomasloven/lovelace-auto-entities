@@ -50,9 +50,9 @@ export function getLabels(hass) {
 }
 
 // Debugging helper
-(window as any).AutoEntities = {
-  getAreas,
-  getDevices,
-  getEntities,
-  getLabels,
-};
+// (window as any).AutoEntities = {
+//   getAreas,
+//   getDevices,
+//   getEntities,
+//   getLabels,
+// };

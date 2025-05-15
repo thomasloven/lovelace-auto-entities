@@ -1,10 +1,11 @@
 import { LitElement, html, CSSResultArray, css } from "lit";
+import pjson from "../../package.json";
 
 class AutoEntitiesHelp extends LitElement {
   render() {
     return html`
       <div>
-        <p>Auto entities</p>
+        <p>Auto entities version ${pjson.version}</p>
         <p>
           See
           <a
