@@ -1,24 +1,4 @@
 import { await_element, selectTree } from "../helpers/selecttree";
-const GUI_EDITOR_RULES = [
-  "none",
-  "domain",
-  "entity_id",
-  "state",
-  "name",
-  "group",
-  "area",
-  "device",
-  "device_manufacturer",
-  "device_model",
-  "attributes",
-  "last_changed",
-  "last_updated",
-  "last_triggered",
-  "entity_category",
-  "integration",
-  "hidden_by",
-  "label",
-];
 
 const ruleKeySelector = {
   type: "select",
@@ -53,12 +33,20 @@ const filterValueSelector = {
   label: { label: {} },
 };
 
+export const hasSelector = (filter) => {
+  return Object.keys(filter).some((k) => k in filterValueSelector);
+};
+
 const ruleSchema = ([key, value], idx) => {
-  if (!(key in ruleKeySelector.options))
+  if (["sort", "optios"].includes(key)) {
+    return undefined;
+  }
+  if (!ruleKeySelector.options.some(([k, v]) => k === key))
     return {
       type: "Constant",
       name: "Some rules are not shown",
-      value: "Please switch to the CODE EDITOR to access all options.",
+      value: `The rule "${key}" is not supported by the GUI editor.
+        Please switch to the CODE EDITOR to access all options.`,
     };
 
   return {
@@ -124,7 +112,7 @@ export const filterSchema = (group) => {
   const filters = { ...group };
   delete filters.options;
   return [
-    ...Object.entries(filters).map(ruleSchema),
+    ...Object.entries(filters).map(ruleSchema).filter(Boolean),
     {
       ...ruleKeySelector,
       name: `key_new`,
@@ -165,14 +153,6 @@ export const form_to_rule = (config, filter): Object => {
   return data;
 };
 
-export const filterOptionsSchema = [
-  {
-    name: "options",
-    label: "Options:",
-    selector: { object: {} },
-  },
-];
-
 export const nonFilterSchema = [
   {
     name: "data",
@@ -181,37 +161,74 @@ export const nonFilterSchema = [
   },
 ];
 
-export const sortSchema = [
+export const entitiesSchema = [
   {
-    name: "method",
-    label: "Sort method",
-    type: "select",
-    options: [
-      ["domain", "Entity Domain"],
-      ["entity_id", "Entity ID"],
-      ["friendly_name", "Friendly Name"],
-      ["state", "Entity State"],
-      ["last_changed", "Last Change"],
-      ["last_updated", "Last Update"],
-      ["last_triggered", "Last Trigger"],
-    ],
-  },
-  {
-    type: "constant",
-    name: "Sorting options:",
-    value: "",
-  },
-  {
-    type: "grid",
-    name: "",
-    schema: [
-      { name: "reverse", type: "boolean", label: "Reverse" },
-      { name: "ignore_case", type: "boolean", label: "Ignore case" },
-      { name: "numeric", type: "boolean", label: "Numeric sort" },
-      { name: "ip", type: "boolean", label: "IP address sort" },
-    ],
+    name: "entities",
+    label: "Entities:",
+    selector: { object: {} },
   },
 ];
+export const templateSchema = [
+  {
+    name: "template",
+    label: "Template:",
+    selector: { template: {} },
+  },
+];
+
+export const sortSchema = (method) => {
+  const schema: any[] = [
+    {
+      name: "method",
+      label: "Sort method",
+      type: "select",
+      options: [
+        ["domain", "Entity Domain"],
+        ["entity_id", "Entity ID"],
+        ["friendly_name", "Friendly Name"],
+        ["state", "Entity State"],
+        ["last_changed", "Last Change"],
+        ["last_updated", "Last Update"],
+        ["last_triggered", "Last Trigger"],
+        ["attribute", "Attribute"],
+      ],
+    },
+    {
+      type: "constant",
+      name: "Sorting options:",
+      value: "",
+    },
+    {
+      type: "grid",
+      name: "",
+      schema: [
+        { name: "reverse", type: "boolean", label: "Reverse" },
+        { name: "ignore_case", type: "boolean", label: "Ignore case" },
+        { name: "numeric", type: "boolean", label: "Numeric sort" },
+        { name: "ip", type: "boolean", label: "IP address sort" },
+      ],
+    },
+  ];
+
+  if (method !== undefined && !schema[0].options.some(([k, v]) => k === method))
+    return [
+      {
+        type: "Constant",
+        name: "GUI editor not available",
+        value: `Sorting by ${method} is not supported by the GUI editor.
+        Please switch to the CODE EDITOR to access all options.`,
+      },
+    ];
+
+  if (method == "attribute") schema.push();
+  schema.push({
+    name: "attribute",
+    label: "Attribute:",
+    selector: { object: {} },
+  });
+
+  return schema;
+};
 
 export const cardOptionsSchema = [
   {

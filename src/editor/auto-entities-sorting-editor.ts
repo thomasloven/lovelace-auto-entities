@@ -17,13 +17,13 @@ class AutoEntitiesSortingEditor extends LitElement {
   }
 
   render() {
-    const data = this._config.sort ?? { method: "none" };
+    const data = this._config.sort ?? {};
     return html`
       <div>
         <ha-form
           .hass=${this.hass}
           .data=${data}
-          .schema=${sortSchema}
+          .schema=${sortSchema(data.method)}
           .computeLabel=${(s) => s.label ?? s.name}
           @value-changed=${this._changeSortOptions}
         ></ha-form>

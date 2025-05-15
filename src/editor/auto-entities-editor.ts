@@ -91,7 +91,7 @@ class AutoEntitiesEditor extends LitElement {
         ._config=${this._config}
         @config-changed=${this._config_changed}
       ></auto-entities-card-editor>`,
-      Help: () => html`<auto-entities-help></auto-entities-help>`,
+      "?": () => html`<auto-entities-help></auto-entities-help>`,
     };
 
     return html`
@@ -128,6 +128,9 @@ class AutoEntitiesEditor extends LitElement {
         sl-tab::part(base) {
           width: 100%;
           justify-content: center;
+        }
+        sl-tab[panel="?"] {
+          flex: 0;
         }
       `,
     ];

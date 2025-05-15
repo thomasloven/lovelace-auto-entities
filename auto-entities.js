@@ -1,4 +1,4 @@
-var _Symbol$metadata, _a$1$litPropertyMetad, _a$1$reactiveElementV, _t$litHtmlVersions, _globalThis$litElemen, _globalThis$litElemen2, _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21, _templateObject22;
+var _Symbol$metadata, _a$1$litPropertyMetad, _a$1$reactiveElementV, _t$litHtmlVersions, _globalThis$litElemen, _globalThis$litElemen2, _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21, _templateObject22, _templateObject23, _templateObject24;
 function _taggedTemplateLiteral(e, t) { return t || (t = e.slice(0)), Object.freeze(Object.defineProperties(e, { raw: { value: Object.freeze(t) } })); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -2340,10 +2340,10 @@ function _get_filter() {
       while (1) switch (_context47.prev = _context47.next) {
         case 0:
           _context47.next = 2;
-          return Promise.all(Object.entries(filter).map(function (_ref22) {
-            var _ref23 = _slicedToArray(_ref22, 2),
-              rule = _ref23[0],
-              value = _ref23[1];
+          return Promise.all(Object.entries(filter).map(function (_ref26) {
+            var _ref27 = _slicedToArray(_ref26, 2),
+              rule = _ref27[0],
+              value = _ref27[1];
             var _a, _b;
             rule = rule.trim().split(" ")[0].trim();
             return (_b = (_a = RULES[rule]) === null || _a === void 0 ? void 0 : _a.call(RULES, hass, value)) !== null && _b !== void 0 ? _b : function () {
@@ -2581,14 +2581,14 @@ function _get_sorter() {
         case 3:
           if (["last_changed", "last_updated", "last_triggered"].includes(method.method)) method.numeric = true;
           sort = /*#__PURE__*/function () {
-            var _ref24 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee49(values) {
+            var _ref28 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee49(values) {
               var map;
               return _regeneratorRuntime().wrap(function _callee49$(_context49) {
                 while (1) switch (_context49.prev = _context49.next) {
                   case 0:
                     _context49.next = 2;
                     return Promise.all(values.map(/*#__PURE__*/function () {
-                      var _ref25 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee48(x) {
+                      var _ref29 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee48(x) {
                         return _regeneratorRuntime().wrap(function _callee48$(_context48) {
                           while (1) switch (_context48.prev = _context48.next) {
                             case 0:
@@ -2605,7 +2605,7 @@ function _get_sorter() {
                         }, _callee48);
                       }));
                       return function (_x83) {
-                        return _ref25.apply(this, arguments);
+                        return _ref29.apply(this, arguments);
                       };
                     }()));
                   case 2:
@@ -2623,7 +2623,7 @@ function _get_sorter() {
               }, _callee49);
             }));
             return function sort(_x82) {
-              return _ref24.apply(this, arguments);
+              return _ref28.apply(this, arguments);
             };
           }();
           return _context50.abrupt("return", sort);
@@ -2852,15 +2852,28 @@ var filterValueSelector = {
     label: {}
   }
 };
+var hasSelector = function hasSelector(filter) {
+  return Object.keys(filter).some(function (k) {
+    return k in filterValueSelector;
+  });
+};
 var ruleSchema = function ruleSchema(_ref10, idx) {
   var _ref11 = _slicedToArray(_ref10, 2),
     key = _ref11[0],
     value = _ref11[1];
   var _a;
-  if (!(key in ruleKeySelector.options)) return {
+  if (["sort", "optios"].includes(key)) {
+    return undefined;
+  }
+  if (!ruleKeySelector.options.some(function (_ref12) {
+    var _ref13 = _slicedToArray(_ref12, 2),
+      k = _ref13[0],
+      v = _ref13[1];
+    return k === key;
+  })) return {
     type: "Constant",
     name: "Some rules are not shown",
-    value: "Please switch to the CODE EDITOR to access all options."
+    value: "The rule \"".concat(key, "\" is not supported by the GUI editor.\n        Please switch to the CODE EDITOR to access all options.")
   };
   return {
     type: "grid",
@@ -2878,7 +2891,7 @@ var ruleSchema = function ruleSchema(_ref10, idx) {
   };
 };
 var postProcess = /*#__PURE__*/function () {
-  var _ref12 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee29(form) {
+  var _ref14 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee29(form) {
     var _a, _b, _c, _d, _iterator13, _step13, grid, selector, cb;
     return _regeneratorRuntime().wrap(function _callee29$(_context29) {
       while (1) switch (_context29.prev = _context29.next) {
@@ -3034,13 +3047,13 @@ var postProcess = /*#__PURE__*/function () {
     }, _callee29, null, [[7, 76, 79, 82]]);
   }));
   return function postProcess(_x72) {
-    return _ref12.apply(this, arguments);
+    return _ref14.apply(this, arguments);
   };
 }();
 var filterSchema = function filterSchema(group) {
   var filters = Object.assign({}, group);
   delete filters.options;
-  return [].concat(_toConsumableArray(Object.entries(filters).map(ruleSchema)), [Object.assign(Object.assign({}, ruleKeySelector), {
+  return [].concat(_toConsumableArray(Object.entries(filters).map(ruleSchema).filter(Boolean)), [Object.assign(Object.assign({}, ruleKeySelector), {
     name: "key_new",
     label: "New Rule ..."
   }), {
@@ -3055,10 +3068,10 @@ var rule_to_form = function rule_to_form(group) {
   var filters = Object.assign({}, group);
   var options = Object.assign({}, group.options);
   delete filters.options;
-  return Object.assign.apply(Object, [{}].concat(_toConsumableArray(Object.entries(filters).map(function (_ref13, idx) {
-    var _ref14 = _slicedToArray(_ref13, 2),
-      key = _ref14[0],
-      value = _ref14[1];
+  return Object.assign.apply(Object, [{}].concat(_toConsumableArray(Object.entries(filters).map(function (_ref15, idx) {
+    var _ref16 = _slicedToArray(_ref15, 2),
+      key = _ref16[0],
+      value = _ref16[1];
     return _defineProperty(_defineProperty({}, "key_".concat(idx), key), "value_".concat(idx), value);
   })), [{
     options: options
@@ -3083,36 +3096,71 @@ var nonFilterSchema = [{
     object: {}
   }
 }];
-var sortSchema = [{
-  name: "method",
-  label: "Sort method",
-  type: "select",
-  options: [["domain", "Entity Domain"], ["entity_id", "Entity ID"], ["friendly_name", "Friendly Name"], ["state", "Entity State"], ["last_changed", "Last Change"], ["last_updated", "Last Update"], ["last_triggered", "Last Trigger"]]
-}, {
-  type: "constant",
-  name: "Sorting options:",
-  value: ""
-}, {
-  type: "grid",
-  name: "",
-  schema: [{
-    name: "reverse",
-    type: "boolean",
-    label: "Reverse"
-  }, {
-    name: "ignore_case",
-    type: "boolean",
-    label: "Ignore case"
-  }, {
-    name: "numeric",
-    type: "boolean",
-    label: "Numeric sort"
-  }, {
-    name: "ip",
-    type: "boolean",
-    label: "IP address sort"
-  }]
+var entitiesSchema = [{
+  name: "entities",
+  label: "Entities:",
+  selector: {
+    object: {}
+  }
 }];
+var templateSchema = [{
+  name: "template",
+  label: "Template:",
+  selector: {
+    template: {}
+  }
+}];
+var sortSchema = function sortSchema(method) {
+  var schema = [{
+    name: "method",
+    label: "Sort method",
+    type: "select",
+    options: [["domain", "Entity Domain"], ["entity_id", "Entity ID"], ["friendly_name", "Friendly Name"], ["state", "Entity State"], ["last_changed", "Last Change"], ["last_updated", "Last Update"], ["last_triggered", "Last Trigger"], ["attribute", "Attribute"]]
+  }, {
+    type: "constant",
+    name: "Sorting options:",
+    value: ""
+  }, {
+    type: "grid",
+    name: "",
+    schema: [{
+      name: "reverse",
+      type: "boolean",
+      label: "Reverse"
+    }, {
+      name: "ignore_case",
+      type: "boolean",
+      label: "Ignore case"
+    }, {
+      name: "numeric",
+      type: "boolean",
+      label: "Numeric sort"
+    }, {
+      name: "ip",
+      type: "boolean",
+      label: "IP address sort"
+    }]
+  }];
+  if (method !== undefined && !schema[0].options.some(function (_ref18) {
+    var _ref19 = _slicedToArray(_ref18, 2),
+      k = _ref19[0],
+      v = _ref19[1];
+    return k === method;
+  })) return [{
+    type: "Constant",
+    name: "GUI editor not available",
+    value: "Sorting by ".concat(method, " is not supported by the GUI editor.\n        Please switch to the CODE EDITOR to access all options.")
+  }];
+  if (method == "attribute") schema.push();
+  schema.push({
+    name: "attribute",
+    label: "Attribute:",
+    selector: {
+      object: {}
+    }
+  });
+  return schema;
+};
 var cardOptionsSchema = [{
   type: "grid",
   name: "",
@@ -3220,6 +3268,17 @@ var AutoEntitiesFilterEditor = /*#__PURE__*/function (_r$2) {
       this._setFilters(type, filters);
     }
   }, {
+    key: "_sortChanged",
+    value: function _sortChanged(ev, idx, type) {
+      ev.stopPropagation();
+      var data = ev.detail.value;
+      var filters = this._getFilters(type);
+      filters[idx] = Object.assign(Object.assign({}, filters[idx]), {
+        sort: data
+      });
+      this._setFilters(type, filters);
+    }
+  }, {
     key: "_customChanged",
     value: function _customChanged(ev, idx, type) {
       ev.stopPropagation();
@@ -3228,6 +3287,28 @@ var AutoEntitiesFilterEditor = /*#__PURE__*/function (_r$2) {
       var filters = this._getFilters(type);
       filters[idx] = Object.assign({}, ev.detail.value.data);
       this._setFilters(type, filters);
+    }
+  }, {
+    key: "_templateChanged",
+    value: function _templateChanged(ev) {
+      ev.stopPropagation();
+      var template = ev.detail.value.template;
+      console.log(template);
+      this._setFilters("template", template);
+    }
+  }, {
+    key: "_entitiesChanged",
+    value: function _entitiesChanged(ev) {
+      ev.stopPropagation();
+      var entities = ev.detail.value.entities;
+      this._config = Object.assign(Object.assign({}, this._config), {
+        entities: entities
+      });
+      this.dispatchEvent(new CustomEvent("config-changed", {
+        detail: {
+          config: this._config
+        }
+      }));
     }
   }, {
     key: "firstUpdated",
@@ -3252,17 +3333,24 @@ var AutoEntitiesFilterEditor = /*#__PURE__*/function (_r$2) {
     key: "render",
     value: function render() {
       var _this11 = this;
-      var _a;
-      if (((_a = this._config.filter) === null || _a === void 0 ? void 0 : _a.template) || this._config.entities) return x(_templateObject || (_templateObject = _taggedTemplateLiteral(["\n        <div>\n          <p>\n            <b>Your filter method is not handled by the GUI editor.</b>\n          </p>\n          <p>Please switch to the CODE EDITOR to access all options.</p>\n        </div>\n      "])));
       var render_type = function render_type(type) {
-        return x(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n      <ha-sortable\n        handle-selector=\".handle\"\n        @item-moved=", "\n      >\n        <div>\n          ", "\n        </div>\n      </ha-sortable>\n      <mwc-button @click=", ">\n        <ha-icon .icon=", "></ha-icon>Add filter\n      </mwc-button>\n      <mwc-button @click=", ">\n        <ha-icon .icon=", "></ha-icon>Add special row\n      </mwc-button>\n    "])), function (ev) {
+        var _a;
+        return x(_templateObject || (_templateObject = _taggedTemplateLiteral(["\n      <ha-sortable\n        handle-selector=\".handle\"\n        @item-moved=", "\n      >\n        <div>\n          ", "\n        </div>\n      </ha-sortable>\n      <mwc-button @click=", ">\n        <ha-icon .icon=", "></ha-icon>Add filter\n      </mwc-button>\n      <mwc-button @click=", ">\n        <ha-icon .icon=", "></ha-icon>Add custom entry\n      </mwc-button>\n    "])), function (ev) {
           return _this11._filterMove(ev, type);
-        }, _this11._config.filter[type].map(function (filter, idx) {
-          return x(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n              <ha-expansion-panel\n                outlined\n                class=\"drag ", "\"\n                ", "\n              >\n                <div class=\"handle\" slot=\"leading-icon\">\n                  <ha-icon .icon=", "></ha-icon>\n                </div>\n                <h3 slot=\"header\">\n                  [", "] - ", "\n                </h3>\n                <div class=\"content\">\n                  ", "\n                  <mwc-button\n                    class=\"warning\"\n                    @click=", "\n                  >\n                    Delete\n                  </mwc-button>\n                  <p class=\"info\">\n                    If entering a custom Value (e.g. \"*light\" or \"/^[Bb]ed/\") in\n                    a box with options, you need to finish with the Enter key.\n                  </p>\n                </div>\n              </ha-expansion-panel>\n            "])), type, type == "include" ? "expanded" : "", "mdi:drag", idx, _this11._describe_filter(filter), filter.type === undefined ? x(_templateObject4 || (_templateObject4 = _taggedTemplateLiteral(["\n                        <ha-form\n                          .hass=", "\n                          .schema=", "\n                          .data=", "\n                          .computeLabel=", "\n                          @value-changed=", "\n                          class=\"filter-rule-form\"\n                        >\n                        </ha-form>\n                      "])), _this11.hass, filterSchema(filter), rule_to_form(filter), function (s) {
+        }, ((_a = _this11._config.filter[type]) !== null && _a !== void 0 ? _a : []).map(function (filter, idx) {
+          var _a;
+          return x(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n              <ha-expansion-panel\n                outlined\n                class=\"drag ", "\"\n                ", "\n              >\n                <div class=\"handle\" slot=\"leading-icon\">\n                  <ha-icon .icon=", "></ha-icon>\n                </div>\n                <h3 slot=\"header\">\n                  [", "] - ", "\n                </h3>\n                <div class=\"content\">\n                  <mwc-button\n                    class=\"warning\"\n                    @click=", "\n                  >\n                    Delete\n                  </mwc-button>\n                  ", "\n                </div>\n              </ha-expansion-panel>\n            "])), type, type == "include" ? "expanded" : "", "mdi:drag", idx, _this11._describe_filter(filter), function (ev) {
+            return _this11._filterDelete(ev, idx, type);
+          }, filter.type === undefined ? x(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n                        ", "\n                        <ha-form\n                          .hass=", "\n                          .schema=", "\n                          .data=", "\n                          .computeLabel=", "\n                          @value-changed=", "\n                          class=\"filter-rule-form\"\n                        >\n                        </ha-form>\n                        <ha-expansion-panel outlined class=\"sort\">\n                          <h4 slot=\"header\">Sorting</h4>\n                          <div class=\"content\">\n                            <ha-form\n                              .hass=", "\n                              .schema=", "\n                              .data=", "\n                              .computeLabel=", "\n                              @value-changed=", "\n                            >\n                            </ha-form>\n                          </div>\n                        </ha-expansion-panel>\n                      "])), hasSelector(filter) ? x(_templateObject4 || (_templateObject4 = _taggedTemplateLiteral(["\n                              <p class=\"info\">\n                                If entering a custom Value (e.g. \"*light\" or\n                                \"/^[Bb]ed/\") in a box with options, you need to\n                                finish with the Enter key.\n                              </p>\n                            "]))) : "", _this11.hass, filterSchema(filter), rule_to_form(filter), function (s) {
             var _a;
             return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
           }, function (ev) {
             return _this11._rulesChanged(ev, idx, type);
+          }, _this11.hass, sortSchema((_a = filter.sort) === null || _a === void 0 ? void 0 : _a.method), filter.sort, function (s) {
+            var _a;
+            return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
+          }, function (ev) {
+            return _this11._sortChanged(ev, idx, type);
           }) : x(_templateObject5 || (_templateObject5 = _taggedTemplateLiteral(["\n                        <ha-form\n                          .hass=", "\n                          .schema=", "\n                          .data=", "\n                          .computeLabel=", "\n                          @value-changed=", "\n                        >\n                        </ha-form>\n                      "])), _this11.hass, nonFilterSchema, {
             data: filter
           }, function (s) {
@@ -3270,21 +3358,29 @@ var AutoEntitiesFilterEditor = /*#__PURE__*/function (_r$2) {
             return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
           }, function (ev) {
             return _this11._customChanged(ev, idx, type);
-          }), function (ev) {
-            return _this11._filterDelete(ev, idx, type);
-          });
+          }));
         }), function (ev) {
           return _this11._filterAdd(ev, type);
         }, "mdi:plus", function (ev) {
           return _this11._filterAdd(ev, type, true);
         }, "mdi:plus");
       };
-      return x(_templateObject6 || (_templateObject6 = _taggedTemplateLiteral(["\n      <div>\n        <ha-expansion-panel outlined>\n          <ha-icon .icon=", " slot=\"leading-icon\"></ha-icon>\n          <h3 slot=\"header\">Include</h3>\n\n          <div class=\"content\">", "</div>\n        </ha-expansion-panel>\n        <ha-expansion-panel outlined>\n          <ha-icon .icon=", " slot=\"leading-icon\"></ha-icon>\n          <h3 slot=\"header\">Exclude</h3>\n          <div class=\"content\">", "</div>\n        </ha-expansion-panel>\n      </div>\n    "])), "mdi:plus", render_type("include"), "mdi:minus", render_type("exclude"));
+      return x(_templateObject6 || (_templateObject6 = _taggedTemplateLiteral(["\n      <div>\n        <ha-expansion-panel outlined>\n          <ha-icon .icon=", " slot=\"leading-icon\"></ha-icon>\n          <h3 slot=\"header\">Include</h3>\n\n          <div class=\"content\">", "</div>\n        </ha-expansion-panel>\n        <ha-expansion-panel outlined>\n          <ha-icon .icon=", " slot=\"leading-icon\"></ha-icon>\n          <h3 slot=\"header\">Exclude</h3>\n          <div class=\"content\">", "</div>\n        </ha-expansion-panel>\n        ", "\n        ", "\n      </div>\n    "])), "mdi:plus", render_type("include"), "mdi:minus", render_type("exclude"), this._config.entities ? x(_templateObject7 || (_templateObject7 = _taggedTemplateLiteral(["\n              <ha-form\n                .hass=", "\n                .schema=", "\n                .data=", "\n                .computeLabel=", "\n                @value-changed=", "\n              >\n              </ha-form>\n            "])), this.hass, entitiesSchema, this._config, function (s) {
+        var _a;
+        return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
+      }, function (ev) {
+        return _this11._entitiesChanged(ev);
+      }) : "", this._config.filter.template ? x(_templateObject8 || (_templateObject8 = _taggedTemplateLiteral(["\n              <ha-form\n                .hass=", "\n                .schema=", "\n                .data=", "\n                .computeLabel=", "\n                @value-changed=", "\n              >\n              </ha-form>\n            "])), this.hass, templateSchema, this._config.filter, function (s) {
+        var _a;
+        return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
+      }, function (ev) {
+        return _this11._templateChanged(ev);
+      }) : "");
     }
   }], [{
     key: "styles",
     get: function get() {
-      return [i$3(_templateObject7 || (_templateObject7 = _taggedTemplateLiteral(["\n        ha-expansion-panel {\n          margin-bottom: 24px;\n          display: block;\n          --expansion-panel-content-padding: 0;\n          border-radius: 6px;\n          --ha-card-border-radius: 6px;\n        }\n        ha-sortable ha-expansion-panel {\n          margin-bottom: 8px;\n        }\n        ha-expansion-panel .content {\n          padding: 12px;\n        }\n        ha-expansion-panel > *[slot=\"header\"] {\n          margin: 0;\n          font-size: inherit;\n          font-weight: inherit;\n        }\n        ha-expansion-panel ha-svg-icon {\n          color: var(--secondary-text-color);\n        }\n        .handle > ha-icon {\n          pointer-events: none;\n        }\n\n        mwc-button.warning {\n          --mdc-theme-primary: var(--error-color);\n        }\n\n        p.info {\n          font-size: 0.875rem;\n          color: var(--secondary-text-color);\n        }\n      "])))];
+      return [i$3(_templateObject9 || (_templateObject9 = _taggedTemplateLiteral(["\n        ha-expansion-panel {\n          margin-bottom: 24px;\n          display: block;\n          --expansion-panel-content-padding: 0;\n          border-radius: 6px;\n          --ha-card-border-radius: 6px;\n        }\n        ha-sortable ha-expansion-panel {\n          margin-bottom: 8px;\n        }\n        ha-expansion-panel .content {\n          padding: 12px;\n        }\n        ha-expansion-panel > *[slot=\"header\"] {\n          margin: 0;\n          font-size: inherit;\n          font-weight: inherit;\n        }\n        ha-expansion-panel ha-svg-icon {\n          color: var(--secondary-text-color);\n        }\n        ha-expansion-panel .sort {\n          margin-top: 8px;\n        }\n\n        .handle > ha-icon {\n          pointer-events: none;\n        }\n\n        mwc-button.warning {\n          --mdc-theme-primary: var(--error-color);\n        }\n\n        p.info {\n          font-size: 0.875rem;\n          color: var(--secondary-text-color);\n        }\n      "])))];
     }
   }]);
 }(r$2);
@@ -3315,10 +3411,8 @@ var AutoEntitiesSortingEditor = /*#__PURE__*/function (_r$3) {
     key: "render",
     value: function render() {
       var _a;
-      var data = (_a = this._config.sort) !== null && _a !== void 0 ? _a : {
-        method: "none"
-      };
-      return x(_templateObject8 || (_templateObject8 = _taggedTemplateLiteral(["\n      <div>\n        <ha-form\n          .hass=", "\n          .data=", "\n          .schema=", "\n          .computeLabel=", "\n          @value-changed=", "\n        ></ha-form>\n      </div>\n    "])), this.hass, data, sortSchema, function (s) {
+      var data = (_a = this._config.sort) !== null && _a !== void 0 ? _a : {};
+      return x(_templateObject10 || (_templateObject10 = _taggedTemplateLiteral(["\n      <div>\n        <ha-form\n          .hass=", "\n          .data=", "\n          .schema=", "\n          .computeLabel=", "\n          @value-changed=", "\n        ></ha-form>\n      </div>\n    "])), this.hass, data, sortSchema(data.method), function (s) {
         var _a;
         return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
       }, this._changeSortOptions);
@@ -3405,10 +3499,10 @@ var AutoEntitiesCardEditor = /*#__PURE__*/function (_r$4) {
       var _a;
       var data = Object.assign({}, this._config);
       data.show_empty = (_a = data.show_empty) !== null && _a !== void 0 ? _a : true;
-      return x(_templateObject9 || (_templateObject9 = _taggedTemplateLiteral(["\n      <div class=\"box cards\">\n        <ha-form\n          .hass=", "\n          .schema=", "\n          .computeLabel=", "\n          .data=", "\n          @value-changed=", "\n        ></ha-form>\n        ", "\n      </div>\n    "])), this.hass, cardOptionsSchema, function (s) {
+      return x(_templateObject11 || (_templateObject11 = _taggedTemplateLiteral(["\n      <div class=\"box cards\">\n        <ha-form\n          .hass=", "\n          .schema=", "\n          .computeLabel=", "\n          .data=", "\n          @value-changed=", "\n        ></ha-form>\n        ", "\n      </div>\n    "])), this.hass, cardOptionsSchema, function (s) {
         var _a;
         return (_a = s.label) !== null && _a !== void 0 ? _a : s.name;
-      }, data, this._changeCardOptions, this._config.card ? x(_templateObject10 || (_templateObject10 = _taggedTemplateLiteral(["\n              <div>\n                <mwc-button\n                  @click=", "\n                  .disabled=", "\n                >\n                  ", "\n                </mwc-button>\n                <mwc-button\n                  .title=", "\n                  @click=", "\n                >\n                  Change card type\n                </mwc-button>\n              </div>\n              <hui-card-element-editor\n                .hass=", "\n                .lovelace=", "\n                .value=", "\n                @config-changed=", "\n                @GUImode-changed=", "\n              ></hui-card-element-editor>\n            "])), this._toggleCardMode, !this._cardGUIModeAvailable, !this._cardEditorEl || this._cardGUIMode ? "Show code editor" : "Show Visual Editor", "Change card type", this._deleteCard, this.hass, this.lovelace, this._getCardConfig(), this._handleCardConfigChanged, this._cardGUIModeChanged) : x(_templateObject11 || (_templateObject11 = _taggedTemplateLiteral(["\n              <hui-card-picker\n                .hass=", "\n                .lovelace=", "\n                @config-changed=", "\n              ></hui-card-picker>\n            "])), this.hass, this.lovelace, this._handleCardConfigChanged));
+      }, data, this._changeCardOptions, this._config.card ? x(_templateObject12 || (_templateObject12 = _taggedTemplateLiteral(["\n              <div>\n                <mwc-button\n                  @click=", "\n                  .disabled=", "\n                >\n                  ", "\n                </mwc-button>\n                <mwc-button\n                  .title=", "\n                  @click=", "\n                >\n                  Change card type\n                </mwc-button>\n              </div>\n              <hui-card-element-editor\n                .hass=", "\n                .lovelace=", "\n                .value=", "\n                @config-changed=", "\n                @GUImode-changed=", "\n              ></hui-card-element-editor>\n            "])), this._toggleCardMode, !this._cardGUIModeAvailable, !this._cardEditorEl || this._cardGUIMode ? "Show code editor" : "Show Visual Editor", "Change card type", this._deleteCard, this.hass, this.lovelace, this._getCardConfig(), this._handleCardConfigChanged, this._cardGUIModeChanged) : x(_templateObject13 || (_templateObject13 = _taggedTemplateLiteral(["\n              <hui-card-picker\n                .hass=", "\n                .lovelace=", "\n                @config-changed=", "\n              ></hui-card-picker>\n            "])), this.hass, this.lovelace, this._handleCardConfigChanged));
     }
   }]);
 }(r$2);
@@ -3428,12 +3522,12 @@ var AutoEntitiesHelp = /*#__PURE__*/function (_r$5) {
   return _createClass(AutoEntitiesHelp, [{
     key: "render",
     value: function render() {
-      return x(_templateObject12 || (_templateObject12 = _taggedTemplateLiteral(["\n      <div>\n        <p>Auto entities</p>\n        <p>\n          See\n          <a\n            href=\"https://github.com/thomasloven/lovelace-auto-entities\"\n            target=\"_blank\"\n            rel=\"noreferrer\"\n          >\n            auto-entities on github\n          </a>\n          for usage instructions.\n        </p>\n        <p>Not all options are available in the GUI editor.</p>\n      </div>\n    "])));
+      return x(_templateObject14 || (_templateObject14 = _taggedTemplateLiteral(["\n      <div>\n        <p>Auto entities</p>\n        <p>\n          See\n          <a\n            href=\"https://github.com/thomasloven/lovelace-auto-entities\"\n            target=\"_blank\"\n            rel=\"noreferrer\"\n          >\n            auto-entities on github\n          </a>\n          for usage instructions.\n        </p>\n        <p>Not all options are available in the GUI editor.</p>\n      </div>\n    "])));
     }
   }], [{
     key: "styles",
     get: function get() {
-      return [i$3(_templateObject13 || (_templateObject13 = _taggedTemplateLiteral(["\n        a {\n          color: var(--primary-color);\n        }\n      "])))];
+      return [i$3(_templateObject15 || (_templateObject15 = _taggedTemplateLiteral(["\n        a {\n          color: var(--primary-color);\n        }\n      "])))];
     }
   }]);
 }(r$2);
@@ -3509,30 +3603,30 @@ var AutoEntitiesEditor = /*#__PURE__*/function (_r$6) {
     value: function render() {
       var _this14 = this;
       if (!this.hass || !this._config) {
-        return x(_templateObject14 || (_templateObject14 = _taggedTemplateLiteral([""])));
+        return x(_templateObject16 || (_templateObject16 = _taggedTemplateLiteral([""])));
       }
       var tabs = {
         Filters: function Filters() {
-          return x(_templateObject15 || (_templateObject15 = _taggedTemplateLiteral(["<auto-entities-filter-editor\n        .hass=", "\n        ._config=", "\n        @config-changed=", "\n      ></auto-entities-filter-editor>"])), _this14.hass, _this14._config, _this14._config_changed);
+          return x(_templateObject17 || (_templateObject17 = _taggedTemplateLiteral(["<auto-entities-filter-editor\n        .hass=", "\n        ._config=", "\n        @config-changed=", "\n      ></auto-entities-filter-editor>"])), _this14.hass, _this14._config, _this14._config_changed);
         },
         Sorting: function Sorting() {
-          return x(_templateObject16 || (_templateObject16 = _taggedTemplateLiteral(["<auto-entities-sorting-editor\n        .hass=", "\n        ._config=", "\n        @config-changed=", "\n      ></auto-entities-sorting-editor>"])), _this14.hass, _this14._config, _this14._config_changed);
+          return x(_templateObject18 || (_templateObject18 = _taggedTemplateLiteral(["<auto-entities-sorting-editor\n        .hass=", "\n        ._config=", "\n        @config-changed=", "\n      ></auto-entities-sorting-editor>"])), _this14.hass, _this14._config, _this14._config_changed);
         },
         Card: function Card() {
-          return x(_templateObject17 || (_templateObject17 = _taggedTemplateLiteral(["<auto-entities-card-editor\n        .hass=", "\n        .lovelace=", "\n        ._config=", "\n        @config-changed=", "\n      ></auto-entities-card-editor>"])), _this14.hass, _this14.lovelace, _this14._config, _this14._config_changed);
+          return x(_templateObject19 || (_templateObject19 = _taggedTemplateLiteral(["<auto-entities-card-editor\n        .hass=", "\n        .lovelace=", "\n        ._config=", "\n        @config-changed=", "\n      ></auto-entities-card-editor>"])), _this14.hass, _this14.lovelace, _this14._config, _this14._config_changed);
         },
-        Help: function Help() {
-          return x(_templateObject18 || (_templateObject18 = _taggedTemplateLiteral(["<auto-entities-help></auto-entities-help>"])));
+        "?": function _() {
+          return x(_templateObject20 || (_templateObject20 = _taggedTemplateLiteral(["<auto-entities-help></auto-entities-help>"])));
         }
       };
-      return x(_templateObject19 || (_templateObject19 = _taggedTemplateLiteral(["\n      <div>\n        <sl-tab-group @sl-tab-show=", ">\n          ", "\n        </sl-tab-group>\n\n        <div>", "</div>\n      </div>\n    "])), this._handleSwitchTab, Object.keys(tabs).map(function (tab) {
-        return x(_templateObject20 || (_templateObject20 = _taggedTemplateLiteral(["\n              <sl-tab\n                slot=\"nav\"\n                .active=", "\n                panel=", "\n              >\n                ", "\n              </sl-tab>\n            "])), _this14._selectedTab == tab, tab, tab);
+      return x(_templateObject21 || (_templateObject21 = _taggedTemplateLiteral(["\n      <div>\n        <sl-tab-group @sl-tab-show=", ">\n          ", "\n        </sl-tab-group>\n\n        <div>", "</div>\n      </div>\n    "])), this._handleSwitchTab, Object.keys(tabs).map(function (tab) {
+        return x(_templateObject22 || (_templateObject22 = _taggedTemplateLiteral(["\n              <sl-tab\n                slot=\"nav\"\n                .active=", "\n                panel=", "\n              >\n                ", "\n              </sl-tab>\n            "])), _this14._selectedTab == tab, tab, tab);
       }), tabs[this._selectedTab].bind(this)());
     }
   }], [{
     key: "styles",
     get: function get() {
-      return [i$3(_templateObject21 || (_templateObject21 = _taggedTemplateLiteral(["\n        sl-tab-group {\n          margin-top: -16px;\n          margin-bottom: 16px;\n        }\n        sl-tab {\n          flex: 1;\n        }\n        sl-tab::part(base) {\n          width: 100%;\n          justify-content: center;\n        }\n      "])))];
+      return [i$3(_templateObject23 || (_templateObject23 = _taggedTemplateLiteral(["\n        sl-tab-group {\n          margin-top: -16px;\n          margin-bottom: 16px;\n        }\n        sl-tab {\n          flex: 1;\n        }\n        sl-tab::part(base) {\n          width: 100%;\n          justify-content: center;\n        }\n        sl-tab[panel=\"?\"] {\n          flex: 0;\n        }\n      "])))];
     }
   }]);
 }(r$2);
@@ -3549,7 +3643,7 @@ window.customCards.push({
   description: "Entity Filter on Steroids. Auto Entities allows you to fill other cards with entities automatically, based on a number of attributes."
 });
 var process_entity = /*#__PURE__*/function () {
-  var _ref16 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee30(hass, entity, entity_id) {
+  var _ref20 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee30(hass, entity, entity_id) {
     var _a, _b, _c, _d, _yield$Promise$all21, _yield$Promise$all22, entities, devices, areas, state, ent, dev, area, str, evl;
     return _regeneratorRuntime().wrap(function _callee30$(_context30) {
       while (1) switch (_context30.prev = _context30.next) {
@@ -3610,7 +3704,7 @@ var process_entity = /*#__PURE__*/function () {
     }, _callee30, null, [[16, 20]]);
   }));
   return function process_entity(_x73, _x74, _x75) {
-    return _ref16.apply(this, arguments);
+    return _ref20.apply(this, arguments);
   };
 }();
 window.queueMicrotask = window.queueMicrotask || function (handler) {
@@ -3957,7 +4051,7 @@ var AutoEntities = /*#__PURE__*/function (_r$7) {
               entities = entities.filter(Boolean);
               _context39.next = 8;
               return Promise.all(((_d = (_c = this._config.filter) === null || _c === void 0 ? void 0 : _c.include) !== null && _d !== void 0 ? _d : []).map(/*#__PURE__*/function () {
-                var _ref17 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee37(filter) {
+                var _ref21 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee37(filter) {
                   var _a, filters, sorter, post_process;
                   return _regeneratorRuntime().wrap(function _callee37$(_context37) {
                     while (1) switch (_context37.prev = _context37.next) {
@@ -3999,7 +4093,7 @@ var AutoEntities = /*#__PURE__*/function (_r$7) {
                       case 12:
                         sorter = _context37.t0;
                         post_process = /*#__PURE__*/function () {
-                          var _ref19 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee35(entity) {
+                          var _ref23 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee35(entity) {
                             return _regeneratorRuntime().wrap(function _callee35$(_context35) {
                               while (1) switch (_context35.prev = _context35.next) {
                                 case 0:
@@ -4014,11 +4108,11 @@ var AutoEntities = /*#__PURE__*/function (_r$7) {
                             }, _callee35);
                           }));
                           return function post_process(_x78) {
-                            return _ref19.apply(this, arguments);
+                            return _ref23.apply(this, arguments);
                           };
                         }();
                         return _context37.abrupt("return", /*#__PURE__*/function () {
-                          var _ref20 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee36(entities) {
+                          var _ref24 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee36(entities) {
                             var _a, _b, _c, _d, _e, _f, add, start, count;
                             return _regeneratorRuntime().wrap(function _callee36$(_context36) {
                               while (1) switch (_context36.prev = _context36.next) {
@@ -4046,7 +4140,7 @@ var AutoEntities = /*#__PURE__*/function (_r$7) {
                             }, _callee36);
                           }));
                           return function (_x79) {
-                            return _ref20.apply(this, arguments);
+                            return _ref24.apply(this, arguments);
                           };
                         }());
                       case 15:
@@ -4056,14 +4150,14 @@ var AutoEntities = /*#__PURE__*/function (_r$7) {
                   }, _callee37);
                 }));
                 return function (_x77) {
-                  return _ref17.apply(this, arguments);
+                  return _ref21.apply(this, arguments);
                 };
               }()));
             case 8:
               include_filters = _context39.sent;
               _context39.next = 11;
               return Promise.all(((_f = (_e = this._config.filter) === null || _e === void 0 ? void 0 : _e.exclude) !== null && _f !== void 0 ? _f : []).map(/*#__PURE__*/function () {
-                var _ref21 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee38(filter) {
+                var _ref25 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee38(filter) {
                   var filters;
                   return _regeneratorRuntime().wrap(function _callee38$(_context38) {
                     while (1) switch (_context38.prev = _context38.next) {
@@ -4080,7 +4174,7 @@ var AutoEntities = /*#__PURE__*/function (_r$7) {
                   }, _callee38);
                 }));
                 return function (_x80) {
-                  return _ref21.apply(this, arguments);
+                  return _ref25.apply(this, arguments);
                 };
               }()));
             case 11:
@@ -4190,7 +4284,7 @@ var AutoEntities = /*#__PURE__*/function (_r$7) {
   }, {
     key: "render",
     value: function render() {
-      return x(_templateObject22 || (_templateObject22 = _taggedTemplateLiteral(["", ""])), this.empty && (this._config.show_empty === false || this._config["else"]) ? this["else"] : this.card);
+      return x(_templateObject24 || (_templateObject24 = _taggedTemplateLiteral(["", ""])), this.empty && (this._config.show_empty === false || this._config["else"]) ? this["else"] : this.card);
     }
   }, {
     key: "getCardSize",

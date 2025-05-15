@@ -7,6 +7,10 @@ import {
   form_to_rule,
   nonFilterSchema,
   postProcess,
+  sortSchema,
+  hasSelector,
+  templateSchema,
+  entitiesSchema,
 } from "./schema";
 
 class AutoEntitiesFilterEditor extends LitElement {
@@ -93,6 +97,15 @@ class AutoEntitiesFilterEditor extends LitElement {
     this._setFilters(type, filters);
   }
 
+  _sortChanged(ev, idx, type) {
+    ev.stopPropagation();
+    const data = ev.detail.value;
+
+    const filters = this._getFilters(type);
+    filters[idx] = { ...filters[idx], sort: data };
+    this._setFilters(type, filters);
+  }
+
   _customChanged(ev, idx, type) {
     ev.stopPropagation();
 
@@ -102,6 +115,26 @@ class AutoEntitiesFilterEditor extends LitElement {
     const filters = this._getFilters(type);
     filters[idx] = { ...ev.detail.value.data };
     this._setFilters(type, filters);
+  }
+
+  _templateChanged(ev) {
+    ev.stopPropagation();
+    const template = ev.detail.value.template;
+
+    console.log(template);
+
+    this._setFilters("template", template);
+  }
+
+  _entitiesChanged(ev) {
+    ev.stopPropagation();
+    const entities = ev.detail.value.entities;
+
+    this._config = { ...this._config, entities };
+
+    this.dispatchEvent(
+      new CustomEvent("config-changed", { detail: { config: this._config } })
+    );
   }
 
   firstUpdated(_changedProperties) {
@@ -122,23 +155,13 @@ class AutoEntitiesFilterEditor extends LitElement {
   }
 
   render() {
-    if (this._config.filter?.template || this._config.entities)
-      return html`
-        <div>
-          <p>
-            <b>Your filter method is not handled by the GUI editor.</b>
-          </p>
-          <p>Please switch to the CODE EDITOR to access all options.</p>
-        </div>
-      `;
-
     const render_type = (type) => html`
       <ha-sortable
         handle-selector=".handle"
         @item-moved=${(ev) => this._filterMove(ev, type)}
       >
         <div>
-          ${this._config.filter[type].map(
+          ${(this._config.filter[type] ?? []).map(
             (filter, idx) => html`
               <ha-expansion-panel
                 outlined
@@ -152,8 +175,23 @@ class AutoEntitiesFilterEditor extends LitElement {
                   [${idx}] - ${this._describe_filter(filter)}
                 </h3>
                 <div class="content">
+                  <mwc-button
+                    class="warning"
+                    @click=${(ev) => this._filterDelete(ev, idx, type)}
+                  >
+                    Delete
+                  </mwc-button>
                   ${filter.type === undefined
                     ? html`
+                        ${hasSelector(filter)
+                          ? html`
+                              <p class="info">
+                                If entering a custom Value (e.g. "*light" or
+                                "/^[Bb]ed/") in a box with options, you need to
+                                finish with the Enter key.
+                              </p>
+                            `
+                          : ""}
                         <ha-form
                           .hass=${this.hass}
                           .schema=${filterSchema(filter)}
@@ -164,6 +202,20 @@ class AutoEntitiesFilterEditor extends LitElement {
                           class="filter-rule-form"
                         >
                         </ha-form>
+                        <ha-expansion-panel outlined class="sort">
+                          <h4 slot="header">Sorting</h4>
+                          <div class="content">
+                            <ha-form
+                              .hass=${this.hass}
+                              .schema=${sortSchema(filter.sort?.method)}
+                              .data=${filter.sort}
+                              .computeLabel=${(s) => s.label ?? s.name}
+                              @value-changed=${(ev) =>
+                                this._sortChanged(ev, idx, type)}
+                            >
+                            </ha-form>
+                          </div>
+                        </ha-expansion-panel>
                       `
                     : html`
                         <ha-form
@@ -176,16 +228,6 @@ class AutoEntitiesFilterEditor extends LitElement {
                         >
                         </ha-form>
                       `}
-                  <mwc-button
-                    class="warning"
-                    @click=${(ev) => this._filterDelete(ev, idx, type)}
-                  >
-                    Delete
-                  </mwc-button>
-                  <p class="info">
-                    If entering a custom Value (e.g. "*light" or "/^[Bb]ed/") in
-                    a box with options, you need to finish with the Enter key.
-                  </p>
                 </div>
               </ha-expansion-panel>
             `
@@ -196,7 +238,7 @@ class AutoEntitiesFilterEditor extends LitElement {
         <ha-icon .icon=${"mdi:plus"}></ha-icon>Add filter
       </mwc-button>
       <mwc-button @click=${(ev) => this._filterAdd(ev, type, true)}>
-        <ha-icon .icon=${"mdi:plus"}></ha-icon>Add special row
+        <ha-icon .icon=${"mdi:plus"}></ha-icon>Add custom entry
       </mwc-button>
     `;
 
@@ -213,6 +255,30 @@ class AutoEntitiesFilterEditor extends LitElement {
           <h3 slot="header">Exclude</h3>
           <div class="content">${render_type("exclude")}</div>
         </ha-expansion-panel>
+        ${this._config.entities
+          ? html`
+              <ha-form
+                .hass=${this.hass}
+                .schema=${entitiesSchema}
+                .data=${this._config}
+                .computeLabel=${(s) => s.label ?? s.name}
+                @value-changed=${(ev) => this._entitiesChanged(ev)}
+              >
+              </ha-form>
+            `
+          : ""}
+        ${this._config.filter.template
+          ? html`
+              <ha-form
+                .hass=${this.hass}
+                .schema=${templateSchema}
+                .data=${this._config.filter}
+                .computeLabel=${(s) => s.label ?? s.name}
+                @value-changed=${(ev) => this._templateChanged(ev)}
+              >
+              </ha-form>
+            `
+          : ""}
       </div>
     `;
   }
@@ -241,6 +307,10 @@ class AutoEntitiesFilterEditor extends LitElement {
         ha-expansion-panel ha-svg-icon {
           color: var(--secondary-text-color);
         }
+        ha-expansion-panel .sort {
+          margin-top: 8px;
+        }
+
         .handle > ha-icon {
           pointer-events: none;
         }
