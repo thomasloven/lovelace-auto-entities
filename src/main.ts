@@ -63,7 +63,7 @@ class AutoEntities extends LitElement {
       throw new Error("No filters specified.");
     }
 
-    if (config.filter.include) {
+    if (config.filter?.include) {
       for (const [index, filter] of config.filter.include.entries()) {
         if (Object.keys(filter).includes("type")) continue;
         for (const k in filter) {
@@ -73,7 +73,7 @@ class AutoEntities extends LitElement {
       }
     }
 
-    if (config.filter.exclude) {
+    if (config.filter?.exclude) {
       for (const [index, filter] of config.filter.exclude.entries()) {
         if (Object.keys(filter).includes("type")) continue;
         for (const k in filter) {
