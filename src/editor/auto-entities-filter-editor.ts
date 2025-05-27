@@ -147,11 +147,24 @@ class AutoEntitiesFilterEditor extends LitElement {
   }
 
   updated(changedProperties) {
-    this.updateComplete.then(() =>
-      this.shadowRoot
-        .querySelectorAll(".filter-rule-form")
-        .forEach((form) => postProcess(form))
-    );
+    this.updateComplete.then(async () => {
+      // Go through all selectors and force them to allow custom values
+      const promises = Array.from(
+        this.shadowRoot.querySelectorAll(".filter-rule-form")
+      ).map(postProcess);
+      await Promise.all(promises);
+
+      // Populate forms with data AFTER selectors have been patched.
+      // Otherwise they may overwrite the data with undefined
+      this.shadowRoot.querySelectorAll("ha-form").forEach((form) => {
+        let f = form as any;
+        if (f.filter_type !== undefined && f.filter_idx !== undefined) {
+          f.data = rule_to_form(
+            this._config.filter[f.filter_type][f.filter_idx]
+          );
+        }
+      });
+    });
   }
 
   render() {
@@ -195,11 +208,12 @@ class AutoEntitiesFilterEditor extends LitElement {
                         <ha-form
                           .hass=${this.hass}
                           .schema=${filterSchema(filter)}
-                          .data=${rule_to_form(filter)}
                           .computeLabel=${(s) => s.label ?? s.name}
                           @value-changed=${(ev) =>
                             this._rulesChanged(ev, idx, type)}
                           class="filter-rule-form"
+                          .filter_type=${type}
+                          .filter_idx=${idx}
                         >
                         </ha-form>
                         <ha-expansion-panel outlined class="sort">
