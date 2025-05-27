@@ -8,13 +8,14 @@ import "./auto-entities-sorting-editor";
 import "./auto-entities-card-editor";
 import "./auto-entities-help";
 
-// customElements.whenDefined("ha-yaml-editor").then(() => {
-//   const HaYamlEditor = customElements.get("ha-yaml-editor").prototype;
-//   const orig_setValue = HaYamlEditor.setValue;
-//   HaYamlEditor.setValue = function (value) {
-//     if (!compare_deep(value, this.value)) orig_setValue.bind(this)(value);
-//   };
-// });
+customElements.whenDefined("ha-yaml-editor").then(() => {
+  const HaYamlEditor = customElements.get("ha-yaml-editor").prototype;
+  const orig_setValue = HaYamlEditor.setValue;
+  HaYamlEditor.setValue = function (value) {
+    if (!this._yaml || !compare_deep(value, this.value))
+      orig_setValue.bind(this)(value);
+  };
+});
 
 // customElements.whenDefined("ha-selector-object").then(() => {
 //   const HaSelectorObject = customElements.get("ha-selector-object").prototype;
