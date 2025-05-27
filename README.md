@@ -60,6 +60,8 @@ Each filter has a set of rules and will match entities which match **ALL** rules
 | `name`                | Friendly name attribute                                                                     | `Kitchen lights`, `Front door`                       |
 | `group`               | Entities in the group                                                                       | `group.living_room_lights`                           |
 | `area`                | Entities in a given area. Also matches all entities belonging to a Device in the area.      | `Kitchen`                                            |
+| `floor`               | Entities on a given floor. Also matches all entities belonging to a Device on that floor.   | `Second`, `Basement`                                 |
+| `level`               | Entities on a given level.                                                                  | `2`, `>1`                                            |
 | `device`              | Entities belonging to a Device                                                              | `Thomas iPhone`                                      |
 | `label`               | Entities that are tagged with a certain label                                               | `Show on dashboard`, `Holiday light`                 |
 | `device_manufacturer` | Entities belonging to a device by a given manufacturer                                      | `IKEA`                                               |
@@ -143,6 +145,8 @@ filter:
     - state: "= 12" # State is exactly 12 (also matches "12", "12.0" etc.)
     - state: "12" # State is exactly "12" but not e.g. "12.0"
 ```
+
+> **Note**: Since `>` has a special function in yaml, the quotation marks are mandatory. `"> 25"`
 
 ### Time since an event
 

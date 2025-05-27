@@ -33,6 +33,11 @@ export function getAreas(hass) {
     cache.areas ?? hass.callWS({ type: "config/area_registry/list" });
   return cache.areas;
 }
+export function getFloors(hass) {
+  cache.floors =
+    cache.floors ?? hass.callWS({ type: "config/floor_registry/list" });
+  return cache.floors;
+}
 export function getDevices(hass) {
   cache.devices =
     cache.devices ?? hass.callWS({ type: "config/device_registry/list" });
@@ -50,9 +55,10 @@ export function getLabels(hass) {
 }
 
 // Debugging helper
-// (window as any).AutoEntities = {
-//   getAreas,
-//   getDevices,
-//   getEntities,
-//   getLabels,
-// };
+(window as any).AutoEntities = {
+  getAreas,
+  getDevices,
+  getEntities,
+  getLabels,
+  getFloors,
+};

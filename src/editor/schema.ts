@@ -9,6 +9,7 @@ const ruleKeySelector = {
     ["domain", "Domain"],
     ["entity_category", "Entity Category"],
     ["entity_id", "Entity ID"],
+    ["floor", "Floor"],
     ["group", "Group"],
     ["hidden_by", "Hidden by"],
     ["integration", "Integration"],
@@ -16,6 +17,7 @@ const ruleKeySelector = {
     ["last_changed", "Last Changed"],
     ["last_triggered", "Last Triggered"],
     ["last_updated", "Last Updated"],
+    ["level", "Level"],
     ["device_manufacturer", "Manufacturer"],
     ["device_model", "Model"],
     ["name", "Name"],
@@ -28,6 +30,7 @@ const filterValueSelector = {
   area: { area: {} },
   device: { device: {} },
   entity_id: { entity: {} },
+  floor: { floor: {} },
   group: { entity: { filter: { domain: "group" } } },
   integration: { config_entry: {} },
   label: { label: {} },
@@ -98,6 +101,10 @@ export const postProcess = async (form: Element) => {
       (await selectTree(
         selector,
         "$ ha-selector-config_entry $ ha-config-entry-picker $ ha-combo-box"
+      )) ??
+      (await selectTree(
+        selector,
+        "$ ha-selector-floor $ ha-floor-picker $ ha-combo-box"
       ));
 
     if (cb) {

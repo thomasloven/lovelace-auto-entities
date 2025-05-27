@@ -1,6 +1,13 @@
 import { HAState, HassObject, LovelaceRowConfig } from "./types";
-import { getAreas, getDevices, getEntities, getLabels } from "./helpers";
+import {
+  getAreas,
+  getDevices,
+  getEntities,
+  getLabels,
+  getFloors,
+} from "./helpers";
 import { matcher } from "./match";
+import { hass } from "./helpers/hass";
 
 const ago_suffix_regex = /([mhd])\s+ago\s*$/i;
 const default_ago_suffix = "m ago";
@@ -122,6 +129,52 @@ export const RULES: Record<
       area = areas.find((a) => a.area_id === dev.area_id);
       if (!area) return false;
       return match(area.name) || match(area.area_id);
+    };
+  },
+  floor: async (hass, value) => {
+    const [match, entities, devices, areas, floors] = await Promise.all([
+      matcher(value),
+      getEntities(hass),
+      getDevices(hass),
+      getAreas(hass),
+      getFloors(hass),
+    ]);
+    return (entity) => {
+      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      if (!ent) return false;
+      let area = areas.find((a) => a.area_id === ent.area_id);
+      if (!area) {
+        const dev = devices.find((d) => d.id === ent.device_id);
+        if (!dev) return false;
+        area = areas.find((a) => a.area_id === dev.area_id);
+      }
+      if (!area) return false;
+      const floor = floors.find((f) => f.floor_id === area.floor_id);
+      if (!floor) return false;
+      return match(floor.name) || match(floor.floor_id);
+    };
+  },
+  level: async (hass, value) => {
+    const [match, entities, devices, areas, floors] = await Promise.all([
+      matcher(value),
+      getEntities(hass),
+      getDevices(hass),
+      getAreas(hass),
+      getFloors(hass),
+    ]);
+    return (entity) => {
+      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      if (!ent) return false;
+      let area = areas.find((a) => a.area_id === ent.area_id);
+      if (!area) {
+        const dev = devices.find((d) => d.id === ent.device_id);
+        if (!dev) return false;
+        area = areas.find((a) => a.area_id === dev.area_id);
+      }
+      if (!area) return false;
+      const floor = floors.find((f) => f.floor_id === area.floor_id);
+      if (!floor) return false;
+      return match(floor.level);
     };
   },
   entity_category: async (hass, value) => {
