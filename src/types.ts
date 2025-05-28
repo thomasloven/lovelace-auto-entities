@@ -82,6 +82,9 @@ export interface HAState {
 export interface HassObject {
   states: HAState[];
   callWS: (_: any) => any;
+  formatEntityState: (stateObj, state?) => string;
+  formatEntityAttributeValue: (stateObj, attribute, value?) => string;
+  formatEntityAttributeName: (stateObj, attribute) => string;
 }
 
 export type MatchValue = string | number;

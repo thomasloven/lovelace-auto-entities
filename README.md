@@ -55,7 +55,7 @@ Each filter has a set of rules and will match entities which match **ALL** rules
 | Rule                  | Matches                                                                                     | Example                                              |
 | --------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `domain`              | Entity domain                                                                               | `light`, `binary_sensor`, `media_player`             |
-| `state`               | Current state of entity                                                                     | `"on"`, `home`, `"3.14"`                             |
+| `state`               | Current state of entity.                                                                    | `"on"`, `home`, `"3.14"`, `"Triggered"`              |
 | `entity_id`           | Full entity id                                                                              | `light.bed_light`, `input_binary.weekdays_only`      |
 | `name`                | Friendly name attribute                                                                     | `Kitchen lights`, `Front door`                       |
 | `group`               | Entities in the group                                                                       | `group.living_room_lights`                           |

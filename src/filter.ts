@@ -30,7 +30,12 @@ export const RULES: Record<
   },
   state: async (hass, value) => {
     const match = await matcher(value);
-    return (entity) => match(entity.state);
+    return (entity) => {
+      return (
+        match(entity.state) ||
+        match(hass.formatEntityState(hass.states[entity.entity_id]))
+      );
+    };
   },
   name: async (hass, value) => {
     const match = await matcher(value);
