@@ -60,9 +60,9 @@ const COMPARISONS: Record<
       getEntities(hass),
       getDevices(hass),
     ]);
-    const ent = entities.find((e) => e.entity_id === x.entity_id);
+    const ent = entities[x.entity_id];
     if (!ent) return undefined;
-    const dev = devices.find((d) => d.id === ent.device_id);
+    const dev = devices[ent.device_id];
     if (!dev) return undefined;
     return dev.name_by_user ?? dev.name;
   },
@@ -72,13 +72,13 @@ const COMPARISONS: Record<
       getDevices(hass),
       getAreas(hass),
     ]);
-    const ent = entities.find((e) => e.entity_id === x.entity_id);
+    const ent = entities[x.entity_id];
     if (!ent) return undefined;
-    let area = areas.find((a) => a.area_id === ent.area_id);
+    let area = areas[ent.area_id];
     if (area) return area.name;
-    const dev = devices.find((d) => d.id === ent.device_id);
+    const dev = devices[ent.device_id];
     if (!dev) return undefined;
-    area = areas.find((a) => a.area_id === dev.area_id);
+    area = areas[dev.area_id];
     if (!area) return undefined;
     return area.name;
   },

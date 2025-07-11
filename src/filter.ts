@@ -80,9 +80,9 @@ export const RULES: Record<
     ]);
 
     return (entity) => {
-      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      const ent = entities[entity.entity_id];
       if (!ent) return false;
-      const dev = devices.find((d) => d.id === ent.device_id);
+      const dev = devices[ent.device_id];
       if (!dev) return false;
       return match(dev.id) || match(dev.name_by_user) || match(dev.name);
     };
@@ -95,9 +95,9 @@ export const RULES: Record<
     ]);
 
     return (entity) => {
-      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      const ent = entities[entity.entity_id];
       if (!ent) return false;
-      const dev = devices.find((d) => d.id === ent.device_id);
+      const dev = devices[ent.device_id];
       if (!dev) return false;
       return match(dev.manufacturer);
     };
@@ -109,9 +109,9 @@ export const RULES: Record<
       getDevices(hass),
     ]);
     return (entity) => {
-      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      const ent = entities[entity.entity_id];
       if (!ent) return false;
-      const dev = devices.find((d) => d.id === ent.device_id);
+      const dev = devices[ent.device_id];
       if (!dev) return false;
       return match(dev.model);
     };
@@ -125,13 +125,13 @@ export const RULES: Record<
     ]);
 
     return (entity) => {
-      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      const ent = entities[entity.entity_id];
       if (!ent) return false;
-      let area = areas.find((a) => a.area_id === ent.area_id);
+      let area = areas[ent.area_id];
       if (area) return match(area.name) || match(area.area_id);
-      const dev = devices.find((d) => d.id === ent.device_id);
+      const dev = devices[ent.device_id];
       if (!dev) return false;
-      area = areas.find((a) => a.area_id === dev.area_id);
+      area = areas[dev.area_id];
       if (!area) return false;
       return match(area.name) || match(area.area_id);
     };
@@ -145,16 +145,16 @@ export const RULES: Record<
       getFloors(hass),
     ]);
     return (entity) => {
-      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      const ent = entities[entity.entity_id];
       if (!ent) return false;
-      let area = areas.find((a) => a.area_id === ent.area_id);
+      let area = areas[ent.area_id];
       if (!area) {
-        const dev = devices.find((d) => d.id === ent.device_id);
+        const dev = devices[ent.device_id];
         if (!dev) return false;
-        area = areas.find((a) => a.area_id === dev.area_id);
+        area = areas[dev.area_id];
       }
       if (!area) return false;
-      const floor = floors.find((f) => f.floor_id === area.floor_id);
+      const floor = floors[area.floor_id];
       if (!floor) return false;
       return match(floor.name) || match(floor.floor_id);
     };
@@ -168,16 +168,16 @@ export const RULES: Record<
       getFloors(hass),
     ]);
     return (entity) => {
-      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      const ent = entities[entity.entity_id];
       if (!ent) return false;
-      let area = areas.find((a) => a.area_id === ent.area_id);
+      let area = areas[ent.area_id];
       if (!area) {
-        const dev = devices.find((d) => d.id === ent.device_id);
+        const dev = devices[ent.device_id];
         if (!dev) return false;
-        area = areas.find((a) => a.area_id === dev.area_id);
+        area = areas[dev.area_id];
       }
       if (!area) return false;
-      const floor = floors.find((f) => f.floor_id === area.floor_id);
+      const floor = floors[area.floor_id];
       if (!floor) return false;
       return match(floor.level);
     };
@@ -189,7 +189,7 @@ export const RULES: Record<
     ]);
 
     return (entity) => {
-      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      const ent = entities[entity.entity_id];
       if (!ent) return false;
       return match(ent.entity_category);
     };
@@ -216,7 +216,7 @@ export const RULES: Record<
     ]);
 
     return (entity) => {
-      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      const ent = entities[entity.entity_id];
       if (!ent) return false;
       return match(ent.platform) || match(ent.config_entry_id);
     };
@@ -228,7 +228,7 @@ export const RULES: Record<
     ]);
 
     return (entity) => {
-      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      const ent = entities[entity.entity_id];
       if (!ent) return false;
       return match(ent.hidden_by);
     };
@@ -243,18 +243,18 @@ export const RULES: Record<
 
     const match_label = (lbl) => {
       if (match(lbl)) return true;
-      const label = labels.find((l) => l.label_id === lbl);
+      const label = labels[lbl];
       return match(label?.name);
     };
 
     return (entity) => {
-      const ent = entities.find((e) => e.entity_id === entity.entity_id);
+      const ent = entities[entity.entity_id];
 
       if (!ent) return false;
       if (!ent.labels) return false;
       if (ent.labels.some(match_label)) return true;
 
-      const dev = devices.find((d) => d.id === ent.device_id);
+      const dev = devices[ent.device_id];
       if (!dev) return false;
       return dev.labels.some(match_label);
     };
