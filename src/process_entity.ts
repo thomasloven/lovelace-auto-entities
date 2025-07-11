@@ -10,11 +10,11 @@ export const process_entity = async (hass: HassObject, entity, entity_id) => {
 
   const state = hass?.states?.[entity_id];
 
-  const ent = entities.find((e) => e.entity_id === entity_id);
-  const dev = ent ? devices.find((d) => d.id === ent.device_id) : undefined;
-  let area = ent ? areas.find((a) => a.area_id === ent.area_id) : undefined;
+  const ent = entities[entity_id];
+  const dev = ent ? devices[ent.device_id] : undefined;
+  let area = ent ? areas[ent.area_id] : undefined;
   if (area === undefined)
-    area = dev ? areas.find((a) => a.area_id === dev.area_id) : undefined;
+    area = dev ? areas[dev.area_id] : undefined;
 
   let str = JSON.stringify(entity);
   str = str.replace(/this.entity_id/g, entity_id);

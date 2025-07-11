@@ -1,3 +1,5 @@
+import { HassObject } from "./types";
+
 export const loadHaForm = async () => {
   if (customElements.get("ha-form")) return;
 
@@ -30,28 +32,44 @@ export const compare_deep = (a: any, b: any) => {
 const cache = (window as any).autoEntities_cache;
 export function getAreas(hass) {
   cache.areas =
-    cache.areas ?? hass.callWS({ type: "config/area_registry/list" });
+    cache.areas ?? cacheByProperty(hass, "area", "area_id");
   return cache.areas;
 }
 export function getFloors(hass) {
   cache.floors =
-    cache.floors ?? hass.callWS({ type: "config/floor_registry/list" });
+    cache.floors ?? cacheByProperty(hass, "floor", "floor_id");
   return cache.floors;
 }
 export function getDevices(hass) {
   cache.devices =
-    cache.devices ?? hass.callWS({ type: "config/device_registry/list" });
+    cache.devices ?? cacheByProperty(hass, "device", "config_id");
   return cache.devices;
 }
 export function getEntities(hass) {
   cache.entities =
-    cache.entities ?? hass.callWS({ type: "config/entity_registry/list" });
+    cache.entities ?? cacheByProperty(hass, "entity", "entity_id");
   return cache.entities;
 }
 export function getLabels(hass) {
   cache.labels =
-    cache.labels ?? hass.callWS({ type: "config/label_registry/list" });
+    cache.labels ?? cacheByProperty(hass, "label", "label_id");
   return cache.labels;
+}
+
+function cacheByProperty<T>(
+  hass: HassObject,
+  type: string,
+  property: keyof T,
+): Promise<Record<string, T>> {
+  return hass.callWS({ type: `config/${type}_registry/list` }).then((items: T[]) => {
+    return items.reduce((acc, item) => {
+      const key = item[property];
+      if (typeof key === "string" || typeof key === "number") {
+        acc[String(key)] = item;
+      }
+      return acc;
+    }, {} as Record<string, T>);
+  });
 }
 
 // Debugging helper
