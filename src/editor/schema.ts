@@ -22,6 +22,7 @@ const ruleKeySelector = {
     ["device_model", "Model"],
     ["name", "Name"],
     ["state", "State"],
+    ["state_translated", "State Translated"],
   ],
 };
 
