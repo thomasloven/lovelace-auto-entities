@@ -80,20 +80,22 @@ class AutoEntitiesCardEditor extends LitElement {
         ${this._config.card
           ? html`
               <div>
-                <mwc-button
+                <ha-button
+                  appearance="plain"
                   @click=${this._toggleCardMode}
                   .disabled=${!this._cardGUIModeAvailable}
                 >
                   ${!this._cardEditorEl || this._cardGUIMode
                     ? "Show code editor"
                     : "Show Visual Editor"}
-                </mwc-button>
-                <mwc-button
+                </ha-button>
+                <ha-button
+                  appearance="plain"
                   .title=${"Change card type"}
                   @click=${this._deleteCard}
                 >
                   Change card type
-                </mwc-button>
+                </ha-button>
               </div>
               <hui-card-element-editor
                 .hass=${this.hass}
