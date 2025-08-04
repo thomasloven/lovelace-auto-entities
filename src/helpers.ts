@@ -42,7 +42,7 @@ export function getFloors(hass) {
 }
 export function getDevices(hass) {
   cache.devices =
-    cache.devices ?? cacheByProperty(hass, "device", "config_id");
+    cache.devices ?? cacheByProperty(hass, "device", "id");
   return cache.devices;
 }
 export function getEntities(hass) {
