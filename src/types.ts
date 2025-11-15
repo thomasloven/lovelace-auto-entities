@@ -2,11 +2,12 @@ export interface SortConfig {
   method: string;
   reverse?: boolean;
   ignore_case?: boolean;
-  attribute?: string;
+  attribute?: any;
   first?: number;
   count?: number;
   numeric?: boolean;
   ip?: boolean;
+  manual_order?: string[];  // Array of entity IDs in desired order for manual sorting
 }
 
 interface FilterConfig {
@@ -40,8 +41,9 @@ interface FilterConfig {
 }
 
 export interface AutoEntitiesConfig {
+  type: string;
   card: any;
-  entities: Array<LovelaceRowConfig | string>;
+  entities?: Array<LovelaceRowConfig | string>;
   filter: {
     template?: string;
     include?: FilterConfig[];
@@ -56,11 +58,37 @@ export interface AutoEntitiesConfig {
   sort?: any;
 
   entity_ids?: any[];
+  entity_overrides?: Record<string, LovelaceRowConfig>;  // Per-entity configuration overrides
+}
+
+// Action configuration for tap, hold, and double-tap actions
+export interface ActionConfig {
+  action: "more-info" | "toggle" | "call-service" | "navigate" | "url" | "assist" | "none";
+  navigation_path?: string;
+  url_path?: string;
+  service?: string;
+  service_data?: any;
+  confirmation?: boolean | {
+    text?: string;
+    exemptions?: any[];
+  };
+  target?: any;
 }
 
 export interface LovelaceRowConfig {
   entity?: string;
   type?: string;
+  name?: string;
+  icon?: string;
+  secondary_info?: string;
+  tap_action?: ActionConfig;
+  hold_action?: ActionConfig;
+  double_tap_action?: ActionConfig;
+  image?: string;
+  show_entity_picture?: boolean;
+  state_color?: boolean;
+  state?: string;  // For overridden state values
+  [key: string]: any;  // Allow additional properties
 }
 export interface LovelaceCard extends HTMLElement {
   hass: any;

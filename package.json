@@ -1,6 +1,6 @@
 {
   "name": "auto-entities",
-  "private": true,
+  "private": false,
   "version": "1.16.1",
   "type": "module",
   "description": "",
@@ -9,19 +9,22 @@
     "watch": "rollup -c --watch",
     "update-card-tools": "npm uninstall card-tools && npm install thomasloven/lovelace-card-tools"
   },
+  "keywords": [],
   "author": "Thomas Lovén",
   "license": "MIT",
-  "devDependencies": {
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^16.0.1",
-    "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.37.0",
-    "rollup-plugin-typescript2": "^0.36.0",
-    "typescript": "^5.8.2"
-  },
   "dependencies": {
-    "@babel/preset-env": "^7.26.9",
-    "lit": "^3.2.1"
+    "lit": "^3.3.1"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.28.5",
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@types/node": "^24.9.2",
+    "rollup": "^4.52.5",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3"
   }
 }
