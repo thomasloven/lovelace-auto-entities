@@ -47,14 +47,16 @@ function compare(_a: any, _b: any, method: SortConfig) {
 
 const COMPARISONS: Record<
   string,
-  (x: HAState, method: SortConfig, hass: HassObject) => any | Promise<any>
+  (x: HAState, method: SortConfig, hass: HassObject, rowConfig?: LovelaceRowConfig) => any | Promise<any>
 > = {
   none: (x) => 0,
+  manual: (x) => 0,  // Manual sorting handled by get_sorter function
   domain: (x) => x?.entity_id?.split(".")[0],
   entity_id: (x) => x?.entity_id,
-  friendly_name: (x) =>
-    x?.attributes?.friendly_name || x?.entity_id?.split(".")[1],
-  name: (x) => x?.attributes?.friendly_name || x?.entity_id?.split(".")[1],
+  friendly_name: (x, m, hass, rowConfig) =>
+    rowConfig?.name || x?.attributes?.friendly_name || x?.entity_id?.split(".")[1],
+  name: (x, m, hass, rowConfig) =>
+    rowConfig?.name || x?.attributes?.friendly_name || x?.entity_id?.split(".")[1],
   device: async (x, m, hass) => {
     const [entities, devices] = await Promise.all([
       getEntities(hass),
@@ -82,39 +84,96 @@ const COMPARISONS: Record<
     if (!area) return undefined;
     return area.name;
   },
-  state: (x) => x?.state,
-  attribute: (x, m) =>
-    m?.attribute?.split(":").reduce((_x, key) => _x?.[key], x?.attributes),
-  last_changed: (x) =>
-    x?.last_changed ? new Date(x.last_changed).getTime() : undefined,
-  last_updated: (x) =>
-    x?.last_updated ? new Date(x.last_updated).getTime() : undefined,
-  last_triggered: (x) =>
-    x?.attributes?.last_triggered
-      ? new Date(x.attributes.last_triggered).getTime()
-      : undefined,
+  state: (x, m, hass, rowConfig) => rowConfig?.state ?? x?.state,
+  attribute: (x, m, hass, rowConfig) => {
+    // First try to get from rowConfig if it has the attribute
+    const attrPath = m?.attribute?.split(":");
+    if (rowConfig && attrPath) {
+      const rowValue = attrPath.reduce((_x, key) => _x?.[key], rowConfig);
+      if (rowValue !== undefined) return rowValue;
+    }
+    // Fall back to entity state attributes
+    return attrPath?.reduce((_x, key) => _x?.[key], x?.attributes);
+  },
+  last_changed: (x) => {
+    if (!x?.last_changed) return undefined;
+    try {
+      const time = new Date(x.last_changed).getTime();
+      return isNaN(time) ? undefined : time;
+    } catch {
+      return undefined;
+    }
+  },
+  last_updated: (x) => {
+    if (!x?.last_updated) return undefined;
+    try {
+      const time = new Date(x.last_updated).getTime();
+      return isNaN(time) ? undefined : time;
+    } catch {
+      return undefined;
+    }
+  },
+  last_triggered: (x) => {
+    if (!x?.attributes?.last_triggered) return undefined;
+    try {
+      const time = new Date(x.attributes.last_triggered).getTime();
+      return isNaN(time) ? undefined : time;
+    } catch {
+      return undefined;
+    }
+  },
 };
 
 export async function get_sorter(hass: HassObject, method: SortConfig) {
   const prepare = COMPARISONS[method.method];
   if (!prepare) return (x) => x;
 
+  // Create a mutable copy of the method config
+  let sortMethod = { ...method };
+
+  // Manual sorting: return items in the order specified by manual_order array
+  if (sortMethod.method === "manual" && sortMethod.manual_order) {
+    return async (values: LovelaceRowConfig[]): Promise<LovelaceRowConfig[]> => {
+      const order = sortMethod.manual_order;
+      const orderMap = new Map(order.map((entityId, index) => [entityId, index]));
+
+      return values.sort((a, b) => {
+        const entityIdA = typeof a === "string" ? a : a.entity;
+        const entityIdB = typeof b === "string" ? b : b.entity;
+
+        const indexA = orderMap.get(entityIdA) ?? Infinity;
+        const indexB = orderMap.get(entityIdB) ?? Infinity;
+
+        return indexA - indexB;
+      });
+    };
+  }
+
   if (
-    ["last_changed", "last_updated", "last_triggered"].includes(method.method)
+    ["last_changed", "last_updated", "last_triggered"].includes(sortMethod.method)
   )
-    method.numeric = true;
+    sortMethod.numeric = true;
 
   const sort = async (
     values: LovelaceRowConfig[]
   ): Promise<LovelaceRowConfig[]> => {
     const map = await Promise.all(
-      values.map(async (x) => [
-        x,
-        await prepare(hass.states[x.entity], method, hass),
-      ])
+      values.map(async (x) => {
+        if (!x) return [null, undefined];
+        const entityId = typeof x === "string" ? x : x.entity;
+        const state = hass.states[entityId];
+        // If state doesn't exist, keep the entity but sort it to the end
+        if (!state) {
+          return [x, undefined];
+        }
+        return [
+          x,
+          await prepare(state, sortMethod, hass, x),
+        ];
+      })
     );
-    map.sort((a, b) => compare(a[1], b[1], method));
-    return map.map((x) => x[0]);
+    map.sort((a, b) => compare(a[1], b[1], sortMethod));
+    return map.map((x) => x[0]).filter((x) => x !== null);
   };
   return sort;
 }

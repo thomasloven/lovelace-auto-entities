@@ -1,22 +1,50 @@
-import nodeResolve from "@rollup/plugin-node-resolve";
-import json from "@rollup/plugin-json";
-import typescript from "rollup-plugin-typescript2";
-import terser from "@rollup/plugin-terser";
-import { getBabelOutputPlugin } from "@rollup/plugin-babel";
+import { defineConfig } from 'rollup';
+import typescript from '@rollup/plugin-typescript';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import terser from '@rollup/plugin-terser';
+import json from '@rollup/plugin-json';
 
-const dev = process.env.ROLLUP_WATCH;
-
-export default {
-  input: "src/main.ts",
-  output: {
-    file: "auto-entities.js",
-    format: "es",
-  },
-  plugins: [
-    nodeResolve(),
-    json(),
-    typescript(),
-    getBabelOutputPlugin({ presets: ["@babel/preset-env"] }),
-    !dev && terser({ format: { comments: false } }),
-  ],
-};
+export default defineConfig([
+  {
+    input: 'src/main.ts',
+    output: {
+      file: 'auto-entities.js',
+      format: 'iife',
+      name: 'autoEntities',
+      sourcemap: false,
+      inlineDynamicImports: true
+    },
+    plugins: [
+      json(),
+      resolve({
+        browser: true,
+        preferBuiltins: false,
+        extensions: ['.js', '.ts', '.mjs', '.json']
+      }),
+      commonjs(),
+      typescript({
+        tsconfig: './tsconfig.json',
+        declaration: false,
+        sourceMap: true
+      }),
+      terser({
+        format: {
+          comments: false
+        },
+        compress: {
+          drop_console: false,
+          passes: 2
+        },
+        mangle: {
+          properties: false
+        }
+      })
+    ],
+    onwarn(warning, warn) {
+      if (warning.code === 'THIS_IS_UNDEFINED') return;
+      if (warning.code === 'CIRCULAR_DEPENDENCY') return;
+      warn(warning);
+    }
+  }
+]);

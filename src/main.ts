@@ -222,16 +222,43 @@ class AutoEntities extends LitElement {
           ? await get_sorter(this.hass, filter.sort)
           : (x) => x;
 
-        const post_process = async (entity) =>
-          await process_entity(
+        const post_process = async (entity) => {
+          // Normalize filter options for Home Assistant compatibility
+          const normalizedOptions = filter.options ? { ...filter.options } : {};
+
+          // Convert underscore to hyphen for secondary_info (HA expects hyphens)
+          if (normalizedOptions.secondary_info) {
+            normalizedOptions.secondary_info = normalizedOptions.secondary_info
+              .replace(/_/g, '-');
+          }
+
+          return await process_entity(
             this.hass,
-            { ...entity, ...filter.options },
+            { ...entity, ...normalizedOptions },
             entity.entity
           );
+        };
 
         return async (entities: EntityList) => {
           let add = entities.filter(filters);
-          // Filter-local sort
+
+          // Apply entity overrides before sorting so sort uses overridden values
+          add = add.map((entity) => {
+            const override = this._config.entity_overrides?.[entity.entity];
+            return override ? { ...entity, ...override } : entity;
+          });
+
+          // Apply filter options to entities before sorting
+          if (filter.options) {
+            // Normalize options for Home Assistant compatibility
+            const normalizedOptions = { ...filter.options };
+            if (normalizedOptions.secondary_info) {
+              normalizedOptions.secondary_info = normalizedOptions.secondary_info.replace(/_/g, '-');
+            }
+            add = add.map((entity) => ({ ...entity, ...normalizedOptions }));
+          }
+
+          // Filter-local sort (with merged options so modified attributes are available)
           add = await sorter(add);
           // Filter-local pagination
           if (filter.sort?.count || filter.sort?.first) {
@@ -239,6 +266,7 @@ class AutoEntities extends LitElement {
             const count = filter.sort?.count ?? Infinity;
             add = add.slice(start, start + count);
           }
+          // Apply post_process after sorting and pagination for template evaluation
           add = await Promise.all(add.map(post_process));
           return add;
         };
@@ -259,6 +287,18 @@ class AutoEntities extends LitElement {
     );
     // Exclude
     entities = entities.filter((e) => !exclude_filters.some((f) => f(e)));
+
+    // Apply global entity overrides
+    if (this._config.entity_overrides) {
+      entities = entities.map((entity) => {
+        const override = this._config.entity_overrides?.[entity.entity];
+        if (override) {
+          //console.log(`[auto-entities] Applying override for ${entity.entity}:`, override);
+          return { ...entity, ...override };
+        }
+        return entity;
+      });
+    }
 
     // Global sort
     const sorter = this._config.sort?.method

@@ -4,15 +4,15 @@ import { AutoEntitiesConfig } from "../types";
 import { cardOptionsSchema } from "./schema";
 
 class AutoEntitiesCardEditor extends LitElement {
-  @state() _config: AutoEntitiesConfig;
-  @property() lovelace;
-  @property() hass;
+  @state() _config!: AutoEntitiesConfig;
+  @property() lovelace: any;
+  @property() hass: any;
 
   @state() _cardGUIMode = true;
   @state() _cardGUIModeAvailable = true;
-  @query("hui-card-element-editor") private _cardEditorEl?;
+  @query("hui-card-element-editor") private _cardEditorEl?: any;
 
-  _changeCardOptions(ev) {
+  _changeCardOptions(ev: CustomEvent) {
     if (!this._config) return;
 
     const data = ev.detail.value;
@@ -23,11 +23,11 @@ class AutoEntitiesCardEditor extends LitElement {
     );
   }
 
-  _toggleCardMode(ev) {
+  _toggleCardMode(_ev: Event) {
     this._cardEditorEl?.toggleMode();
   }
 
-  _deleteCard(ev) {
+  _deleteCard(_ev: Event) {
     if (!this._config) return;
 
     this._config = { ...this._config };
@@ -44,7 +44,7 @@ class AutoEntitiesCardEditor extends LitElement {
     return cfg;
   }
 
-  _handleCardConfigChanged(ev) {
+  _handleCardConfigChanged(ev: CustomEvent) {
     ev.stopPropagation();
     if (!this._config) return;
 
@@ -59,7 +59,7 @@ class AutoEntitiesCardEditor extends LitElement {
     );
   }
 
-  _cardGUIModeChanged(ev) {
+  _cardGUIModeChanged(ev: CustomEvent) {
     ev.stopPropagation();
     this._cardGUIMode = ev.detail.guiMode;
     this._cardGUIModeAvailable = ev.detail.guiModeAvailable;
@@ -73,7 +73,7 @@ class AutoEntitiesCardEditor extends LitElement {
         <ha-form
           .hass=${this.hass}
           .schema=${cardOptionsSchema}
-          .computeLabel=${(s) => s.label ?? s.name}
+          .computeLabel=${(s: any) => s.label ?? s.name}
           .data=${data}
           @value-changed=${this._changeCardOptions}
         ></ha-form>
