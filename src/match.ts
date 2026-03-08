@@ -2,6 +2,14 @@ const ago_suffix_regex = /([mhd])\s+ago\s*$/i;
 const default_ago_suffix = "m ago";
 
 export async function matcher(pattern: any): Promise<(value: any) => boolean> {
+  // If pattern is an array, match if the value satisfies ANY element (OR logic).
+  // This allows e.g. `label: [label1, label2]` to match entities that have
+  // label1 OR label2.
+  if (Array.isArray(pattern)) {
+    const subMatchers = await Promise.all(pattern.map((p) => matcher(p)));
+    return (value: any) => subMatchers.some((m) => m(value));
+  }
+
   const matchers = [];
   const transforms = [];
 
