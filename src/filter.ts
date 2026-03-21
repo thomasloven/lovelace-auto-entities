@@ -32,6 +32,10 @@ export const RULES: Record<
     const match = await matcher(value);
     return (entity) => match(entity.state);
   },
+  device_class: async (hass, value) => {
+    const match = await matcher(value);
+    return (entity) => match(entity.attributes?.device_class);
+  },
   state_translated: async (hass, value) => {
     const match = await matcher(value);
     return (entity) => match(hass.formatEntityState(hass.states[entity.entity_id]));
