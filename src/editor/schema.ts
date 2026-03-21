@@ -6,6 +6,7 @@ const ruleKeySelector = {
     ["area", "Area"],
     ["attributes", "Attribute"],
     ["device", "Device"],
+    ["device_class", "Device Class"],
     ["domain", "Domain"],
     ["entity_category", "Entity Category"],
     ["entity_id", "Entity ID"],

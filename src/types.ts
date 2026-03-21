@@ -27,6 +27,7 @@ interface FilterConfig {
   last_updated?: string | number;
   last_triggered?: string | number;
 
+  device_class?: string;
   entity_category?: string;
   integration?: string;
   hidden_by?: string;

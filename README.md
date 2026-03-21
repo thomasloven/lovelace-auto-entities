@@ -72,6 +72,7 @@ Each filter has a set of rules and will match entities which match **ALL** rules
 | `attributes`          | Map of `attribute: value` pairs to match                                                    |
 | `last_changed`        | Time since last state change (defaults to minutes)                                          | `< 15`, `> 2 d ago`                                  |
 | `last_updated`        | Time since last update (defaults to minutes)                                                | `< 15`, `> 2 d ago`                                  |
+| `device_class`        | Device class attribute of the entity                                                        | `motion`, `temperature`, `battery`                   |
 | `entity_category`     | [Entity category](https://developers.home-assistant.io/docs/core/entity#generic-properties) | `config`, `diagnostic`                               |
 |                       |                                                                                             |                                                      |
 | `not`                 | Matche entities that do _not_ match a filter                                                |
