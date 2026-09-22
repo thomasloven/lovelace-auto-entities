@@ -411,6 +411,27 @@ Or:
 template: "{{states.light | selectattr('state', '==', 'on') | map(attribute='entity_id') | list}}"
 ```
 
+Templates can also return entity objects when you need to set options on each
+matching entity. For example, this adds `secondary_info` to every window
+sensor expanded from a group:
+
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+  title: Windows
+filter:
+  template: |-
+    {%- for entity in expand('binary_sensor.all_windows') -%}
+      {{
+        {
+          'entity': entity.entity_id,
+          'secondary_info': 'last-changed'
+        }
+      }},
+    {%- endfor -%}
+```
+
 Templates also give great opportunity for customization:
 
 ```yaml
