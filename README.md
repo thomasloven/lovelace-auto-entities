@@ -230,7 +230,7 @@ sort:
   ip: <ip>
 ```
 
-- `method:` **Required** One of `domain`, `entity_id`, `name`, `device`, `area`, `state`, `attribute`, `last_changed` `last_updated` or `last_triggered`.
+- `method:` **Required** One of `domain`, `entity_id`, `name`, `friendly_name`, `device`, `area`, `state`, `attribute`, `last_changed`, `last_updated` or `last_triggered`.
 - `reverse:` Set to `true` to reverse the order. Default: `false`.
 - `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
 - `numeric:` Set to `true` to sort by numeric value. Default: `false` except for `last_changed`, `last_updated` and `last_triggered` sorting methods.
@@ -409,6 +409,27 @@ Or:
 
 ```yaml
 template: "{{states.light | selectattr('state', '==', 'on') | map(attribute='entity_id') | list}}"
+```
+
+Templates can also return entity objects when you need to set options on each
+matching entity. For example, this adds `secondary_info` to every window
+sensor expanded from a group:
+
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+  title: Windows
+filter:
+  template: |-
+    {%- for entity in expand('binary_sensor.all_windows') -%}
+      {{
+        {
+          'entity': entity.entity_id,
+          'secondary_info': 'last-changed'
+        }
+      }},
+    {%- endfor -%}
 ```
 
 Templates also give great opportunity for customization:
