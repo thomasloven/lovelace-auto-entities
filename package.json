@@ -6,6 +6,7 @@
   "description": "",
   "scripts": {
     "build": "rollup -c",
+    "test": "node --test test/match.test.mjs",
     "watch": "rollup -c --watch",
     "update-card-tools": "npm uninstall card-tools && npm install thomasloven/lovelace-card-tools"
   },
