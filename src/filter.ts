@@ -284,3 +284,91 @@ export async function get_filter(
     return rules.every((x) => x(hass_entity));
   };
 }
+
+
+// ---------------------------------------------------------------------------
+// Performance support: split a filter into rules that only depend on the
+// entity/device/area registries ("static") and everything else ("dynamic").
+// Static rules never read hass.states, so their result for a given entity set
+// can be cached. Dynamic rules read state and MUST be rebuilt for every hass
+// object (their closures capture `hass`), exactly as get_filter() does.
+// ---------------------------------------------------------------------------
+const STATIC_RULES = new Set([
+  "domain",
+  "entity_id",
+  "device",
+  "device_manufacturer",
+  "device_model",
+  "area",
+  "floor",
+  "level",
+  "entity_category",
+  "integration",
+  "hidden_by",
+  "label",
+]);
+
+export const rule_name = (rule: string) => rule.trim().split(" ")[0].trim();
+
+export function split_filter(filter: Record<string, any>) {
+  const stat: [string, any][] = [];
+  const dyn: [string, any][] = [];
+  for (const [rule, value] of Object.entries(filter)) {
+    const name = rule_name(rule);
+    if (name === "type" || name === "options" || name === "sort") continue;
+    (STATIC_RULES.has(name) ? stat : dyn).push([rule, value]);
+  }
+  return { stat, dyn };
+}
+
+// Build a predicate (HAState -> boolean) for a list of [rule, value] pairs.
+// An empty list is "match everything"; a filter with no rules at all must be
+// handled by the caller (get_filter matches nothing in that case).
+export async function build_predicate(
+  hass: HassObject,
+  entries: [string, any][]
+): Promise<(entity: HAState) => boolean> {
+  const fns: ((e: HAState) => boolean)[] = [];
+  for (const [rule, value] of entries) {
+    const fn = await (RULES[rule_name(rule)]?.(hass, value) ?? (() => false));
+    if (fn !== undefined) fns.push(fn);
+  }
+  return (e) => fns.every((x) => x(e));
+}
+
+const AGO = /([mhd])\s+ago\s*$/i;
+// True if any rule (at any depth, include or exclude) depends on wall-clock time
+export function is_time_dependent(obj: any): boolean {
+  if (typeof obj === "string") return AGO.test(obj);
+  if (Array.isArray(obj)) return obj.some(is_time_dependent);
+  if (!obj || typeof obj !== "object") return false;
+  return Object.entries(obj).some(
+    ([k, v]) =>
+      ["last_changed", "last_updated", "last_triggered"].includes(rule_name(k)) ||
+      is_time_dependent(v)
+  );
+}
+
+// True if the result can depend on something other than entity state objects:
+// translated states (locale) or eval_js option templates (arbitrary JS).
+export function has_hidden_inputs(obj: any): boolean {
+  if (Array.isArray(obj)) return obj.some(has_hidden_inputs);
+  if (!obj || typeof obj !== "object") return false;
+  return Object.entries(obj).some(
+    ([k, v]) =>
+      rule_name(k) === "state_translated" ||
+      (k === "eval_js" && v === true) ||
+      has_hidden_inputs(v)
+  );
+}
+
+// Entities named by `group:` rules (anywhere, including inside and/or/not): the rule
+// reads their state/attributes even though they are not candidates themselves.
+export function group_deps(obj: any, out: Set<string>) {
+  if (Array.isArray(obj)) return obj.forEach((x) => group_deps(x, out));
+  if (!obj || typeof obj !== "object") return;
+  for (const [k, v] of Object.entries(obj)) {
+    if (rule_name(k) === "group" && (typeof v !== "object" || Array.isArray(v))) out.add(String(v));
+    else group_deps(v, out);
+  }
+}

@@ -425,3 +425,33 @@ filter:
       },
     {% endfor %}]
 ```
+
+## Performance (large installs)
+
+Home Assistant gives every card a new `hass` object on every state change anywhere, and by default each auto-entities card responds by rebuilding a row for every entity and re-running its filters. On installs with thousands of entities and several auto-entities cards this adds up.
+
+Setting `optimize: true` makes a card (it is off by default)
+
+1. evaluate the registry-only rules (`domain`, `entity_id`, `device`, `device_manufacturer`, `device_model`, `area`, `floor`, `level`, `entity_category`, `integration`, `hidden_by`, `label`) once per set of entities, and run the state-dependent rules (`state`, `attributes`, `name`, `group`, `not`/`and`/`or`, ...) only over those candidates, and
+2. skip the whole re-evaluation when none of the entities its result depends on has changed.
+
+Nothing that reads `hass` is cached between updates, so results are identical to the unoptimised card.
+
+```yaml
+type: custom:auto-entities
+optimize: true              # off by default; `optimize: false` (or leaving it out) = original behaviour
+# or, to choose individual optimisations:
+# optimize:
+#   candidate_cache: true   # cache registry-only rule results per entity set
+#   skip_unchanged: true    # skip re-evaluation when nothing the result depends on changed
+#   verify: false           # also run the original algorithm and log "[auto-entities] MISMATCH" on any difference (slow, for testing)
+#   debug: false            # keep counters in window.autoEntities_stats
+filter:
+  include:
+    - integration: visonic
+      state: "on"
+```
+
+What the skip logic watches: every entity the filters could match via the registry-only rules, entities named by `group:` rules (also inside `not`/`and`/`or`), literal `entities:` and template entities, and every row that reaches `exclude`/sorting. It never skips for a card that uses time-dependent rules (`last_changed`, `last_updated`, `last_triggered`, or any `... ago` value, anywhere), `state_translated`, or `eval_js`, and re-evaluates when the language/locale or the set of entity ids changes.
+
+Known limits: Home Assistant itself replaces `hass.states` on every update; code that mutates `hass.states` in place is not detected. The entity, device and area registries are cached for the lifetime of the page, as before.
