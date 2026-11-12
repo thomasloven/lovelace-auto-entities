@@ -56,6 +56,16 @@ export interface AutoEntitiesConfig {
   sort?: any;
 
   entity_ids?: any[];
+
+  // Performance options (all optional, defaults on). `optimize: false` restores the original behaviour.
+  optimize?:
+    | boolean
+    | {
+        candidate_cache?: boolean;
+        skip_unchanged?: boolean;
+        verify?: boolean;
+        debug?: boolean;
+      };
 }
 
 export interface LovelaceRowConfig {

@@ -5,8 +5,8 @@ import {
   bind_template,
   unbind_template,
 } from "./helpers/templates";
-import { get_filter, RULES } from "./filter";
-import { get_sorter } from "./sort";
+import { RULES } from "./filter";
+import { Engine, resolve_optimize, OptimizeOptions } from "./engine";
 import {
   AutoEntitiesConfig,
   EntityList,
@@ -17,7 +17,6 @@ import {
 import pjson from "../package.json";
 import "./editor/auto-entities-editor";
 import { compare_deep } from "./helpers";
-import { process_entity } from "./process_entity";
 
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
@@ -39,6 +38,8 @@ class AutoEntities extends LitElement {
   _updateCooldown = { timer: undefined, rerun: false };
   _cardBuilt?: Promise<void>;
   _cardBuiltResolve?;
+  _engine = new Engine();
+  _opts: OptimizeOptions;
 
   static getConfigElement() {
     return document.createElement("auto-entities-editor");
@@ -86,6 +87,8 @@ class AutoEntities extends LitElement {
 
     config = JSON.parse(JSON.stringify(config));
     this._config = config;
+    this._opts = resolve_optimize(config);
+    this._engine.reset();
 
     if (
       this._config.filter?.template &&
@@ -103,6 +106,7 @@ class AutoEntities extends LitElement {
   }
 
   _renderer = (tpl) => {
+    this._engine.reset();
     if (typeof tpl === "string") {
       this._template = tpl.split(/[\s,]+/);
     } else {
@@ -144,7 +148,13 @@ class AutoEntities extends LitElement {
 
     if (!this.hass) return;
 
-    const entities = await this.update_entities();
+    const { entities, skipped, superseded } = await this._engine.run(
+      this.hass,
+      this._config,
+      this._template,
+      this._opts ?? resolve_optimize(this._config)
+    );
+    if (skipped || superseded) return;
     this.update_card(entities);
   }
 
@@ -193,106 +203,6 @@ class AutoEntities extends LitElement {
       await this.updateComplete;
       (this.card as any).requestUpdate();
     }
-  }
-
-  async update_entities() {
-    const format = (entity: LovelaceRowConfig | string): LovelaceRowConfig => {
-      if (!entity) return null;
-      return typeof entity === "string" ? { entity: entity.trim() } : entity;
-    };
-
-    let entities: EntityList = [...(this._config?.entities?.map(format) || [])];
-
-    if (!this.hass) {
-      return entities;
-    }
-
-    if (this._template) {
-      entities = entities.concat(this._template.map(format));
-    }
-    entities = entities.filter(Boolean);
-
-    const include_filters = await Promise.all(
-      (this._config.filter?.include ?? []).map(async (filter) => {
-        if (filter.type !== undefined)
-          return async () => [filter as LovelaceRowConfig];
-
-        const filters = await get_filter(this.hass, filter);
-        const sorter = filter.sort?.method
-          ? await get_sorter(this.hass, filter.sort)
-          : (x) => x;
-
-        const post_process = async (entity) =>
-          await process_entity(
-            this.hass,
-            { ...entity, ...filter.options },
-            entity.entity
-          );
-
-        return async (entities: EntityList) => {
-          let add = entities.filter(filters);
-          // Filter-local sort
-          add = await sorter(add);
-          // Filter-local pagination
-          if (filter.sort?.count || filter.sort?.first) {
-            const start = filter.sort?.first ?? 0;
-            const count = filter.sort?.count ?? Infinity;
-            add = add.slice(start, start + count);
-          }
-          add = await Promise.all(add.map(post_process));
-          return add;
-        };
-      })
-    );
-
-    const exclude_filters = await Promise.all(
-      (this._config.filter?.exclude ?? []).map(async (filter) => {
-        const filters = await get_filter(this.hass, filter);
-        return filters;
-      })
-    );
-
-    const all_entities: EntityList = Object.keys(this.hass.states).map(format);
-    // Include
-    entities = entities.concat(
-      ...(await Promise.all(include_filters.map((f) => f(all_entities))))
-    );
-    // Exclude
-    entities = entities.filter((e) => !exclude_filters.some((f) => f(e)));
-
-    // Global sort
-    const sorter = this._config.sort?.method
-      ? await get_sorter(this.hass, this._config.sort)
-      : (x) => x;
-    entities = await sorter(entities);
-
-    // Unique
-    if (this._config.unique) {
-      let sorter = (
-        entity: LovelaceRowConfig,
-        index: number,
-        self: LovelaceRowConfig[]
-      ) => index === self.findIndex((e) => compare_deep(e, entity));
-
-      if (this._config.unique === "entity") {
-        sorter = (
-          entity: LovelaceRowConfig,
-          index: number,
-          self: LovelaceRowConfig[]
-        ) => index === self.findIndex((e) => e.entity === entity.entity);
-      }
-
-      entities = entities.filter(sorter);
-    }
-
-    // Pagination
-    if (this._config.sort?.count || this._config.sort?.first) {
-      const start = this._config.sort?.first ?? 0;
-      const count = this._config.sort?.count ?? Infinity;
-      entities = entities.slice(start, start + count);
-    }
-
-    return entities;
   }
 
   async updated(changedProperties) {
