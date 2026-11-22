@@ -48,8 +48,9 @@ export async function bind_template(
   const cacheKey = JSON.stringify([template, variables]);
   let cache = cachedTemplates[cacheKey];
   if (!cache) {
+    // No callback("") here: the caller keeps its last result until the new
+    // one arrives, so a card re-attached after a view switch doesn't empty.
     unbind_template(callback);
-    callback("");
 
     variables = {
       user: hs.user.name,
