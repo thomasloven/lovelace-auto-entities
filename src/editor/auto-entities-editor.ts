@@ -97,19 +97,19 @@ class AutoEntitiesEditor extends LitElement {
 
     return html`
       <div>
-        <sl-tab-group @sl-tab-show=${this._handleSwitchTab}>
+        <ha-tab-group @wa-tab-show=${this._handleSwitchTab}>
           ${Object.keys(tabs).map(
             (tab) => html`
-              <sl-tab
+              <ha-tab-group-tab
                 slot="nav"
                 .active=${this._selectedTab == tab}
                 panel=${tab}
               >
                 ${tab}
-              </sl-tab>
+              </ha-tab-group-tab>
             `
           )}
-        </sl-tab-group>
+        </ha-tab-group>
 
         <div>${tabs[this._selectedTab].bind(this)()}</div>
       </div>
@@ -119,18 +119,18 @@ class AutoEntitiesEditor extends LitElement {
   static get styles(): CSSResultArray {
     return [
       css`
-        sl-tab-group {
+        ha-tab-group {
           margin-top: -16px;
           margin-bottom: 16px;
         }
-        sl-tab {
+        ha-tab-group-tab {
           flex: 1;
         }
-        sl-tab::part(base) {
+        ha-tab-group-tab::part(base) {
           width: 100%;
           justify-content: center;
         }
-        sl-tab[panel="?"] {
+        ha-tab-group-tab[panel="?"] {
           flex: 0;
         }
       `,
