@@ -2,6 +2,7 @@ import { LitElement, html, CSSResultArray, css } from "lit";
 import { property, state } from "lit/decorators.js";
 import { AutoEntitiesConfig } from "../types";
 import { loadHaForm, compare_deep } from "../helpers";
+import { localize } from "../localize";
 
 import "./auto-entities-filter-editor";
 import "./auto-entities-sorting-editor";
@@ -92,7 +93,15 @@ class AutoEntitiesEditor extends LitElement {
         ._config=${this._config}
         @config-changed=${this._config_changed}
       ></auto-entities-card-editor>`,
-      "?": () => html`<auto-entities-help></auto-entities-help>`,
+      "?": () =>
+        html`<auto-entities-help .hass=${this.hass}></auto-entities-help>`,
+    };
+
+    const tabLabels = {
+      Filters: localize("tab.filters", this.hass),
+      Sorting: localize("tab.sorting", this.hass),
+      Card: localize("tab.card", this.hass),
+      "?": "?",
     };
 
     return html`
@@ -105,7 +114,7 @@ class AutoEntitiesEditor extends LitElement {
                 .active=${this._selectedTab == tab}
                 panel=${tab}
               >
-                ${tab}
+                ${tabLabels[tab]}
               </sl-tab>
             `
           )}
@@ -144,6 +153,8 @@ customElements.define("auto-entities-editor", AutoEntitiesEditor);
   type: "auto-entities",
   name: "Auto Entities",
   preview: false,
-  description:
-    "Entity Filter on Steroids. Auto Entities allows you to fill other cards with entities automatically, based on a number of attributes.",
+  // Read when the card picker opens, once the user's language is known
+  get description() {
+    return localize("card.description");
+  },
 });

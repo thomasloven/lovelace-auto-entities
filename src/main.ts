@@ -18,6 +18,7 @@ import pjson from "../package.json";
 import "./editor/auto-entities-editor";
 import { compare_deep } from "./helpers";
 import { process_entity } from "./process_entity";
+import { localize } from "./localize";
 
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
@@ -57,11 +58,11 @@ class AutoEntities extends LitElement {
 
   setConfig(config: AutoEntitiesConfig) {
     if (!config) {
-      throw new Error("No configuration.");
+      throw new Error(localize("error.no_configuration", this.hass));
     }
 
     if (!config.filter && !config.entities) {
-      throw new Error("No filters specified.");
+      throw new Error(localize("error.no_filters", this.hass));
     }
 
     if (config.filter?.include) {
@@ -69,7 +70,12 @@ class AutoEntities extends LitElement {
         if (Object.keys(filter).includes("type")) continue;
         for (const k in filter) {
           if (!(k.trim().split(" ")[0].trim() in RULES))
-            throw new Error(`Unknown rule "${k}" in include filter ${index}`);
+            throw new Error(
+              localize("error.unknown_include_rule", this.hass, {
+                rule: k,
+                index,
+              })
+            );
         }
       }
     }
@@ -79,7 +85,12 @@ class AutoEntities extends LitElement {
         if (Object.keys(filter).includes("type")) continue;
         for (const k in filter) {
           if (!(k.trim().split(" ")[0].trim() in RULES))
-            throw new Error(`Unknown rule "${k}" in exclude filter ${index}`);
+            throw new Error(
+              localize("error.unknown_exclude_rule", this.hass, {
+                rule: k,
+                index,
+              })
+            );
         }
       }
     }

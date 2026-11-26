@@ -1,30 +1,38 @@
 import { await_element, selectTree } from "../helpers/selecttree";
+import { localize, TranslationKey } from "../localize";
 
-const ruleKeySelector = {
+const ruleKeys = [
+  "area",
+  "attributes",
+  "device",
+  "domain",
+  "entity_category",
+  "entity_id",
+  "floor",
+  "group",
+  "hidden_by",
+  "integration",
+  "label",
+  "last_changed",
+  "last_triggered",
+  "last_updated",
+  "level",
+  "device_manufacturer",
+  "device_model",
+  "name",
+  "state",
+  "state_translated",
+];
+
+const ruleKeySelector = (hass) => ({
   type: "select",
-  options: [
-    ["area", "Area"],
-    ["attributes", "Attribute"],
-    ["device", "Device"],
-    ["domain", "Domain"],
-    ["entity_category", "Entity Category"],
-    ["entity_id", "Entity ID"],
-    ["floor", "Floor"],
-    ["group", "Group"],
-    ["hidden_by", "Hidden by"],
-    ["integration", "Integration"],
-    ["label", "Label"],
-    ["last_changed", "Last Changed"],
-    ["last_triggered", "Last Triggered"],
-    ["last_updated", "Last Updated"],
-    ["level", "Level"],
-    ["device_manufacturer", "Manufacturer"],
-    ["device_model", "Model"],
-    ["name", "Name"],
-    ["state", "State"],
-    ["state_translated", "State Translated"],
-  ],
-};
+  options: ruleKeys
+    .map((key): [string, string] => [
+      key,
+      localize(`rule.${key}` as TranslationKey, hass),
+    ])
+    .sort(([, a], [, b]) => a.localeCompare(b)),
+});
 
 const filterValueSelector = {
   attributes: { object: {} },
@@ -41,16 +49,16 @@ export const hasSelector = (filter) => {
   return Object.keys(filter).some((k) => k in filterValueSelector);
 };
 
-const ruleSchema = ([key, value], idx) => {
+const ruleSchema = (hass, [key, value], idx) => {
   if (["sort", "optios"].includes(key)) {
     return undefined;
   }
-  if (!ruleKeySelector.options.some(([k, v]) => k === key))
+  if (!ruleKeys.includes(key))
     return {
       type: "Constant",
       name: "Some rules are not shown",
-      value: `The rule "${key}" is not supported by the GUI editor.
-        Please switch to the CODE EDITOR to access all options.`,
+      label: localize("filter.unsupported_title", hass),
+      value: localize("filter.unsupported_rule", hass, { rule: key }),
     };
 
   return {
@@ -58,9 +66,9 @@ const ruleSchema = ([key, value], idx) => {
     name: "",
     schema: [
       {
-        ...ruleKeySelector,
+        ...ruleKeySelector(hass),
         name: `key_${idx}`,
-        label: "Rule",
+        label: localize("filter.rule", hass),
       },
       {
         name: `value_${idx}`,
@@ -116,19 +124,21 @@ export const postProcess = async (form: Element) => {
   }
 };
 
-export const filterSchema = (group) => {
+export const filterSchema = (hass, group) => {
   const filters = { ...group };
   delete filters.options;
   return [
-    ...Object.entries(filters).map(ruleSchema).filter(Boolean),
+    ...Object.entries(filters)
+      .map((rule, idx) => ruleSchema(hass, rule, idx))
+      .filter(Boolean),
     {
-      ...ruleKeySelector,
+      ...ruleKeySelector(hass),
       name: `key_new`,
-      label: "New Rule ...",
+      label: localize("filter.new_rule", hass),
     },
     {
       name: "options",
-      label: "Options:",
+      label: localize("filter.options", hass),
       selector: { object: {} },
     },
   ];
@@ -169,51 +179,68 @@ export const nonFilterSchema = [
   },
 ];
 
-export const entitiesSchema = [
+export const entitiesSchema = (hass) => [
   {
     name: "entities",
-    label: "Entities:",
+    label: localize("filter.entities", hass),
     selector: { object: {} },
   },
 ];
-export const templateSchema = [
+export const templateSchema = (hass) => [
   {
     name: "template",
-    label: "Template:",
+    label: localize("filter.template", hass),
     selector: { template: {} },
   },
 ];
 
-export const sortSchema = (method) => {
+export const sortSchema = (hass, method) => {
   const schema: any[] = [
     {
       name: "method",
-      label: "Sort method",
+      label: localize("sort.method", hass),
       type: "select",
       options: [
-        ["domain", "Entity Domain"],
-        ["entity_id", "Entity ID"],
-        ["friendly_name", "Friendly Name"],
-        ["state", "Entity State"],
-        ["last_changed", "Last Change"],
-        ["last_updated", "Last Update"],
-        ["last_triggered", "Last Trigger"],
-        ["attribute", "Attribute"],
+        ["domain", localize("sort.domain", hass)],
+        ["entity_id", localize("sort.entity_id", hass)],
+        ["friendly_name", localize("sort.friendly_name", hass)],
+        ["state", localize("sort.state", hass)],
+        ["last_changed", localize("sort.last_changed", hass)],
+        ["last_updated", localize("sort.last_updated", hass)],
+        ["last_triggered", localize("sort.last_triggered", hass)],
+        ["attribute", localize("sort.attribute", hass)],
       ],
     },
     {
       type: "constant",
       name: "Sorting options:",
+      label: localize("sort.options", hass),
       value: "",
     },
     {
       type: "grid",
       name: "",
       schema: [
-        { name: "reverse", type: "boolean", label: "Reverse" },
-        { name: "ignore_case", type: "boolean", label: "Ignore case" },
-        { name: "numeric", type: "boolean", label: "Numeric sort" },
-        { name: "ip", type: "boolean", label: "IP address sort" },
+        {
+          name: "reverse",
+          type: "boolean",
+          label: localize("sort.reverse", hass),
+        },
+        {
+          name: "ignore_case",
+          type: "boolean",
+          label: localize("sort.ignore_case", hass),
+        },
+        {
+          name: "numeric",
+          type: "boolean",
+          label: localize("sort.numeric", hass),
+        },
+        {
+          name: "ip",
+          type: "boolean",
+          label: localize("sort.ip", hass),
+        },
       ],
     },
   ];
@@ -223,22 +250,22 @@ export const sortSchema = (method) => {
       {
         type: "Constant",
         name: "GUI editor not available",
-        value: `Sorting by ${method} is not supported by the GUI editor.
-        Please switch to the CODE EDITOR to access all options.`,
+        label: localize("sort.unsupported_title", hass),
+        value: localize("sort.unsupported_method", hass, { method }),
       },
     ];
 
   if (method == "attribute") schema.push();
   schema.push({
     name: "attribute",
-    label: "Attribute:",
+    label: localize("sort.attribute_field", hass),
     selector: { object: {} },
   });
 
   return schema;
 };
 
-export const cardOptionsSchema = [
+export const cardOptionsSchema = (hass) => [
   {
     type: "grid",
     name: "",
@@ -246,12 +273,12 @@ export const cardOptionsSchema = [
       {
         name: "show_empty",
         type: "boolean",
-        label: "Show if empty",
+        label: localize("card.show_empty", hass),
       },
       {
         name: "card_param",
         type: "string",
-        label: "Parameter to populate",
+        label: localize("card.card_param", hass),
       },
     ],
   },

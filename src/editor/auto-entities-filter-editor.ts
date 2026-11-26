@@ -12,6 +12,7 @@ import {
   templateSchema,
   entitiesSchema,
 } from "./schema";
+import { localize } from "../localize";
 
 class AutoEntitiesFilterEditor extends LitElement {
   @state() _config: AutoEntitiesConfig;
@@ -21,7 +22,9 @@ class AutoEntitiesFilterEditor extends LitElement {
     if ("type" in filter) {
       return `${filter.type} ${filter.label ? `"${filter.label}"` : ""}`;
     }
-    return `${Object.keys(filter).length} rules`;
+    return localize("filter.rule_count", this.hass, {
+      count: Object.keys(filter).length,
+    });
   }
 
   _getFilters(type) {
@@ -193,22 +196,23 @@ class AutoEntitiesFilterEditor extends LitElement {
                     appearance="filled"
                     @click=${(ev) => this._filterDelete(ev, idx, type)}
                   >
-                    Delete
+                    ${localize("filter.delete", this.hass)}
                   </ha-button>
                   ${filter.type === undefined
                     ? html`
                         ${hasSelector(filter)
                           ? html`
                               <p class="info">
-                                If entering a custom Value (e.g. "*light" or
-                                "/^[Bb]ed/") in a box with options, you need to
-                                finish with the Enter key.
+                                ${localize(
+                                  "filter.custom_value_info",
+                                  this.hass
+                                )}
                               </p>
                             `
                           : ""}
                         <ha-form
                           .hass=${this.hass}
-                          .schema=${filterSchema(filter)}
+                          .schema=${filterSchema(this.hass, filter)}
                           .computeLabel=${(s) => s.label ?? s.name}
                           @value-changed=${(ev) =>
                             this._rulesChanged(ev, idx, type)}
@@ -218,11 +222,13 @@ class AutoEntitiesFilterEditor extends LitElement {
                         >
                         </ha-form>
                         <ha-expansion-panel outlined class="sort">
-                          <h4 slot="header">Sorting</h4>
+                          <h4 slot="header">
+                            ${localize("filter.sorting", this.hass)}
+                          </h4>
                           <div class="content">
                             <ha-form
                               .hass=${this.hass}
-                              .schema=${sortSchema(filter.sort?.method)}
+                              .schema=${sortSchema(this.hass, filter.sort?.method)}
                               .data=${filter.sort}
                               .computeLabel=${(s) => s.label ?? s.name}
                               @value-changed=${(ev) =>
@@ -254,14 +260,14 @@ class AutoEntitiesFilterEditor extends LitElement {
         @click=${(ev) => this._filterAdd(ev, type)}
       >
         <ha-icon slot="start" .icon=${"mdi:plus"}></ha-icon>
-        Add filter
+        ${localize("filter.add", this.hass)}
       </ha-button>
       <ha-button
         appearance="plain" 
         @click=${(ev) => this._filterAdd(ev, type, true)}
       >
         <ha-icon slot="start" .icon=${"mdi:plus"}></ha-icon>
-      Add custom entry
+      ${localize("filter.add_custom", this.hass)}
     </ha-button>
   `;
 
@@ -269,20 +275,20 @@ class AutoEntitiesFilterEditor extends LitElement {
       <div>
         <ha-expansion-panel outlined>
           <ha-icon .icon=${"mdi:plus"} slot="leading-icon"></ha-icon>
-          <h3 slot="header">Include</h3>
+          <h3 slot="header">${localize("filter.include", this.hass)}</h3>
 
           <div class="content">${render_type("include")}</div>
         </ha-expansion-panel>
         <ha-expansion-panel outlined>
           <ha-icon .icon=${"mdi:minus"} slot="leading-icon"></ha-icon>
-          <h3 slot="header">Exclude</h3>
+          <h3 slot="header">${localize("filter.exclude", this.hass)}</h3>
           <div class="content">${render_type("exclude")}</div>
         </ha-expansion-panel>
         ${this._config.entities
           ? html`
               <ha-form
                 .hass=${this.hass}
-                .schema=${entitiesSchema}
+                .schema=${entitiesSchema(this.hass)}
                 .data=${this._config}
                 .computeLabel=${(s) => s.label ?? s.name}
                 @value-changed=${(ev) => this._entitiesChanged(ev)}
@@ -294,7 +300,7 @@ class AutoEntitiesFilterEditor extends LitElement {
           ? html`
               <ha-form
                 .hass=${this.hass}
-                .schema=${templateSchema}
+                .schema=${templateSchema(this.hass)}
                 .data=${this._config.filter}
                 .computeLabel=${(s) => s.label ?? s.name}
                 @value-changed=${(ev) => this._templateChanged(ev)}

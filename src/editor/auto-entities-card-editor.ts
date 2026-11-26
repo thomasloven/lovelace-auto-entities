@@ -2,6 +2,7 @@ import { LitElement, html } from "lit";
 import { property, state, query } from "lit/decorators.js";
 import { AutoEntitiesConfig } from "../types";
 import { cardOptionsSchema } from "./schema";
+import { localize } from "../localize";
 
 class AutoEntitiesCardEditor extends LitElement {
   @state() _config: AutoEntitiesConfig;
@@ -72,7 +73,7 @@ class AutoEntitiesCardEditor extends LitElement {
       <div class="box cards">
         <ha-form
           .hass=${this.hass}
-          .schema=${cardOptionsSchema}
+          .schema=${cardOptionsSchema(this.hass)}
           .computeLabel=${(s) => s.label ?? s.name}
           .data=${data}
           @value-changed=${this._changeCardOptions}
@@ -86,15 +87,15 @@ class AutoEntitiesCardEditor extends LitElement {
                   .disabled=${!this._cardGUIModeAvailable}
                 >
                   ${!this._cardEditorEl || this._cardGUIMode
-                    ? "Show code editor"
-                    : "Show Visual Editor"}
+                    ? localize("card.show_code_editor", this.hass)
+                    : localize("card.show_visual_editor", this.hass)}
                 </ha-button>
                 <ha-button
                   appearance="plain"
-                  .title=${"Change card type"}
+                  .title=${localize("card.change_type", this.hass)}
                   @click=${this._deleteCard}
                 >
-                  Change card type
+                  ${localize("card.change_type", this.hass)}
                 </ha-button>
               </div>
               <hui-card-element-editor

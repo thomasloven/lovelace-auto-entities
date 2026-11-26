@@ -23,7 +23,7 @@ class AutoEntitiesSortingEditor extends LitElement {
         <ha-form
           .hass=${this.hass}
           .data=${data}
-          .schema=${sortSchema(data.method)}
+          .schema=${sortSchema(this.hass, data.method)}
           .computeLabel=${(s) => s.label ?? s.name}
           @value-changed=${this._changeSortOptions}
         ></ha-form>
